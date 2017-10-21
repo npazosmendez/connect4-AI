@@ -8,21 +8,23 @@ class c_linea{
     public:
         // Constructores
         c_linea(uint C, uint N, uint M, uint p);
-        c_linea(uint C, uint N, uint M, uint p, uint yo /*para indicar qué jugador soy*/);
+        c_linea(uint C, uint N, uint M, uint p, uint yo /*para indicar qué jug. soy*/);
 
         // Métodos para modificar el juego
-        void jugar1(uint columna); // juega jugador 1
-        void jugar2(uint columna); // juega jugador 2
-        void jugar(uint columna); // juega jugador 'yo'
+        void jugar1(uint columna); // juega jug. 1
+        void jugar2(uint columna); // juega jug. 2
+        void jugar(uint columna); // juega jug. 'yo'
 
         // Métodos para observar el juego
         bool termino(); // indica si termino el juego
-        bool gano1(); // indica si ganó el jugador 1
-        bool gano2(); // indica si ganó el jugador 2
-        bool gane(); // indica si ganó el jugador 'yo'
-        uint fichas1(); // # fichas restantes del jug. 1
-        uint fichas2(); // # fichas restantes del jug. 2
-        uint fichas(); // // # fichas restantes del jug. 'yo'
+        bool gano1(); // indica si ganó el jug. 1
+        bool gano2(); // indica si ganó el jug. 2
+        bool gane(); // indica si ganó el jug. 'yo'
+        uint turno() {return _turno;};
+        bool metoca() {return _turno==_yo;};
+        uint fichas1(){return _p1;};
+        uint fichas2(){return _p2;};
+        uint fichas(); // # fichas restantes del jug. 'yo'
 
         const vector<vector<int>>& tablero(){return _tablero;};
 
@@ -33,8 +35,8 @@ class c_linea{
         /* El tablero es una matriz (arreglo de columnas), y cada posición
         puede tener:
             0 : no hay ficha
-            1: hay ficha de jugador 1
-            2: hay ficha de jugador 2
+            1: hay ficha de jug. 1
+            2: hay ficha de jug. 2
         Ejemplo:
             0 0 0 0 0 0
             0 0 1 1 0 0
@@ -45,14 +47,14 @@ class c_linea{
 
         uint _p1; // # fichas jug 1
         uint _p2; // # fichas jug 2
-        const uint _yo; // qué jugador soy
+        const uint _yo; // qué jug. soy
         vector<vector<int>> _tablero;
         vector<uint> _alturas;
         uint _turno;
 };
 
 c_linea::c_linea(uint C, uint N, uint M, uint p) : C(C), N(N), M(M), _p1(p), _p2(p), _yo(1), _tablero(N,vector<int>(M,0)), _alturas(N,0), _turno(1) {
-    // por defecto, 'yo' = jugador 1
+    // por defecto, 'yo' = jug. 1
 }
 c_linea::c_linea(uint C, uint N, uint M, uint p, uint yo) : C(C), N(N), M(M), _p1(p), _p2(p), _yo(yo), _tablero(N,vector<int>(M,0)), _alturas(N,0), _turno(1) {
 }
@@ -108,12 +110,6 @@ bool c_linea::gane(){
         return gano1();
     else
         return gano2();
-}
-uint c_linea::fichas1(){
-    return _p1;
-}
-uint c_linea::fichas2(){
-    return _p2;
 }
 uint c_linea::fichas(){
     if (_yo == 1)

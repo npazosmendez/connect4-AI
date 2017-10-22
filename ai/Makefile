@@ -14,7 +14,7 @@ minimax_ab: ai.cpp $(OBJ)
 	$(CC) $(FLAGS) -DAI=MINIMAX_AB $(OBJ) $< -o $@
 
 golosa: ai.cpp $(OBJ) c_linea.o
-	$(CC) $(FLAGS) -DAI=GOLSA $(OBJ) $< -o $@
+	$(CC) $(FLAGS) -DAI=GOLOSA $(OBJ) $< -o $@
 
 
 # Objetos

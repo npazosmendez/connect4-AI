@@ -9,10 +9,13 @@ void send(int msg);
 int read_int(); // si encuentra "salir", exit()
 string read_str(); // si encuentra "salir", exit()
 
+// TODO
+int minimax(c_linea &juego);
+
 int main() {
 
     string msg, color, oponent_color, go_first;
-    int columns, rows, c, p,  yo;
+    int columns, rows, c, p, yo, el;
 
     // Tantos juegos como el juez diga
     while (true) {
@@ -28,30 +31,30 @@ int main() {
 
         // Qué jugador soy?
         go_first = read_str();
-        if (go_first == "vos")
+        if (go_first == "vos"){
             yo = 1;
-        else
+            el = 2;
+        }else{
             yo = 2;
+            el = 1;
+        }
 
         // Acá empieza el juego
         c_linea juego(c,columns,rows,p,yo);
         if (yo==1) {
-            // TODO: primer movimiento
+            // me toca primero
+            send(minimax(juego));
         }
         while (true) {
-            int mov_oponente;
             msg = read_str();
-            if (msg == "ganaste" || msg == "perdiste" || msg == "empataron") {
+            if (msg == "ganaste" || msg == "perdiste" || msg == "empataron")
                 break;
-            }else{
-                mov_oponente = stoi(msg);
-            }
-            // TODO: movimiento
-
-
+            else
+                juego.jugar(el, stoi(msg));
+                
+            send(minimax(juego));
         }
     }
-
     return 0;
 }
 

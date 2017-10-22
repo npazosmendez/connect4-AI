@@ -1,1 +1,6 @@
 *.gch
+*.o
+
+minimax
+minimax_ab
+golosa

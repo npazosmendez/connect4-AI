@@ -59,7 +59,8 @@ int main() {
         if (yo==1) {
             // me toca primero
             #if AI==MINIMAX
-                // ...
+                jugada = minimax(juego);
+                juego.jugar(yo,jugada);
             #elif AI==GOLOSA
                 // ...
             #endif
@@ -73,7 +74,8 @@ int main() {
                 juego.jugar(el, stoi(msg));
 
             #if AI==MINIMAX
-                // ...
+                jugada = minimax(juego);
+                juego.jugar(yo,jugada);
             #elif AI==MINIMAX_AB
                 // ...
             #elif AI==GOLOSA

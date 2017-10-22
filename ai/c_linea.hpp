@@ -32,9 +32,10 @@ class c_linea{
         bool gano1(){return gano(1);};
         bool gano2(){return gano(2);};
         bool gane(){return gano(_yo);};
-        bool perdio1(){return gano2();};
-        bool perdio2(){return gano1();};
-        bool perdi(){if (_yo == 1) return perdio1(); else return perdio2();};
+        bool perdio(int jugador){if (jugador == 1) return gano2(); else return gano1();};
+        bool perdio1(){return perdio(1);};
+        bool perdio2(){return perdio(2);};
+        bool perdi(){return perdio(_yo);};
         uint turno() {return _turno;};
         bool metoca() {return _turno==_yo;};
         uint fichas1(){return _p1;};

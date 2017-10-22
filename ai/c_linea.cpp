@@ -20,11 +20,9 @@ void c_linea::jugar(int jugador, int columna){
     assert(!termino());
     #endif
     if (jugador==1){
-        assert(_p1 > 0);
         _p1--;
         _turno = 2;
     }else{
-        assert(_p2 > 0);
         _p2--;
         _turno = 1;
     }

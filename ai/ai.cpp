@@ -62,7 +62,8 @@ int main() {
                 jugada = minimax(juego);
                 juego.jugar(yo,jugada);
             #elif AI==GOLOSA
-                // ...
+                jugada = golosa(juego);
+                juego.jugar(yo,jugada);
             #endif
             send(jugada);
         }
@@ -79,7 +80,8 @@ int main() {
             #elif AI==MINIMAX_AB
                 // ...
             #elif AI==GOLOSA
-                // ...
+                jugada = golosa(juego);
+                juego.jugar(yo,jugada);
             #endif
             send(jugada);
         }

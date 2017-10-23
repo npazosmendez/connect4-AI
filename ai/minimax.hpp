@@ -3,6 +3,6 @@
 
 #include "c_linea.hpp"
 
-int minimax(c_linea &juego);
+int minimax(c_linea juego);
 
 #endif

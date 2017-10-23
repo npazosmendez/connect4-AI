@@ -1,6 +1,6 @@
 CC = g++
 FLAGS = -std=c++11 -ggdb -Wall -O3
-OBJ = minimax.o golosa.o c_linea.o
+OBJ = minimax.o golosa.o c_linea.o minimax_ab.o
 EXECS = minimax minimax_ab golosa
 
 all: clean $(EXECS)

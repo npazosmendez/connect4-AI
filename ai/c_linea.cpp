@@ -1,11 +1,11 @@
 #include "c_linea.hpp"
 #define ASSERT
 
-c_linea::c_linea(uint C, uint N, uint M, uint p) : C(C), N(N), M(M), _p1(p), _p2(p), _yo(1), _tablero(N,vector<int>(M,0)), _alturas(N,0), _turno(1) {
+c_linea::c_linea(uint C, uint N, uint M, uint p) : C(C), N(N), M(M), yo(1), _p1(p), _p2(p), _tablero(N,vector<int>(M,0)), _alturas(N,0), _turno(1) {
     // por defecto, 'yo' = jug. 1
 }
 
-c_linea::c_linea(uint C, uint N, uint M, uint p, uint yo) : C(C), N(N), M(M), _p1(p), _p2(p), _yo(yo), _tablero(N,vector<int>(M,0)), _alturas(N,0), _turno(1) {
+c_linea::c_linea(uint C, uint N, uint M, uint p, uint yo_v) : C(C), N(N), M(M), yo(yo_v), _p1(p), _p2(p), _tablero(N,vector<int>(M,0)), _alturas(N,0), _turno(1) {
     #ifdef ASSERT
     assert(yo==1 || yo==2);
     #endif

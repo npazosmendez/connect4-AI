@@ -3,6 +3,7 @@
 #include <string>
 
 #include "minimax.hpp"
+#include "minimax_ab.hpp"
 #include "golosa.hpp"
 
 /* Compilar usando:
@@ -64,6 +65,9 @@ int main() {
             #elif AI==GOLOSA
                 jugada = golosa(juego);
                 juego.jugar(yo,jugada);
+            #elif AI==MINIMAX_AB
+                jugada = minimax_ab(juego);
+                juego.jugar(yo,jugada);
             #endif
             send(jugada);
         }
@@ -76,13 +80,12 @@ int main() {
 
             #if AI==MINIMAX
                 jugada = minimax(juego);
-                juego.jugar(yo,jugada);
             #elif AI==MINIMAX_AB
-                // ...
+                jugada = minimax_ab(juego);
             #elif AI==GOLOSA
                 jugada = golosa(juego);
-                juego.jugar(yo,jugada);
             #endif
+            juego.jugar(yo,jugada);
             send(jugada);
         }
     }

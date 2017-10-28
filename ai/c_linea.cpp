@@ -119,6 +119,128 @@ bool c_linea::gano(int jugador){
     return false;
 }
 
+uint c_linea::contar_lineas(int contador_der, int contador_izq, int largo){
+    /* Auxiliar para lineas_nuevas(...):
+    Dadas las cantidades de fichas a izquierda y derecha de igual color de una
+    ficha central, y el largo de la línea a formar, cuenta cuántas lineas hay
+    de tal largo, que cumplan:
+        * contienen a la ficha central
+        * al menos uno de sus extremos es límite (no está contenida en otra más grande hacia ambos lados)
+    */
+    uint res = 0;
+    if (contador_der +1 == largo || (contador_der+1 > largo && contador_izq == 0)) res++; // encontré a derecha
+    if (contador_izq +1 == largo || (contador_izq+1 > largo && contador_der== 0)) res++; // encontré a izquierda
+    if ((contador_izq+1 < largo || contador_der +1 < largo) && contador_der > 0 && contador_izq > 0) {
+        // si para algún lado hay algo pero no llegué, me fijo si puedo extenderme hacia los dos lados
+        // por ejemplo, lineas de 3: ooox(X)xxooo, no llegué a izquierda pero puedo extenderme hacia ambos lados
+        if (contador_der + contador_izq + 1 >= largo) res++;
+    }
+    return res;
+}
+
+uint c_linea::lineas_nuevas(int largo, int columna, int jugador){
+    /* NOTE
+    Esta función devuelve la cantidad de líneas de longitud 'largo' que cumplen:
+        * son de 'jugador'
+        * contienen a la ficha de más arriba de 'columna'
+        * al menos uno de sus extremos es límite (no está contenida en otra más grande hacia ambos lados)
+
+    La idea de esta función es ver cuántas líneas de largo 'largo' me agrega
+    haber jugado en 'columna'. La decisión de contar solo las líneas que tienen
+    algún extremo límite surge de que, a primera vista, no parecería
+    interesante contar líneas que en realidad son más largas para ambos lados.
+    Interesa contar aquellas líneas de largo L, que en un futuro puedan llegar
+    a ser de largo L+1.
+
+    TODO: tal vez tenga sentido que la función tenga en
+    cuenta que la línea contada pueda ser expandida. Si hacemos eso, mejor
+    hacerlo en otra función, y conservar esta.
+    */
+    #ifdef ASSERT
+    assert(jugador==1 || jugador==2);
+    assert(largo > 0);
+    assert(columna < N);
+    assert(_alturas[columna] > 0);
+    assert(_tablero[columna][_alturas[columna]-1]==jugador);
+    #endif
+
+    uint res = 0;
+
+    // busco en columna (para abajo nada más)
+    int contador = 0;
+    int fila = _alturas[columna]-1;
+    while(fila >= 0 && _tablero[columna][fila]==jugador && contador < largo){
+        contador++;
+        fila--;
+    }
+    if (contador == largo) res++; // encontré una
+    // cout << "En columna: " << res << endl;
+
+    // busco en fila (hacia ambos lados)
+    // cuento a derecha
+    int contador_der = 0;
+    int col = columna+1;
+    while(col < N && _tablero[col][_alturas[columna]-1]==jugador){
+        contador_der++;
+        col++;
+    }
+    // cuento a izquierda
+    int contador_izq = 0;
+    col = columna-1;
+    while(col >= 0 && _tablero[col][_alturas[columna]-1]==jugador){
+        contador_izq++;
+        col--;
+    }
+    res += contar_lineas(contador_der, contador_izq, largo);
+    // cout << "En fila: " << res << endl;
+
+    // busco a 45° (hacia ambos lados)
+    // cuento a derecha (hacia arriba)
+    contador_der = 0;
+    col = columna+1;
+    fila = _alturas[columna]-1 +1;
+    while(col < N && fila < M && _tablero[col][fila]==jugador){
+        contador_der++;
+        col++;
+        fila++;
+    }
+    // cuento a izquierda (hacia abajo)
+    contador_izq = 0;
+    col = columna-1;
+    fila = _alturas[columna]-1 -1;
+    while(col >= 0 && fila >= 0 && _tablero[col][fila]==jugador){
+        contador_izq++;
+        col--;
+        fila--;
+    }
+    res += contar_lineas(contador_der, contador_izq, largo);
+    // cout << "En 45°: " << res << endl;
+
+    // busco a -45° (hacia ambos lados)
+    // cuento a derecha (hacia abajo)
+    contador_der = 0;
+    col = columna+1;
+    fila = _alturas[columna]-1 -1;
+    while(col < N && fila >= 0 && _tablero[col][fila]==jugador){
+        contador_der++;
+        col++;
+        fila--;
+    }
+    // cuento a izquierda (hacia arriba)
+    contador_izq = 0;
+    col = columna-1;
+    fila = _alturas[columna]-1 +1;
+    while(col >= 0 && fila < M && _tablero[col][fila]==jugador){
+        contador_izq++;
+        col--;
+        fila++;
+    }
+    res += contar_lineas(contador_der, contador_izq, largo);
+    // cout << "En -45°: " << res << endl;
+
+    return res;
+}
+
 void c_linea::mostrar(){
     for (int fil = M-1; fil >= 0; fil--){
         for (int col = 0; col < N; col++){

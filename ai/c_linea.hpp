@@ -42,6 +42,9 @@ class c_linea{
         uint fichas2(){return _p2;};
         uint fichas(){if (yo == 1) return fichas1(); else return fichas2();};
 
+        // Métodos para las tácticas golosas
+        uint lineas_nuevas(int largo, int columna, int jugador); // # líneas de long 'largo' que se formaron en la última jugada en 'columna' (de 'jugador')
+
 
         // Variables públicas
         const int C;
@@ -71,6 +74,9 @@ class c_linea{
         vector< vector<int> > _tablero;
         vector<int> _alturas;
         uint _turno;
+
+        // Auxiliares
+        uint contar_lineas(int contador_der, int contador_izq, int largo);
 
 };
 

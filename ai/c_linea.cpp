@@ -241,6 +241,117 @@ uint c_linea::lineas_nuevas(int largo, int columna, int jugador){
     return res;
 }
 
+uint c_linea::exp_horizontal(int col){
+	int fila=_alturas[col]-1;
+	if (col-1>=0&&col+1<N)
+		return (_tablero[col-1][fila]==_tablero[col][fila]) || (_tablero[col+1][fila]==_tablero[col][fila]);
+	if (col-1<0)
+		return (_tablero[col+1][fila]==_tablero[col][fila]);
+	if (col+1>=N)
+		return (_tablero[col-1][fila]==_tablero[col][fila]);
+	return 0;
+}
+
+uint c_linea::exp_vertical(int col){//no puedo colocar una ficha debajo de otra, asi que solo importa ver hacia abajo
+	int fila=_alturas[col]-1;
+	if (fila-1<0)
+		return false;
+	else 
+		return (_tablero[col][fila]==_tablero[col][fila-1]);
+}
+
+uint c_linea::exp_oblicua(int col){
+	int fila=_alturas[col]-1;
+	if (col-1>=0&&fila+1<M)
+		return (_tablero[col-1][fila+1]==_tablero[col][fila]);
+	if (col-1>=0&&fila-1>=0)
+		return (_tablero[col-1][fila-1]==_tablero[col][fila]);
+	if (col+1<N&&fila+1<M)
+		return (_tablero[col+1][fila+1]==_tablero[col][fila]);
+	if (col+1<N&&fila-1>=0)
+		return (_tablero[col+1][fila-1]==_tablero[col][fila]);
+	return 0;
+}		
+
+uint c_linea::perjudica_rival(int col){
+	int fila=_alturas[col]-1;
+	bool hayAdyEnemigo=false;
+	bool hayAdyMio=false;
+	if (col-1>=0&&fila+1<M)
+	{
+		hayAdyEnemigo = hayAdyEnemigo || ((_tablero[col-1][fila+1]!=_tablero[col][fila])&&_tablero[col-1][fila+1]!=0);
+		hayAdyMio = hayAdyMio || (_tablero[col-1][fila+1]==_tablero[col][fila]);
+	}	
+	if (col-1>=0&&fila-1>=0)
+	{
+		hayAdyEnemigo = hayAdyEnemigo || ((_tablero[col-1][fila-1]!=_tablero[col][fila])&&_tablero[col-1][fila-1]!=0);
+		hayAdyMio = hayAdyMio || (_tablero[col-1][fila+1]==_tablero[col][fila]);
+	}	
+	if (col+1<N&&fila+1<M)
+	{
+		hayAdyEnemigo = hayAdyEnemigo || ((_tablero[col+1][fila+1]!=_tablero[col][fila])&&_tablero[col+1][fila+1]!=0);
+		hayAdyMio = hayAdyMio || (_tablero[col+1][fila+1]==_tablero[col][fila]);
+	}
+	if (col+1<N&&fila-1>=0)
+	{	
+		hayAdyEnemigo = hayAdyEnemigo || ((_tablero[col+1][fila-1]!=_tablero[col][fila])&&_tablero[col+1][fila-1]!=0);
+		hayAdyMio = hayAdyMio || (_tablero[col+1][fila-1]==_tablero[col][fila]);
+	}
+	if (col+1<N)
+	{
+		hayAdyEnemigo = hayAdyEnemigo || ((_tablero[col+1][fila]!=_tablero[col][fila])&&_tablero[col+1][fila]!=0);
+		hayAdyMio = hayAdyMio || (_tablero[col+1][fila]==_tablero[col][fila]);
+	}
+	if (col-1>=0)
+	{
+		hayAdyEnemigo = hayAdyEnemigo || ((_tablero[col-1][fila]!=_tablero[col][fila])&&_tablero[col-1][fila]!=0);
+		hayAdyMio = hayAdyMio || (_tablero[col-1][fila]==_tablero[col][fila]);
+	}
+	if (fila+1<N)
+	{
+		hayAdyEnemigo = hayAdyEnemigo || ((_tablero[col][fila+1]!=_tablero[col][fila])&&_tablero[col][fila+1]!=0);
+		hayAdyMio = hayAdyMio || (_tablero[col][fila+1]==_tablero[col][fila]);
+	}
+	if (fila-1>=0)
+	{
+		hayAdyEnemigo = hayAdyEnemigo || ((_tablero[col][fila-1]!=_tablero[col][fila])&&_tablero[col][fila-1]!=0);
+		hayAdyMio = hayAdyMio || (_tablero[col][fila-1]==_tablero[col][fila]);
+	}
+	return (hayAdyEnemigo&&!hayAdyMio);	
+} 
+
+uint c_linea::dispercion(int jugador){
+	int distFila[M];
+	for(int i=0;i<M;i++)//inicializo en 0
+		distFila[i]=0;
+	for(int f=0;f<M;f++)//para cada fila
+	{
+		int pos1=N;
+		int pos2=-1;
+		bool hay=false;
+		for(int c=0;c<N;c++)//recorro las columnas
+			if(_tablero[c][f]==jugador)
+			{
+				hay=true;
+				if(c<pos1)//minimizo pos1
+					pos1=c;
+				if(c>pos2)//maximizo pos2
+					pos2=c;
+			}
+		if(hay)
+			distFila[f]=pos2-pos1;//la distancia entre las dos fichas mas alejadas de esa fila
+	}	
+	int total=0;
+	int sumados=0;
+	for(int i=0;i<M;i++)
+		if(distFila[M]!=0)
+		{
+			total+=distFila[M];
+			sumados++;
+		}
+	return (int)(total/sumados);
+}
+
 void c_linea::mostrar(){
     for (int fil = M-1; fil >= 0; fil--){
         for (int col = 0; col < N; col++){

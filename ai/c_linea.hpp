@@ -48,7 +48,7 @@ class c_linea{
 	uint exp_vertical(int columna); // 1 o 0 segun si se colocó arriba de otra ficha del mismo jugador
 	uint exp_oblicua(int columna); // 1 o 0 segun si se colocó en diagonal a otra ficha del mismo jugador
 	uint perjudica_rival(int columna); // 1 o 0 segun si se colocó arriba de otra ficha del mismo jugador
-	uint dispercion(int jugador); // se fija la mayor distancia entre dos fichas de un jugador por cada linea (con al menos dos fichas de tal jugador) y las promedia
+	uint dispersion(int jugador); // se fija la mayor distancia entre dos fichas de un jugador por cada linea (con al menos dos fichas de tal jugador) y las promedia
 
         // Variables públicas
         const int C;

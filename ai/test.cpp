@@ -46,5 +46,68 @@ int main(int argc, char const *argv[]) {
 
     cout << "Testing lineas_nuevas(...): "<< endl;
     cout << juego.lineas_nuevas(4, 1,1) << endl;
+
+    C = 5;
+    N = 10;
+    M = 6;
+    p = 100;
+    c_linea juego2(C,N,M,p);
+
+    juego2.jugar1(1);
+    juego2.jugar2(2);
+    juego2.jugar1(1);
+    juego2.jugar2(0);
+    juego2.jugar1(3);
+    juego2.jugar2(0);
+    juego2.jugar1(0);
+    juego2.jugar2(4);
+    juego2.jugar1(2);
+    juego2.jugar2(3);
+    juego2.jugar1(4);
+    juego2.jugar2(2);
+    juego2.jugar1(1);
+    juego2.jugar2(1);
+
+
+    juego2.jugar1(5);
+    cout<<juego2.exp_horizontal(5)<<endl;
+    juego2.desjugar1(5);
+    juego2.jugar1(9);
+    juego2.jugar2(5);
+    cout<<juego2.exp_horizontal(5)<<endl;
+    juego2.desjugar2(5);
+    juego2.jugar2(9);
+    juego2.jugar1(3);
+    cout<<juego2.exp_vertical(3)<<endl;
+    juego2.desjugar1(3);
+    juego2.jugar1(4);
+    cout<<juego2.exp_vertical(4)<<endl;
+    juego2.desjugar1(4);
+    juego2.jugar1(4);
+    cout<<juego2.exp_oblicua(4)<<endl;
+    juego2.desjugar1(4);
+    juego2.jugar1(5);
+    cout<<juego2.exp_oblicua(5)<<endl;
+    juego2.desjugar1(5);
+    juego2.jugar1(0);
+    cout<<juego2.exp_oblicua(0)<<endl;
+    juego2.desjugar1(0);
+    juego2.jugar1(9);
+    cout<<juego2.perjudica_rival(9)<<endl;
+    juego2.desjugar1(9);
+    juego2.jugar1(2);
+    cout<<juego2.perjudica_rival(2)<<endl;
+    juego2.desjugar1(2);
+    juego2.jugar1(3);
+    cout<<juego2.perjudica_rival(3)<<endl;
+    juego2.desjugar1(3);
+    juego2.jugar1(7);
+    cout<<juego2.perjudica_rival(7)<<endl;
+    juego2.desjugar1(7);
+    juego2.jugar1(0);
+    cout<<juego2.dispersion(1)<<endl;
+    juego2.mostrar();
+    cout << "ganó 1? : " << juego2.gano1() << endl;
+    cout << "ganó 2? : " << juego2.gano2() << endl;
     return 0;
 }

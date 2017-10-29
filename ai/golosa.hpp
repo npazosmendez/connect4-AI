@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "c_linea.hpp"
+#define PESOS_COUNT 7
 
 class c_linea;
 using namespace std;
@@ -21,6 +22,11 @@ class golosa{
         int jugar(c_linea juego);
 
         // Posibles features (sujeto a modificaciones)
+        // -------------------------------------------------------
+        //                       IMPORTANTE !
+        // -------------------------------------------------------
+        // NOTE: Si agregan algun peso, dejen el vector alturas al final,
+        // y actualicen el define PESOS_COUNT
         struct pesos_t{
             float fichas1; // -f1 --fichas1
             float fichas2; // -f2 --fichas2

@@ -1,5 +1,6 @@
 #include "genetic_trainer.hpp"
 #include <string.h>
+#include <cstdlib>
 
 
 /*
@@ -45,13 +46,32 @@ pesos gen_trainer::crossover(pesos p1, pesos p2){
         memcpy((void*) son_values, (void*) p2_values, sizeof(float)*(PESOS_COUNT-cross_section));
     } // up to this point, p1 and p2 float parameteres have been crossed over
     // crossover array of heights
-    uint heights_cross_section = rand() % p1.alturas.size() + 1;
-    // TODO: crossover alturas
-
+    uint heights_cross_section = rand() % p1.alturas.size();
+    for (uint i = 0; i <= heights_cross_section; i++) {
+        p_son.alturas[i] = p1.alturas[i];
+    }
+    if (heights_cross_section < p1.alturas.size() - 1) {
+        for (uint i = heights_cross_section+1; i < p1.alturas.size(); i++) {
+            p_son.alturas[i] = p1.alturas[i];
+        }
+    }
+    return p_son;
 }
 
-pesos gen_trainer::mutate(pesos p){
-
+void gen_trainer::mutate(pesos &p){
+    float lottery = rand()/RAND_MAX; // lottery ~ U[0,1]
+    if (lottery < this->p_mutation) {
+        // mutation achieved
+        uint mutation_idx = rand() % PESOS_COUNT;
+        float* p_floats = (float*) &p;
+        int random_num = rand();
+        random_num &= 0x80000000; // bit de signo en positivo
+        // copy int bytes assuming is float, in order to get random number 
+        memcpy((void*)&p_floats[mutation_idx], &random_num, sizeof(float));
+        // randomizo algun valor del vector alturas tambien? o lo cuento en mutation_idx y
+        // sale sorteado ahi?
+        p_floats[mutation_idx] = (float)rand();
+    }
 }
 
 pesos gen_trainer::random_selection(vector<pesos> ps){

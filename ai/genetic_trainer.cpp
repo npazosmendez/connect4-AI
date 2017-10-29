@@ -21,8 +21,45 @@
     while !individual fit enough || generation limit
     return best individual from population
 */
-pesos gen_trainer::train(){
-
+pesos gen_trainer::train(uint pop_size){
+    // generate initial population
+    vector<pesos> pop = vector<pesos>(pop_size);
+    vector<float> pop_fitness;
+    uint gen_count = 0;
+    for (uint i = 0; i < pop_size; i++) {
+        pop[i] = this->randon_genome();
+    }
+    // empieza ciclo evolutivo
+    do{
+        gen_count++;
+        vector<pesos> new_pop = vector<pesos>(pop_size);
+        pop_fitness = vector<float>(pop_size);
+        for (uint i = 0; i < pop_size; i++) {
+            // agarro dos padres
+            pesos p1 = this->random_selection(pop, pop_fitness);
+            pesos p2 = this->random_selection(pop, pop_fitness);
+            // nace hijo
+            pesos child = this->crossover(p1, p2);
+            // muta
+            this->mutate(child);
+            // es wolverine
+            new_pop[i] = child;
+        }
+        pop = new_pop;
+    }while(gen_count < this->gen_limit);
+    // pop_fitness y pop tiene las povlaciones y los correspondientes
+    // valores de fitness de la última generación de individuos
+    pesos max_pesos; float max_fit = -1;
+    for (uint i = 0; i < pop_size; i++) {
+        if (pop_fitness[i] == -1) {
+            pop_fitness[i] = this->fitness(pop[i]);
+        }
+        if (max_fit < pop_fitness[i]) {
+            max_pesos = pop[i];
+            max_fit = pop_fitness[i];
+        }
+    }
+    return max_pesos;
 }
 
 

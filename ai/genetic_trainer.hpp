@@ -27,7 +27,7 @@ class gen_trainer{
             n(_n), m(_m), c(_c), gen_limit(gl), p_mutation(pm){
             srand (time(NULL));
         };
-        pesos train();
+        pesos train(uint pop_size);
         pesos get_max() const;
 };
 

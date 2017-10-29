@@ -1,6 +1,8 @@
 *.gch
 *.o
 *.pyc
+*.out
+*.bin
 
 log/
 

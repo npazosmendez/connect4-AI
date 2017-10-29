@@ -29,7 +29,7 @@ class c_linea{
 
 
         // Métodos para observar el juego
-        const vector< vector<int> >& tablero(){return _tablero;};
+        const vector< vector<int> >& tablero() const {return _tablero;};
         bool termino(); // indica si terminó el juego
         bool gano(int jugador); // indica si ganó el jugador 'jugador'
         bool gano1(){return gano(1);};
@@ -45,13 +45,6 @@ class c_linea{
         uint fichas2(){return _p2;};
         uint fichas(){if (yo == 1) return fichas1(); else return fichas2();};
 
-        // Métodos para las tácticas golosas
-        uint lineas_nuevas(int largo, int columna, int jugador); // # líneas de long 'largo' que se formaron en la última jugada en 'columna' (de 'jugador')
-    	uint exp_horizontal(int columna); // 1 o 0 segun si se colocó al lado a otra ficha del mismo jugador
-    	uint exp_vertical(int columna); // 1 o 0 segun si se colocó arriba de otra ficha del mismo jugador
-    	uint exp_oblicua(int columna); // 1 o 0 segun si se colocó en diagonal a otra ficha del mismo jugador
-    	uint perjudica_rival(int columna); // 1 o 0 segun si se colocó arriba de otra ficha del mismo jugador
-    	uint dispersion(int jugador); // se fija la mayor distancia entre dos fichas de un jugador por cada linea (con al menos dos fichas de tal jugador) y las promedia
 
         // Variables públicas
         const int C;
@@ -82,8 +75,6 @@ class c_linea{
         vector<int> _alturas;
         uint _turno;
 
-        // Auxiliares
-        uint contar_lineas(int contador_der, int contador_izq, int largo);
 
 };
 

@@ -6,6 +6,7 @@
 
 class c_linea;
 using namespace std;
+typedef unsigned int uint;
 
 class golosa{
     friend class c_linea;
@@ -45,6 +46,14 @@ class golosa{
 
         // Métodos auxiliares para calcular jugada
         float puntaje(c_linea &juego);
+
+        uint contar_lineas(int contador_der, int contador_izq, int largo);
+        uint lineas_nuevas(const c_linea &juego, int largo, int columna, int jugador); // # líneas de long 'largo' que se formaron en la última jugada en 'columna' (de 'jugador')
+        uint exp_horizontal(const c_linea &juego, int columna); // 1 o 0 segun si se colocó al lado a otra ficha del mismo jugador
+        uint exp_vertical(const c_linea &juego, int columna); // 1 o 0 segun si se colocó arriba de otra ficha del mismo jugador
+        uint exp_oblicua(const c_linea &juego, int columna); // 1 o 0 segun si se colocó en diagonal a otra ficha del mismo jugador
+        uint perjudica_rival(const c_linea &juego, int columna); // 1 o 0 segun si se colocó arriba de otra ficha del mismo jugador
+        uint dispersion(const c_linea &juego, int jugador); // se fija la mayor distancia entre dos fichas de un jugador por cada linea (con al menos dos fichas de tal jugador) y las promedia
 
         // Otros métodos auxiliares
         pesos_t leer_pesos(int argc, char const *argv[]);

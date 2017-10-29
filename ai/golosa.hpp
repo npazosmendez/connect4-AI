@@ -45,7 +45,7 @@ class golosa{
         const int yo;
 
         // Métodos auxiliares para calcular jugada
-        float puntaje(c_linea &juego);
+        float puntaje(c_linea &juego, int jugada_recien);
 
         uint contar_lineas(int contador_der, int contador_izq, int largo);
         uint lineas_nuevas(const c_linea &juego, int largo, int columna, int jugador); // # líneas de long 'largo' que se formaron en la última jugada en 'columna' (de 'jugador')

@@ -54,7 +54,7 @@ int golosa::jugar(c_linea juego){
         // para cada jugada posible
         if (juego.tablero()[i][juego.M-1]==0) {
             juego.jugar(yo, i);
-            float temp = puntaje(juego);
+            float temp = puntaje(juego,i);
             if (temp > puntaje_max || res == -1) {
                 res = i;
                 puntaje_max = temp;
@@ -67,10 +67,12 @@ int golosa::jugar(c_linea juego){
 
 // Métodos auxiliares para calcular jugada
 
-float golosa::puntaje(c_linea &juego){
+float golosa::puntaje(c_linea &juego, int jugada_recien){
+    float res = 0;
+
     // TODO
 
-    return 0;
+    return res;
 }
 
 

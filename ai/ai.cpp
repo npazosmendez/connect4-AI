@@ -27,7 +27,7 @@ void send(int msg);
 int read_int(); // si encuentra "salir", exit()
 string read_str(); // si encuentra "salir", exit()
 
-int main() {
+int main(int argc, char const *argv[]) {
 
     string msg, color, oponent_color, go_first;
     int columns, rows, c, p, yo, el;
@@ -54,6 +54,12 @@ int main() {
             el = 1;
         }
 
+
+        // Si soy la golosa, leo los pesos
+        #if AI==GOLOSA
+            golosa ai_golosa(argc,argv,columns,rows,c,yo);
+        #endif
+
         // Acá empieza el juego
         int jugada;
         c_linea juego(c,columns,rows,p,yo);
@@ -61,14 +67,12 @@ int main() {
             // me toca primero
             #if AI==MINIMAX
                 jugada = minimax(juego);
-                juego.jugar(yo,jugada);
             #elif AI==GOLOSA
-                jugada = golosa(juego);
-                juego.jugar(yo,jugada);
+                jugada = ai_golosa.jugar(juego);
             #elif AI==MINIMAX_AB
                 jugada = minimax_ab(juego);
-                juego.jugar(yo,jugada);
             #endif
+            juego.jugar(yo,jugada);
             send(jugada);
         }
         while (true) {
@@ -83,8 +87,9 @@ int main() {
             #elif AI==MINIMAX_AB
                 jugada = minimax_ab(juego);
             #elif AI==GOLOSA
-                jugada = golosa(juego);
+                jugada = ai_golosa.jugar(juego);
             #endif
+
             juego.jugar(yo,jugada);
             send(jugada);
         }

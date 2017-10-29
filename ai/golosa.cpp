@@ -310,6 +310,17 @@ uint golosa::dispersion(const c_linea &juego, int jugador){
 }
 
 
+vector<float> pesos_to_vec(golosa::pesos_t p){
+    vector<float> vec_pesos = vector<float>(PESOS_COUNT + p.alturas.size());
+    float* p_as_floats = (float*) &p;
+    for (int i = 0; i < PESOS_COUNT; i++) {
+        vec_pesos[i] = p_as_floats[i];
+    }
+    for (uint i = 0; i < p.alturas.size(); i++) {
+        vec_pesos[i] = p.alturas[i];
+    }
+    return vec_pesos;
+};
 
 
 //////////////////////////////////////////////////////////////////////////////

@@ -65,26 +65,70 @@ void gen_trainer::mutate(pesos &p){
         uint mutation_idx = rand() % PESOS_COUNT;
         float* p_floats = (float*) &p;
         int random_num = rand();
-        random_num &= 0x80000000; // bit de signo en positivo
+        random_num &= 0x7FFFFFFF; // bit de signo en positivo
         // copy int bytes assuming is float, in order to get random number 
         memcpy((void*)&p_floats[mutation_idx], &random_num, sizeof(float));
         // randomizo algun valor del vector alturas tambien? o lo cuento en mutation_idx y
         // sale sorteado ahi?
-        p_floats[mutation_idx] = (float)rand();
     }
 }
 
-pesos gen_trainer::random_selection(vector<pesos> ps){
-
+pesos gen_trainer::random_selection(vector<pesos> ps, vector<float> &fs){
+    // ps: poblacion de pesos actual
+    // fs: fitness converetido en proba fs(p) = 1 - (1/fitness(p))
+    // proba entre 0 y 1, cuanto mayor el fitness, mayor la proba
+    // Si fs tiene -1, es que no fue calculado rodavía
+    while(true){
+        uint chosen_index = rand() % ps.size();
+        float lottery_num = rand() % RAND_MAX;
+        if (fs[chosen_index] == -1) 
+            // todavia no se calculo el fintess de ese genoma
+            fs[chosen_index] = this->fitness(ps[chosen_index]);
+        if (lottery_num < fs[chosen_index]) {
+            // si el float en [0,1] sorteado es menor a la proba
+            // que sale de evaluar el fitness, de forma que si es alta,
+            // es más probableq que quede en ese intervalo, se elige ese 
+            // peso 
+            return ps[chosen_index];
+        }
+    }
 }
 
 uint gen_trainer::fitness(pesos p){
-
+    return 0;
 }
-
-
 
 pesos gen_trainer::get_max() const{
-
+    return this->max_achieved;
 }
 
+pesos gen_trainer::randon_genome(){
+    pesos p;
+    // randomizo los pesos de los feature no altura
+    for (int i = 0; i < PESOS_COUNT; i++) {
+        float* p_floats = (float*) &p;
+        int random_num = rand();
+        random_num &= 0x7FFFFFFF; // bit de signo en positivo
+        // copy int bytes assuming is float, in order to get random number 
+        memcpy((void*)&p_floats[i], &random_num, sizeof(float));
+    }
+    // asumo n era columnas
+    p.alturas = vector<float>(this->n);
+    //float* p_alturas_floats = (float*) p.alturas.data();
+    // mismo de randomizar, pero con pesos alturas
+    for (uint i = 0; i < this->n; i++) {
+        p.alturas[i] = this->__get_rand_float();
+        //int random_num = rand();
+        //random_num &= 0x7FFFFFFF; // bit de signo en positivo
+        //// copy int bytes assuming is float, in order to get random number 
+        //memcpy((void*)&p_alturas_floats[i], &random_num, sizeof(float));
+    }
+    return p;
+}
+
+float gen_trainer::__get_rand_float(){
+        int random_num = rand();
+        random_num &= 0x7FFFFFFF; // bit de signo en positivo
+        void* ptr = &random_num;
+        return *((float*)ptr);
+}

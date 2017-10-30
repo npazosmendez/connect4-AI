@@ -1,15 +1,16 @@
-#include "minimax.hpp"
+#include "minimax_hc.hpp"
 #include "c_linea.hpp"
-#include <limits>
+#include <climits>
 
 using namespace std;
 
-int minimax_ab_aux(c_linea juego, int alfa, int beta);
 
-int minimax_ab(c_linea &juego){
+valor_t minimax_hc_aux(c_linea juego, valor_t alfa, valor_t beta);
+
+int minimax_hc(c_linea &juego){
     int res = -1;
-    int alfa = -1; // lo peor que podemos obtener
-    int beta = 1; // lo mejor que podemos obtener
+    valor_t alfa{-2,0}; // lo peor que podemos obtener
+    valor_t beta{2,0}; // lo mejor que podemos obtener
 
     /* NOTE: en el primer nodo se debe hacer un "max". Este caso lo tratamos
     por separado para no tener que agregarle más parámetros a la función
@@ -20,7 +21,7 @@ int minimax_ab(c_linea &juego){
         if (juego.tablero()[i][juego.M-1]==0) {
             if (res==-1) res=i; // si todavía no encontré ninguna opción
             juego.jugar(juego.yo, i);
-            int temp = minimax_ab_aux(juego, alfa, beta);
+            valor_t temp = minimax_hc_aux(juego, alfa, beta);
             if (temp > alfa) {
                 alfa = temp;
                 res = i;
@@ -32,15 +33,15 @@ int minimax_ab(c_linea &juego){
     return res;
 }
 
-int minimax_ab_aux(c_linea juego, int alfa, int beta){
+valor_t minimax_hc_aux(c_linea juego, valor_t alfa, valor_t beta){
     // Caso base. Nodo terminal
     if (juego.termino()) {
         if (juego.gane())
-            return 1;
+            return {.puntos = 1, .profundidad = 1};
         else if(juego.perdi())
-            return -1;
+            return {.puntos = -1, .profundidad = 1};
         else
-            return 0;
+            return {.puntos = 0, .profundidad = 1};
     }
     // Según si me toca o no, minimizo o maximizo
     int jug = juego.turno();
@@ -50,7 +51,8 @@ int minimax_ab_aux(c_linea juego, int alfa, int beta){
         for (int i = 0; i < juego.N; i++) {
             if (juego.tablero()[i][juego.M-1]==0) {
                 juego.jugar(jug, i);
-                alfa = max(alfa, minimax_ab_aux(juego, alfa, beta));
+                alfa = max(alfa, minimax_hc_aux(juego, alfa, beta));
+                alfa.avanzar();
                 juego.desjugar(jug, i);
                 if (beta <= alfa) break;
             }
@@ -62,7 +64,8 @@ int minimax_ab_aux(c_linea juego, int alfa, int beta){
         for (int i = 0; i < juego.N; i++) {
             if (juego.tablero()[i][juego.M-1]==0) {
                 juego.jugar(jug, i);
-                beta = min(beta, minimax_ab_aux(juego, alfa, beta));
+                beta = min(beta, minimax_hc_aux(juego, alfa, beta));
+                beta.avanzar();
                 juego.desjugar(jug, i);
                 if (beta <= alfa) break;
             }

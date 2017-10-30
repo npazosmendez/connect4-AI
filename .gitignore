@@ -9,6 +9,7 @@ log/
 
 minimax
 minimax_ab
+minimax_hc
 golosa
 tags
 tests/tests

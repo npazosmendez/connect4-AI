@@ -3,6 +3,7 @@
 *.pyc
 *.out
 *.bin
+*.a
 
 log/
 
@@ -10,3 +11,4 @@ minimax
 minimax_ab
 golosa
 tags
+tests/tests

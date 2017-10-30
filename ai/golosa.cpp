@@ -352,6 +352,8 @@ uint golosa::columna_media(const c_linea &juego, int jugador){
     return sumatoria_ponderada/fichas_usadas;
 }
 
+/*
+Función vieja. Depende de cómo manejemos los features
 vector<float> pesos_to_vec(golosa::pesos_t p){
     vector<float> vec_pesos = vector<float>(PESOS_COUNT + p.alturas.size());
     float* p_as_floats = (float*) &p;
@@ -363,7 +365,7 @@ vector<float> pesos_to_vec(golosa::pesos_t p){
     }
     return vec_pesos;
 };
-
+*/
 
 //////////////////////////////////////////////////////////////////////////////
 // FUNCIONES VIEJAS. VERIFICAR QUÉ SE TIRA, QUÉ SE RECICLA, QUÉ SE PRIVATIZA, ETC.

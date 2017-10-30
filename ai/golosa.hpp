@@ -9,9 +9,6 @@ class c_linea;
 using namespace std;
 typedef unsigned int uint;
 
-
-vector<float> pesos_to_vec(golosa::pesos_t p);
-
 class golosa{
     friend class c_linea;
     public:

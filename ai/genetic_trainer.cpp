@@ -135,25 +135,36 @@ pesos gen_trainer::random_selection(vector<pesos> ps, vector<float> &fs){
 }
 
 
-// idea:
 /*
+   IDEA
 Pongo a correr c_linea una cierta cantidad de iteraciones en las que este empieza,
 y la misma cantidad en las que este va segundo. De parseo el log y veo cuantas gane.
+ - Jugar X/2 veces contra el random siendo primero
+ - Jugar X/2 veces contra el random siendo último
+ - fitness = 1 - 1/wins
 */
+
+//"python2 c_linea.py —blue_player ./random_player —first rojo —red_player ./random_player —iterations 50"
+
 uint gen_trainer::fitness(pesos p){
-
-    uint iterations = 50;
-    string command = "python c_linea.py -- blue_player ./random_player --first";
-
-"python2 c_linea.py —blue_player ./random_player —first rojo —red_player ./random_player —iterations 50"
-    
-//python2 c_linea.py —blue_player ./random_player —first rojo —red_player ./random_player —iterations 50
-    system();
-    
-    int victorys = contar_victorias("rojo");
-    return 1
-
-    return 0;
+    // TODO: Pasarle parametros al jugador goloso
+    uint iterations = 50; // total
+    string command = "python c_linea.py -- blue_player ./random_player --first ";
+    // primero empieza rojo (yo)
+    string call = string(command);
+    call += "rojo --iterations ";
+    call += std::to_string(iterations/2);
+    call += " --red_player ./golosa";
+    std::system(call.c_str());
+    float wins_1 = (float)contar_victorias("rojo");
+    // segundo empieza azul (random)
+    call = string(command);
+    call += "rojo --iterations ";
+    call += std::to_string(iterations/2);
+    call += " --red_player ./golosa";
+    std::system(call.c_str());
+    float wins_2 = (float)contar_victorias("rojo");
+    return 1 - (1/(wins_1 + wins_2));
 }
 
 pesos gen_trainer::get_max() const{

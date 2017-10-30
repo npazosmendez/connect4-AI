@@ -1,6 +1,7 @@
 language: cpp
 # install additional dependencies, not necessary
-install: true
+install: 
+    - sudo apt-get install libgtest-dev
 script: 
     - make -C tests/
     - ./tests/tests

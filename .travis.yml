@@ -1,0 +1,7 @@
+language: cpp
+# install additional dependencies, not necessary
+install: true
+script: 
+    - make -C tests/
+    - ./tests/tests
+

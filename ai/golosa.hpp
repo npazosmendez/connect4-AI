@@ -43,6 +43,10 @@ class golosa{
             pesos_t() : fichas1(1), fichas2(1), dispersion(1), agresividad(1), expansion_h(1), expansion_v(1), expansion_o(1) {};
         };
 
+
+        //Pongo los features publicos porque sino no se pueden testear. Igualmente seguro cambiemos todo esto
+        float fila_media(const c_linea &juego, int jugador); // la media de al distribucion de las fichas por fila
+        float columna_media(const c_linea &juego, int jugador); // la media de al distribucion de las fichas por columna
     private:
 
         // Variables privadas
@@ -60,8 +64,6 @@ class golosa{
         uint exp_oblicua(const c_linea &juego, int columna); // 1 o 0 segun si se colocó en diagonal a otra ficha del mismo jugador
         uint perjudica_rival(const c_linea &juego, int columna); // 1 o 0 segun si se colocó arriba de otra ficha del mismo jugador
         uint dispersion(const c_linea &juego, int jugador); // se fija la mayor distancia entre dos fichas de un jugador por cada linea (con al menos dos fichas de tal jugador) y las promedia
-        uint fila_media(const c_linea &juego, int jugador); // la media de al distribucion de las fichas por fila
-        uint columna_media(const c_linea &juego, int jugador); // la media de al distribucion de las fichas por columna
 
         // Otros métodos auxiliares
         pesos_t leer_pesos(int argc, char const *argv[]);

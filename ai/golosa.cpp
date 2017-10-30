@@ -309,7 +309,7 @@ uint golosa::dispersion(const c_linea &juego, int jugador){
 	return ((uint)(total/sumados));
 }
 
-uint golosa::fila_media(const c_linea &juego, int jugador){
+float golosa::fila_media(const c_linea &juego, int jugador){
     // la media de al distribucion de las fichas por fila
     int cant_por_fila[M];  //Me guardo la cantidad de fichas de cada fila
     for (int i = 0; i < M; i++ ) { //Lo inicializo en 0
@@ -326,11 +326,11 @@ uint golosa::fila_media(const c_linea &juego, int jugador){
     int fichas_usadas = 0;
     for (int i = 0; i < M; i++ ) {
         fichas_usadas += cant_por_fila[i];
-        sumatoria_ponderada += (i+1) * cant_por_fila[i];
+        sumatoria_ponderada += i * cant_por_fila[i];
     }
-    return sumatoria_ponderada/fichas_usadas;
+    return fichas_usadas==0 ? 0 : sumatoria_ponderada/fichas_usadas;
 }
-uint golosa::columna_media(const c_linea &juego, int jugador){
+float golosa::columna_media(const c_linea &juego, int jugador){
     // la media de al distribucion de las fichas por columna
     int cant_por_columna[N];  //Me guardo la cantidad de fichas de cada columna
     for (int i = 0; i < N; i++ ) { //Lo inicializo en 0
@@ -347,9 +347,9 @@ uint golosa::columna_media(const c_linea &juego, int jugador){
     int fichas_usadas = 0;
     for (int i = 0; i < N; i++ ) {
         fichas_usadas += cant_por_columna[i];
-        sumatoria_ponderada += (i+1) * cant_por_columna[i];
+        sumatoria_ponderada += i * cant_por_columna[i];
     }
-    return sumatoria_ponderada/fichas_usadas;
+    return fichas_usadas==0 ? 0 : sumatoria_ponderada/fichas_usadas;
 }
 
 /*

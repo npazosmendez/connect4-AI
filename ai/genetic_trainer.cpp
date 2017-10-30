@@ -1,6 +1,9 @@
 #include "genetic_trainer.hpp"
+#include "training.cpp"
 #include <string.h>
 #include <cstdlib>
+#include <stdlib.h>  
+#include <string>
 
 
 /*
@@ -33,7 +36,7 @@ pesos gen_trainer::train(uint pop_size){
     do{
         gen_count++;
         vector<pesos> new_pop = vector<pesos>(pop_size);
-        pop_fitness = vector<float>(pop_size);
+        pop_fitness = vector<float>(pop_size , -1);
         for (uint i = 0; i < pop_size; i++) {
             // agarro dos padres
             pesos p1 = this->random_selection(pop, pop_fitness);
@@ -131,7 +134,25 @@ pesos gen_trainer::random_selection(vector<pesos> ps, vector<float> &fs){
     }
 }
 
+
+// idea:
+/*
+Pongo a correr c_linea una cierta cantidad de iteraciones en las que este empieza,
+y la misma cantidad en las que este va segundo. De parseo el log y veo cuantas gane.
+*/
 uint gen_trainer::fitness(pesos p){
+
+    uint iterations = 50;
+    string command = "python c_linea.py -- blue_player ./random_player --first";
+
+"python2 c_linea.py —blue_player ./random_player —first rojo —red_player ./random_player —iterations 50"
+    
+//python2 c_linea.py —blue_player ./random_player —first rojo —red_player ./random_player —iterations 50
+    system();
+    
+    int victorys = contar_victorias("rojo");
+    return 1
+
     return 0;
 }
 

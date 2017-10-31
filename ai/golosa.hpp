@@ -41,6 +41,7 @@ class golosa{
 
             // Valores por defecto
             pesos_t() : fichas1(1), fichas2(1), dispersion(1), agresividad(1), expansion_h(1), expansion_v(1), expansion_o(1) {};
+            string to_argv();
         };
 
 

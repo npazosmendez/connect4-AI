@@ -352,6 +352,24 @@ float golosa::columna_media(const c_linea &juego, int jugador){
     return fichas_usadas==0 ? 0 : sumatoria_ponderada/fichas_usadas;
 }
 
+// devuelve string que comienza con los parametros de la gololsa, y termina con " "
+string golosa::pesos_t::to_argv(){
+    string argv;
+    argv += "-f1 " + std::to_string(this->fichas1) + " ";
+    argv += "-f2 " + std::to_string(this->fichas2) + " ";
+    argv += "-d " + std::to_string(this->dispersion) + " ";
+    argv += "-a " + std::to_string(this->agresividad) + " ";
+    argv += "-eh " + std::to_string(this->expansion_h) + " ";
+    argv += "-ev " + std::to_string(this->expansion_v) + " ";
+    argv += "-eo " + std::to_string(this->expansion_o) + " ";
+    argv += "-hh ";
+    for (uint i = 0; i < this->alturas.size(); i++) {
+        argv += std::to_string(this->alturas[i]) + " ";
+    }
+    return argv;
+
+}
+
 /*
 Función vieja. Depende de cómo manejemos los features
 vector<float> pesos_to_vec(golosa::pesos_t p){

@@ -13,8 +13,9 @@ install:
 
 tests:
 	$(CC) $(FLAGS) $(GOOGLE_SHIT) $(TESTS) $(CODE) -o tests
-	echo TODO leer todos los archivos del directorio
 
+test: all
+	./tests
 
 clean:
 	rm -f *.o

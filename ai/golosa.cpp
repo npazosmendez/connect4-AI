@@ -2,6 +2,7 @@
 #include "c_linea.hpp"
 #include "limits.h"
 #include <string.h>
+#include <string>
 
 using namespace std;
 
@@ -16,7 +17,7 @@ golosa::pesos_t golosa::leer_pesos(int argc, char const *argv[]){
     for (int i = 0; i < argc; i++) {
         const char* param = argv[i];
         if (strcmp(param, "-f1") == 0 || strcmp(param, "--fichas1")) {
-            pesos.fichas1 = stof(argv[i+2]);
+            pesos.fichas1 = stof(argv[i+1]);
         }else if(strcmp(param, "-f2") == 0 || strcmp(param, "--fichas2")) {
             pesos.fichas2 = stof(argv[i+1]);
         }else if(strcmp(param, "-hh") == 0 || strcmp(param, "--alturas")) {
@@ -350,6 +351,43 @@ float golosa::columna_media(const c_linea &juego, int jugador){
         sumatoria_ponderada += i * cant_por_columna[i];
     }
     return fichas_usadas==0 ? 0 : sumatoria_ponderada/fichas_usadas;
+}
+
+// devuelve string que comienza con los parametros de la gololsa, y termina con " "
+std::string golosa::pesos_t::to_argv(){
+    std::string argv;
+    argv += "-f1 " + std::to_string(this->fichas1) + " ";
+    argv += "-f2 " + std::to_string(this->fichas2) + " ";
+    argv += "-d " + std::to_string(this->dispersion) + " ";
+    argv += "-a " + std::to_string(this->agresividad) + " ";
+    argv += "-eh " + std::to_string(this->expansion_h) + " ";
+    argv += "-ev " + std::to_string(this->expansion_v) + " ";
+    argv += "-eo " + std::to_string(this->expansion_o) + " ";
+    argv += "-hh ";
+    for (uint i = 0; i < this->alturas.size(); i++) {
+        argv += std::to_string(this->alturas[i]) + " ";
+    }
+    return argv;
+
+}
+
+
+std::vector<std::string> string_to_argv(string argv){   
+    vector< std::string > vs;
+    for (uint i = 0; i < argv.size(); i++) {
+        // trim initial empty spaces if there are || consequent between 'words'
+        while(i < argv.size() && argv[i] == ' ') i++;
+        if (i == argv.size()) break;
+        // create empty string
+        std::string temp;
+        // fill temp with 'word'
+        while(i < argv.size() && argv[i] != ' ')
+            temp += argv[i];
+        // when break => argv[i] == ' '
+        // push temp in vs
+        vs.push_back(temp);
+    }
+    return vs;
 }
 
 /*

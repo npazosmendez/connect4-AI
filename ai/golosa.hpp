@@ -2,12 +2,15 @@
 #define GOLOSA_H
 
 #include <vector>
+#include <string>
 #include "c_linea.hpp"
 #define PESOS_COUNT 7
-
 class c_linea;
 using namespace std;
 typedef unsigned int uint;
+
+
+std::vector<string> string_to_argv(string);
 
 class golosa{
     friend class c_linea;
@@ -48,6 +51,7 @@ class golosa{
         //Pongo los features publicos porque sino no se pueden testear. Igualmente seguro cambiemos todo esto
         float fila_media(const c_linea &juego, int jugador); // la media de al distribucion de las fichas por fila
         float columna_media(const c_linea &juego, int jugador); // la media de al distribucion de las fichas por columna
+        inline pesos_t _ver_pesos() { return this->_pesos; } 
     private:
 
         // Variables privadas

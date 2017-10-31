@@ -2,6 +2,7 @@
 #include "c_linea.hpp"
 #include "limits.h"
 #include <string.h>
+#include <string>
 
 using namespace std;
 
@@ -353,8 +354,8 @@ float golosa::columna_media(const c_linea &juego, int jugador){
 }
 
 // devuelve string que comienza con los parametros de la gololsa, y termina con " "
-string golosa::pesos_t::to_argv(){
-    string argv;
+std::string golosa::pesos_t::to_argv(){
+    std::string argv;
     argv += "-f1 " + std::to_string(this->fichas1) + " ";
     argv += "-f2 " + std::to_string(this->fichas2) + " ";
     argv += "-d " + std::to_string(this->dispersion) + " ";
@@ -368,6 +369,25 @@ string golosa::pesos_t::to_argv(){
     }
     return argv;
 
+}
+
+
+std::vector<std::string> string_to_argv(string argv){   
+    vector< std::string > vs;
+    for (uint i = 0; i < argv.size(); i++) {
+        // trim initial empty spaces if there are || consequent between 'words'
+        while(i < argv.size() && argv[i] == ' ') i++;
+        if (i == argv.size()) break;
+        // create empty string
+        std::string temp;
+        // fill temp with 'word'
+        while(i < argv.size() && argv[i] != ' ')
+            temp += argv[i];
+        // when break => argv[i] == ' '
+        // push temp in vs
+        vs.push_back(temp);
+    }
+    return vs;
 }
 
 /*

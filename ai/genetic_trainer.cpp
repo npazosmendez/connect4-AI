@@ -154,14 +154,16 @@ uint gen_trainer::fitness(pesos p){
     string call = string(command);
     call += "rojo --iterations ";
     call += std::to_string(iterations/2);
-    call += " --red_player ./golosa";
+    call += " --red_player ./golosa ";
+    call += p.to_argv();
     std::system(call.c_str());
     float wins_1 = (float)contar_victorias("rojo");
     // segundo empieza azul (random)
     call = string(command);
     call += "rojo --iterations ";
     call += std::to_string(iterations/2);
-    call += " --red_player ./golosa";
+    call += " --red_player ./golosa ";
+    call += p.to_argv();
     std::system(call.c_str());
     float wins_2 = (float)contar_victorias("rojo");
     return 1 - (1/(wins_1 + wins_2));

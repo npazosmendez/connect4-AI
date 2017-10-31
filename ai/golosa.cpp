@@ -16,7 +16,7 @@ golosa::pesos_t golosa::leer_pesos(int argc, char const *argv[]){
     for (int i = 0; i < argc; i++) {
         const char* param = argv[i];
         if (strcmp(param, "-f1") == 0 || strcmp(param, "--fichas1")) {
-            pesos.fichas1 = stof(argv[i+2]);
+            pesos.fichas1 = stof(argv[i+1]);
         }else if(strcmp(param, "-f2") == 0 || strcmp(param, "--fichas2")) {
             pesos.fichas2 = stof(argv[i+1]);
         }else if(strcmp(param, "-hh") == 0 || strcmp(param, "--alturas")) {

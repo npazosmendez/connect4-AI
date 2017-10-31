@@ -5,12 +5,13 @@
 using namespace std;
 
 
-valor_t minimax_hc_aux(c_linea juego, valor_t alfa, valor_t beta);
+valor_t minimax_hc_aux(c_linea juego, valor_t alfa, valor_t beta, int yo);
 
-int minimax_hc(c_linea &juego){
+int minimax_hc(c_linea juego){
     int res = -1;
     valor_t alfa{-2,0}; // lo peor que podemos obtener
     valor_t beta{2,0}; // lo mejor que podemos obtener
+    int yo = juego.turno();
 
     /* NOTE: en el primer nodo se debe hacer un "max". Este caso lo tratamos
     por separado para no tener que agregarle más parámetros a la función
@@ -20,24 +21,26 @@ int minimax_hc(c_linea &juego){
     for (int i = 0; i < juego.N; i++) {
         if (juego.tablero()[i][juego.M-1]==0) {
             if (res==-1) res=i; // si todavía no encontré ninguna opción
-            juego.jugar(juego.yo, i);
-            valor_t temp = minimax_hc_aux(juego, alfa, beta);
+            juego.jugar(yo, i);
+            valor_t temp = minimax_hc_aux(juego, alfa, beta, yo);
             if (temp > alfa) {
                 alfa = temp;
                 res = i;
             }
-            juego.desjugar(juego.yo, i);
+            juego.desjugar(yo, i);
             if (beta <= alfa) break;
         }
     }
     return res;
 }
 
-valor_t minimax_hc_aux(c_linea juego, valor_t alfa, valor_t beta){
+valor_t minimax_hc_aux(c_linea juego, valor_t alfa, valor_t beta, int yo){
+    valor_t lo_mejor = {.puntos = 1, .profundidad = 0};
     // Caso base. Nodo terminal
     if (juego.termino()) {
-        if (juego.gane())
+        if (juego.gane()){
             return {.puntos = 1, .profundidad = 1};
+        }
         else if(juego.perdi())
             return {.puntos = -1, .profundidad = 1};
         else
@@ -45,13 +48,13 @@ valor_t minimax_hc_aux(c_linea juego, valor_t alfa, valor_t beta){
     }
     // Según si me toca o no, minimizo o maximizo
     int jug = juego.turno();
-    if (juego.yo == (uint)jug) {
+    if (yo == jug) {
         // Max
         // para cada jugada posible
-        for (int i = 0; i < juego.N; i++) {
+        for (int i = 0; i < juego.N && alfa < lo_mejor; i++) {
             if (juego.tablero()[i][juego.M-1]==0) {
                 juego.jugar(jug, i);
-                alfa = max(alfa, minimax_hc_aux(juego, alfa, beta));
+                alfa = max(alfa, minimax_hc_aux(juego, alfa, beta, yo));
                 alfa.avanzar();
                 juego.desjugar(jug, i);
                 if (beta <= alfa) break;
@@ -64,7 +67,7 @@ valor_t minimax_hc_aux(c_linea juego, valor_t alfa, valor_t beta){
         for (int i = 0; i < juego.N; i++) {
             if (juego.tablero()[i][juego.M-1]==0) {
                 juego.jugar(jug, i);
-                beta = min(beta, minimax_hc_aux(juego, alfa, beta));
+                beta = min(beta, minimax_hc_aux(juego, alfa, beta, yo));
                 beta.avanzar();
                 juego.desjugar(jug, i);
                 if (beta <= alfa) break;

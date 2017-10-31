@@ -55,6 +55,6 @@ struct valor_t{
     }
 };
 
-int minimax_hc(c_linea &juego);
+int minimax_hc(c_linea juego);
 
 #endif

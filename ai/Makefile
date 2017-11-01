@@ -3,7 +3,7 @@ FLAGS = -std=c++11 -ggdb -Wall -O3
 OBJ = minimax.o golosa.o c_linea.o minimax_ab.o minimax_hc.o
 EXECS = minimax minimax_ab golosa minimax_hc
 
-all: clean $(EXECS)
+all: $(EXECS)
 
 # Ejecutables (AIs)
 

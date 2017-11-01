@@ -29,11 +29,36 @@ int golosa::jugar(c_linea juego){
 }
 
 float golosa::puntaje(c_linea &juego, int jugada_recien){
-    float res = 0;
+	float puntaje=0; 
+   
+	// parametros //
+	uint fichas1 = juego.fichas1 ();
+	uint fichas2 = juego.fichas2 ();
+	uint dispersionJ1 = dispersion (juego, 1);
+	uint dispersionJ2 = dispersion (juego, 2);
+	uint perjudica = perjudica_rival (juego, jugada_recien);
+	uint expHorizontal = exp_horizontal (juego, jugada_recien);
+	uint expVertical = exp_vertical (juego, jugada_recien);
+	uint expOblicua = exp_oblicua (juego, jugada_recien);
+	/* base para parametros que tengan rangos
+	std::vector<float> PARAM;
+	for(int i = 0; i< cantPARAM; i++)
+		PARAM.push_back(FUNCION (juego, jugada_recien));*/
 
-    // TODO
+	// Funcion lineal //
+	puntaje += fichas1 * parametros[W_FICHAS1];
+	puntaje += fichas2 * parametros[W_FICHAS2];
+	puntaje += dispersionJ1 * parametros[W_DISPERSION1];
+	puntaje += dispersionJ2 * parametros[W_DISPERSION2];
+	puntaje += perjudica * parametros[W_AGRESS];
+	puntaje += expHorizontal * parametros[W_EXPH];
+	puntaje += expVertical * parametros[W_EXPV];
+	puntaje += expOblicua * parametros[W_EXPO];
+	/* base para parametros que tengan rangos
+	for(int i = 0; i< cantPARAM; i++)
+		puntaje += PARAM[i + W_PARAM_START] * parametros[i];*/
 
-    return res;
+    return puntaje;
 }
 
 
@@ -336,7 +361,7 @@ golosa::golosa(int argc, char const *argv[], int N, int M, int C, int yo) : para
 
 
 // devuelve string que comienza con los parametros de la gololsa, y termina con " "
-string golosa::to_argv(){
+/*string golosa::to_argv(){
     std::string argv;
     argv += "-f1 " + std::to_string(parametros[W_FICHAS1]) + " ";
     argv += "-f2 " + std::to_string(parametros[W_FICHAS2]) + " ";
@@ -347,7 +372,7 @@ string golosa::to_argv(){
     argv += "-eo " + std::to_string(parametros[W_EXPO]) + " ";
     return argv;
 
-}
+}*/
 
 std::vector<std::string> string_to_argv(string argv){
     vector< std::string > vs;

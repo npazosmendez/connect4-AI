@@ -32,7 +32,8 @@ Curiosidades a tener en cuenta:
 enum{
     W_FICHAS1,
     W_FICHAS2,
-    W_DISPERSION,
+    W_DISPERSION1,
+    W_DISPERSION2,
     W_AGRESS,
     W_EXPH,
     W_EXPV,

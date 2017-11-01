@@ -5,7 +5,7 @@ using namespace std;
 TEST(golosa_test, columna_media) {
     int C = 4; int N = 10; int M = 6; int p = 100;
     c_linea juego(C,N,M,p);
-    golosa golo(golosa::pesos_t(), N, M, C, 1);
+    golosa golo(N, M, C, 1);
 
     EXPECT_EQ(golo.columna_media(juego, 1), 0);
     EXPECT_EQ(golo.columna_media(juego, 2), 0);

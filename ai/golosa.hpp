@@ -4,7 +4,6 @@
 #include <vector>
 #include <string>
 #include "c_linea.hpp"
-#define PESOS_COUNT 7
 class c_linea;
 using namespace std;
 typedef unsigned int uint;
@@ -12,50 +11,58 @@ typedef unsigned int uint;
 
 std::vector<string> string_to_argv(string);
 
+/* ////////////////// AGREGADO DE PARÁMETROS AL GOLOSO //////////////////////
+NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE
+Para agregar un parámetro 'TU_VIEJA' que tome el goloso, lo único que se
+debe hacer es agregar un
+    #define TU_VIEJA __COUNTER__
+después de los demás '#defines ...' que están abajo (ANTES DE #define PARAM_COUNT).
+
+Curiosidades a tener en cuenta:
+    - El parámetro puede accederse con el vector<float> llamado 'parametros',
+    haciendo parametros[TU_VIEJA].
+    - El parámetro agregado, obviamente, no se utiliza solo. Probablemente
+    se quiera agregar algo a la función 'puntaje(...)' que lo use.
+    - Si el parámetro agregado es el peso de un feature, o similar, debe
+    implementarse el método que lo calcule, y usarse como se desee. Por ejemplo
+    haciendo res+=parametros[TU_VIEJA]*mi_feature(...)).
+*/
+
+// Definiciones de parámetros
+#define W_FICHAS1 __COUNTER__
+#define W_FICHAS2 __COUNTER__
+#define W_DISPERSION __COUNTER__
+#define W_AGRESS __COUNTER__
+#define W_EXPH __COUNTER__
+#define W_EXPV __COUNTER__
+#define W_EXPO __COUNTER__
+
+// acá deben agregarse nuevos defines ...
+
+// Antes de este de abajo! No después
+#define PARAM_COUNT __COUNTER__
+
 class golosa{
     friend class c_linea;
     public:
-        struct pesos_t;
 
         // Constructores
-        golosa(pesos_t pesos, int N, int M, int C, int yo);
-        golosa(int argc, char const *argv[], int N, int M, int C, int yo); // parsear argv para pesos
+        golosa(int N, int M, int C, int yo); // con parámetros basura (para testear otras cosas)
+        golosa(vector<float> param, int N, int M, int C, int yo);
+        golosa(int argc, char const *argv[], int N, int M, int C, int yo); // parsear argv para parámetros
 
         // Métodos públicos
         int jugar(c_linea juego);
 
-        // Posibles features (sujeto a modificaciones)
-        // -------------------------------------------------------
-        //                       IMPORTANTE !
-        // -------------------------------------------------------
-        // NOTE: Si agregan algun peso, dejen el vector alturas al final,
-        // y actualicen el define PESOS_COUNT
-        struct pesos_t{
-            float fichas1; // -f1 --fichas1
-            float fichas2; // -f2 --fichas2
-            float dispersion; // -d --dispersion
-            float agresividad; // -a --agresividad
-            float expansion_h; // -eh -expansionh
-            float expansion_v; // -ev -expansionv
-            float expansion_o; // -eo -expansiono
-            vector<float> alturas; // -hh --alturas
-            // Cantidad de rectas de long X (1<=X<=C) (extensibles)
-            // TODO: a definir
-
-            // Valores por defecto
-            pesos_t() : fichas1(1), fichas2(1), dispersion(1), agresividad(1), expansion_h(1), expansion_v(1), expansion_o(1) {};
-            string to_argv();
-        };
-
-
         //Pongo los features publicos porque sino no se pueden testear. Igualmente seguro cambiemos todo esto
         float fila_media(const c_linea &juego, int jugador); // la media de al distribucion de las fichas por fila
         float columna_media(const c_linea &juego, int jugador); // la media de al distribucion de las fichas por columna
-        inline pesos_t _ver_pesos() { return this->_pesos; } 
+        inline vector<float> _ver_pesos() { return this->parametros; }
     private:
 
         // Variables privadas
-        const pesos_t _pesos;
+        const vector<float> parametros;
+
         const int N, M, C;
         const int yo;
 
@@ -71,8 +78,9 @@ class golosa{
         uint dispersion(const c_linea &juego, int jugador); // se fija la mayor distancia entre dos fichas de un jugador por cada linea (con al menos dos fichas de tal jugador) y las promedia
 
         // Otros métodos auxiliares
-        pesos_t leer_pesos(int argc, char const *argv[]);
+        vector<float> leer_pesos(int argc, char const *argv[]);
         void print_help();
+        string to_argv();
 
 };
 

@@ -6,49 +6,11 @@
 
 using namespace std;
 
-// Constructores y sus parsers
-golosa::golosa(pesos_t pesos, int N, int M, int C, int yo) : _pesos(pesos), N(N), M(M), C(C), yo(yo) {};
-
-golosa::golosa(int argc, char const *argv[], int N, int M, int C, int yo) : _pesos(leer_pesos(argc, argv)), N(N), M(M), C(C), yo(yo) {};
-
-golosa::pesos_t golosa::leer_pesos(int argc, char const *argv[]){
-    // TODO: no tira errores. Lee lo que puede y lo demás queda por defecto. Solo falla si falla es stof().
-    pesos_t pesos;
-    for (int i = 0; i < argc; i++) {
-        const char* param = argv[i];
-        if (strcmp(param, "-f1") == 0 || strcmp(param, "--fichas1")) {
-            pesos.fichas1 = stof(argv[i+1]);
-        }else if(strcmp(param, "-f2") == 0 || strcmp(param, "--fichas2")) {
-            pesos.fichas2 = stof(argv[i+1]);
-        }else if(strcmp(param, "-hh") == 0 || strcmp(param, "--alturas")) {
-            for (int h = 0; h < N; h++)
-                pesos.alturas.push_back(stof(argv[i+1+h]));
-        }else if(strcmp(param, "-d") == 0 || strcmp(param, "--dispersion")) {
-            pesos.dispersion = stof(argv[i+1]);
-        }else if(strcmp(param, "-a") == 0 || strcmp(param, "--agresividad")) {
-            pesos.agresividad = stof(argv[i+1]);
-        }else if(strcmp(param, "-eh") == 0 || strcmp(param, "--expansionh")) {
-            pesos.expansion_h = stof(argv[i+1]);
-        }else if(strcmp(param, "-ev") == 0 || strcmp(param, "--expansionv")) {
-            pesos.expansion_v = stof(argv[i+1]);
-        }else if(strcmp(param, "-eo") == 0 || strcmp(param, "--expansiono")) {
-            pesos.expansion_o = stof(argv[i+1]);
-        }
-        // ...
-    }
-    return pesos;
-}
-
-void golosa::print_help(){
-    /* Iba a hacer esto para indicar cómo llenar los pesos por los argumentos,
-    pero el stdout de esto lo va a usar el python casi siempre. Queda en
-    stany-by.
-    */
-}
-
-// Métodos públicos
 
 int golosa::jugar(c_linea juego){
+    /* Dentro de las jugadas posibles, esta función elige la que lleva al juego
+    al mejor tablero posible para el jugador, cuyo 'puntaje' se determina
+    con la función de tal nombre, combinando features del tablero. */
     int res = -1;
     float puntaje_max;
     for (int i = 0; i < juego.N; i++) {
@@ -66,8 +28,6 @@ int golosa::jugar(c_linea juego){
     return res;
 }
 
-// Métodos auxiliares para calcular jugada
-
 float golosa::puntaje(c_linea &juego, int jugada_recien){
     float res = 0;
 
@@ -76,6 +36,10 @@ float golosa::puntaje(c_linea &juego, int jugada_recien){
     return res;
 }
 
+
+/* /////////////////////////////////////// */
+// FEATURES Y DEMÁS DE UN JUEGO PARTICULAR //
+/* /////////////////////////////////////// */
 
 uint golosa::contar_lineas(int contador_der, int contador_izq, int largo){
     /* Auxiliar para lineas_nuevas(...):
@@ -353,26 +317,39 @@ float golosa::columna_media(const c_linea &juego, int jugador){
     return fichas_usadas==0 ? 0 : sumatoria_ponderada/fichas_usadas;
 }
 
+
+
+/* /////////////////////////////////////// */
+//   AUXILIARES DE INICIALIZACIÓN Y OTROS  //
+//   (NO TIENEN QUE VER CON EL JUGADOR)    //
+/* /////////////////////////////////////// */
+
+
+// Constructores y sus parsers
+golosa::golosa(int N, int M, int C, int yo) : parametros(PARAM_COUNT), N(N), M(M), C(C), yo(yo) {}
+
+golosa::golosa(vector<float> param, int N, int M, int C, int yo) : parametros(param), N(N), M(M), C(C), yo(yo) {
+    assert(param.size() == PARAM_COUNT);
+};
+
+golosa::golosa(int argc, char const *argv[], int N, int M, int C, int yo) : parametros(leer_pesos(argc, argv)), N(N), M(M), C(C), yo(yo) {};
+
+
 // devuelve string que comienza con los parametros de la gololsa, y termina con " "
-std::string golosa::pesos_t::to_argv(){
+string golosa::to_argv(){
     std::string argv;
-    argv += "-f1 " + std::to_string(this->fichas1) + " ";
-    argv += "-f2 " + std::to_string(this->fichas2) + " ";
-    argv += "-d " + std::to_string(this->dispersion) + " ";
-    argv += "-a " + std::to_string(this->agresividad) + " ";
-    argv += "-eh " + std::to_string(this->expansion_h) + " ";
-    argv += "-ev " + std::to_string(this->expansion_v) + " ";
-    argv += "-eo " + std::to_string(this->expansion_o) + " ";
-    argv += "-hh ";
-    for (uint i = 0; i < this->alturas.size(); i++) {
-        argv += std::to_string(this->alturas[i]) + " ";
-    }
+    argv += "-f1 " + std::to_string(parametros[W_FICHAS1]) + " ";
+    argv += "-f2 " + std::to_string(parametros[W_FICHAS2]) + " ";
+    argv += "-d " + std::to_string(parametros[W_DISPERSION]) + " ";
+    argv += "-a " + std::to_string(parametros[W_AGRESS]) + " ";
+    argv += "-eh " + std::to_string(parametros[W_EXPH]) + " ";
+    argv += "-ev " + std::to_string(parametros[W_EXPV]) + " ";
+    argv += "-eo " + std::to_string(parametros[W_EXPO]) + " ";
     return argv;
 
 }
 
-
-std::vector<std::string> string_to_argv(string argv){   
+std::vector<std::string> string_to_argv(string argv){
     vector< std::string > vs;
     for (uint i = 0; i < argv.size(); i++) {
         // trim initial empty spaces if there are || consequent between 'words'
@@ -390,93 +367,38 @@ std::vector<std::string> string_to_argv(string argv){
     return vs;
 }
 
-/*
-Función vieja. Depende de cómo manejemos los features
-vector<float> pesos_to_vec(golosa::pesos_t p){
-    vector<float> vec_pesos = vector<float>(PESOS_COUNT + p.alturas.size());
-    float* p_as_floats = (float*) &p;
-    for (int i = 0; i < PESOS_COUNT; i++) {
-        vec_pesos[i] = p_as_floats[i];
+
+vector<float> golosa::leer_pesos(int argc, char const *argv[]){
+    /* NOTE: los parámetros se cargan secuencialmente, sin flags que indiquen
+    qué son. Es decir, deben estar en el mismo orden en que se definen en los
+    #define de c_linea.hpp. Esto es para hacer más fácil el agregado de
+    parámetros.
+    */
+    vector<float> pesos;
+    for (size_t i = 1; i < PARAM_COUNT + 1; i++) {
+        pesos.push_back(stof(argv[i]));
     }
-    for (uint i = 0; i < p.alturas.size(); i++) {
-        vec_pesos[i] = p.alturas[i];
+    return pesos;
+    /* El código de abajo es el viejo, que usaba flags para identificarlos */
+    /*
+    for (int i = 0; i < argc; i++) {
+        const char* param = argv[i];
+        if (strcmp(param, "-f1") == 0 || strcmp(param, "--fichas1")) {
+            parametros[W_FICHAS1] = stof(argv[i+1]);
+        }else if(strcmp(param, "-f2") == 0 || strcmp(param, "--fichas2")) {
+            parametros[W_FICHAS1] = stof(argv[i+1]);
+        }else if(strcmp(param, "-d") == 0 || strcmp(param, "--dispersion")) {
+            parametros[W_DISPERSION] = stof(argv[i+1]);
+        }else if(strcmp(param, "-a") == 0 || strcmp(param, "--agresividad")) {
+            parametros[W_AGRESS] = stof(argv[i+1]);
+        }else if(strcmp(param, "-eh") == 0 || strcmp(param, "--expansionh")) {
+            parametros[W_EXPH] = stof(argv[i+1]);
+        }else if(strcmp(param, "-ev") == 0 || strcmp(param, "--expansionv")) {
+            parametros[W_EXPV] = stof(argv[i+1]);
+        }else if(strcmp(param, "-eo") == 0 || strcmp(param, "--expansiono")) {
+            parametros[W_EXPO] = stof(argv[i+1]);
+        }
+        // ...
     }
-    return vec_pesos;
-};
-*/
-
-//////////////////////////////////////////////////////////////////////////////
-// FUNCIONES VIEJAS. VERIFICAR QUÉ SE TIRA, QUÉ SE RECICLA, QUÉ SE PRIVATIZA, ETC.
-//////////////////////////////////////////////////////////////////////////////
-/*
-int tira_maxima(c_linea &juego, int yo);
-
-int puntaje(pesos_t pesos, c_linea &juego){
-    // Si terminó el juego, el puntaje es extremo
-    if (juego.termino()){
-        if (juego.gane())
-            return INT_MAX;
-        else if(juego.perdi())
-            return INT_MIN;
-        else
-            return 0; // Empate. TODO: ver cómo manejar este caso
-    }
-
-    int res = 0;
-
-    return res;
+    */
 }
-
-
-int tira_maxima(c_linea &juego, int yo){
-    int res = 0;
-    // busco en filas
-    for (int fil = 0; fil < juego.M; fil++) {
-        int contador = 0;
-        for (int col = 0; col < juego.N; col++) {
-            contador = (juego.tablero()[col][fil] == yo) ? (contador+1) : 0;
-            res = max(res,contador);
-        }
-    }
-    // busco en columnas
-    for (int col = 0; col < juego.N; col++) {
-        int contador = 0;
-        for (int fil = 0; fil < juego.M; fil++) {
-            contador = (juego.tablero()[col][fil] == yo) ? (contador+1) : 0;
-            res = max(res,contador);
-        }
-    }
-    // busco en diagonales de 45°
-    for (int col = 0; col < juego.N; col++) {
-        // desde la base de esa columna para arriba
-        int contador = 0;
-        for (int fil = 0; fil < juego.M && col+fil<juego.N; fil++) {
-            contador = (juego.tablero()[col+fil][fil] == yo) ? (contador+1) : 0;
-            res = max(res,contador);
-        }
-        // desde el tope de esa columna para abajo
-        contador = 0;
-        for (int fil = juego.M-1; fil >= 0 && (col-(juego.M-1-fil)) >= 0; fil--) {
-            contador = (juego.tablero()[col-(juego.M-1-fil)][fil] == yo) ? (contador+1) : 0;
-            res = max(res,contador);
-        }
-    }
-    // busco en diagonales de -45°
-    for (int col = 0; col < juego.N; col++) {
-        // desde la base de esa columna para arriba
-        int contador = 0;
-        for (int fil = 0; fil < juego.M && col-fil>=0; fil++) {
-            contador = (juego.tablero()[col-fil][fil] == yo) ? (contador+1) : 0;
-            res = max(res,contador);
-        }
-        // desde el tope de esa columna para abajo
-        contador = 0;
-        for (int fil = juego.M-1; fil >= 0 && (col+(juego.M-1-fil)) < juego.N; fil--) {
-            contador = (juego.tablero()[col+(juego.M-1-fil)][fil] == yo) ? (contador+1) : 0;
-            res = max(res,contador);
-        }
-    }
-    return res;
-}
-
-*/

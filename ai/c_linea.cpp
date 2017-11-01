@@ -3,11 +3,17 @@
 
 c_linea::c_linea(uint C, uint N, uint M, uint p) : C(C), N(N), M(M), yo(1), _p1(p), _p2(p), _tablero(N,vector<int>(M,0)), _alturas(N,0), _turno(1) {
     // por defecto, 'yo' = jug. 1
+    #ifdef ASSERT
+    assert(C <= N);
+    assert(C <= M);
+    #endif
 }
 
 c_linea::c_linea(uint C, uint N, uint M, uint p, uint yo_v) : C(C), N(N), M(M), yo(yo_v), _p1(p), _p2(p), _tablero(N,vector<int>(M,0)), _alturas(N,0), _turno(1) {
     #ifdef ASSERT
     assert(yo==1 || yo==2);
+    assert(C <= N);
+    assert(C <= M);
     #endif
 }
 
@@ -52,7 +58,7 @@ void c_linea::desjugar(int jugador, int columna){
 
 bool c_linea::termino(){
     // si alguien ya ganó o no hay fichas, terminó
-    if(gano1() || gano2() || _p2 == 0)
+    if(gano1() || gano2() || (_p2 == 0 && _p1 == 0))
         return true;
     // si están todas las columnas llenas, terminó
     for (int i = 0; i < N; i++) {

@@ -14,9 +14,8 @@ std::vector<string> string_to_argv(string);
 /* ////////////////// AGREGADO DE PARÁMETROS AL GOLOSO //////////////////////
 NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE
 Para agregar un parámetro 'TU_VIEJA' que tome el goloso, lo único que se
-debe hacer es agregar un
-    #define TU_VIEJA __COUNTER__
-después de los demás '#defines ...' que están abajo (ANTES DE #define PARAM_COUNT).
+debe hacer es agregar un TU_VIEJA en el 'enum' que está acá abajo,
+después de los demás ya definidos (ANTES DE PARAM_COUNT).
 
 Curiosidades a tener en cuenta:
     - El parámetro puede accederse con el vector<float> llamado 'parametros',
@@ -29,18 +28,20 @@ Curiosidades a tener en cuenta:
 */
 
 // Definiciones de parámetros
-#define W_FICHAS1 __COUNTER__
-#define W_FICHAS2 __COUNTER__
-#define W_DISPERSION __COUNTER__
-#define W_AGRESS __COUNTER__
-#define W_EXPH __COUNTER__
-#define W_EXPV __COUNTER__
-#define W_EXPO __COUNTER__
+// (la 'W' se refiere a weight, pero siéntanse libres de cambiarlo)
+enum{
+    W_FICHAS1,
+    W_FICHAS2,
+    W_DISPERSION,
+    W_AGRESS,
+    W_EXPH,
+    W_EXPV,
+    W_EXPO,
+    // acá deben agregarse nuevos defines ...
 
-// acá deben agregarse nuevos defines ...
-
-// Antes de este de abajo! No después
-#define PARAM_COUNT __COUNTER__
+    // Antes de este de abajo! No después
+    PARAM_COUNT
+};
 
 class golosa{
     friend class c_linea;

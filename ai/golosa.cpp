@@ -16,13 +16,19 @@ int golosa::jugar(c_linea juego){
         return (int)parametros[PRIMERA_JUGADA];
     }
     int yo = juego.turno();
+    int el = 0;
+    if (yo == 1) el = 2; else el = 1;
     int res = -1;
     float puntaje_max = 0;
     for (int i = 0; i < juego.N; i++) {
         // para cada jugada posible
         if (juego.tablero()[i][juego.M-1]==0) {
             juego.jugar(yo, i);
-            float temp = puntaje(juego,i, yo);
+            if (juego.gano(yo) || imbatible(juego, yo)) {
+                // Gané o puedo ganar en la próxima seguro
+                return i;
+            }
+            float temp = puntaje(juego,i, yo, el);
             if (temp > puntaje_max || res == -1) {
                 res = i;
                 puntaje_max = temp;
@@ -33,35 +39,75 @@ int golosa::jugar(c_linea juego){
     return res;
 }
 
-float golosa::puntaje(c_linea &juego, int jugada_recien, int yo){
+float golosa::puntaje(c_linea juego, int jugada_recien, int yo, int el){
 	float puntaje=0;
 
-	// parametros //
-	uint fichas1 = juego.fichas1 ();
-	uint fichas2 = juego.fichas2 ();
+    ////////////////////////////////////
+	/* Me guardo los features y demás */
+    ////////////////////////////////////
+
+	// uint fichas1 = juego.fichas1 ();
+	// uint fichas2 = juego.fichas2 ();
 	uint dispersionJ1 = dispersion (juego, 1);
 	uint dispersionJ2 = dispersion (juego, 2);
 	uint perjudica = perjudica_rival (juego, jugada_recien);
 	uint expHorizontal = exp_horizontal (juego, jugada_recien);
 	uint expVertical = exp_vertical (juego, jugada_recien);
 	uint expOblicua = exp_oblicua (juego, jugada_recien);
-	/* base para parametros que tengan rangos
-	std::vector<float> PARAM;
-	for(int i = 0; i< cantPARAM; i++)
-		PARAM.push_back(FUNCION (juego, jugada_recien));*/
+    vector<int> lineas_ext_yo = lineas_extensibles(juego, yo);
+    vector<int> lineas_ext_el = lineas_extensibles(juego, el);
 
-	// Funcion lineal //
-	puntaje += fichas1 * parametros[W_FICHAS1];
-	puntaje += fichas2 * parametros[W_FICHAS2];
+    /* EMERGENCY BUTTON !!!! */
+    if (lineas_ext_el[C-1] > 0) {
+        // Le estoy dejando una línea servida!
+        // Devuelvo -infinito
+        float menos_infinito = - numeric_limits<float>::max();
+        return menos_infinito;
+    }
+
+    //////////////////////////////////////////////////
+    /* Combino algunos features formando un puntaje */
+    //////////////////////////////////////////////////
+
+	// puntaje += fichas1 * parametros[W_FICHAS1];
+	// puntaje += fichas2 * parametros[W_FICHAS2];
 	puntaje += dispersionJ1 * parametros[W_DISPERSION1];
 	puntaje += dispersionJ2 * parametros[W_DISPERSION2];
 	puntaje += perjudica * parametros[W_AGRESS];
 	puntaje += expHorizontal * parametros[W_EXPH];
 	puntaje += expVertical * parametros[W_EXPV];
 	puntaje += expOblicua * parametros[W_EXPO];
-	/* base para parametros que tengan rangos
-	for(int i = 0; i< cantPARAM; i++)
-		puntaje += PARAM[i + W_PARAM_START] * parametros[i];*/
+    for (int i = 0; i < C; i++) {
+        // cantidad de líneas extensibles a C de longitud 'i'
+        puntaje += pesos_lineas[i]*lineas_ext_yo[i]; // las mías suman
+        puntaje -= pesos_lineas[i]*lineas_ext_el[i]; // las de él restan
+    }
+
+
+    //////////////////////////////////////////////////////////////
+    /* ¿Qué pasa si esta misma jugada se la dejo a mi oponente? */
+    //////////////////////////////////////////////////////////////
+
+    juego.desjugar(yo, jugada_recien); // (intercambio jugada por la de él)
+    juego.paso();
+    juego.jugar(el, jugada_recien);
+
+    /* EMERGENCY BUTTON !!!! */
+    if (imbatible(juego, el)) {
+        // Si juega acá es imbatible!
+        // Es el mejor movimiento que puedo hacer, para intentar cagarle
+        // la imbatibilidad
+        float infinito = numeric_limits<float>::max();
+        return infinito;
+    }
+
+    vector<int> lineas_ext_el_hipoteticas = lineas_extensibles(juego, el); // gran nombre para una variable
+    for (int i = 0; i < C; i++) {
+        puntaje += pesos_lineas[i]*(lineas_ext_el_hipoteticas[i]-lineas_ext_el[i]);
+        /* Esto suma, porque se lo estoy cagando.
+         Tomo la diferencia con lo que tiene en el turno anterior,
+         midiendo de alguna manera qué tanto lo cagué recién. */
+    }
 
     return puntaje;
 }
@@ -79,128 +125,6 @@ bool golosa::primera_jugada(const c_linea &juego){
     return true;
 }
 
-
-uint golosa::contar_lineas(int contador_der, int contador_izq, int largo){
-    /* Auxiliar para lineas_nuevas(...):
-    Dadas las cantidades de fichas a izquierda y derecha de igual color de una
-    ficha central, y el largo de la línea a formar, cuenta cuántas lineas hay
-    de tal largo, que cumplan:
-        * contienen a la ficha central
-        * al menos uno de sus extremos es límite (no está contenida en otra más grande hacia ambos lados)
-    */
-    uint res = 0;
-    if (contador_der +1 == largo || (contador_der+1 > largo && contador_izq == 0)) res++; // encontré a derecha
-    if (contador_izq +1 == largo || (contador_izq+1 > largo && contador_der== 0)) res++; // encontré a izquierda
-    if ((contador_izq+1 < largo || contador_der +1 < largo) && contador_der > 0 && contador_izq > 0) {
-        // si para algún lado hay algo pero no llegué, me fijo si puedo extenderme hacia los dos lados
-        // por ejemplo, lineas de 3: ooox(X)xxooo, no llegué a izquierda pero puedo extenderme hacia ambos lados
-        if (contador_der + contador_izq + 1 >= largo) res++;
-    }
-    return res;
-}
-
-uint golosa::lineas_nuevas(const c_linea &juego, int largo, int columna, int jugador){
-    /* NOTE
-    Esta función devuelve la cantidad de líneas de longitud 'largo' que cumplen:
-        * son de 'jugador'
-        * contienen a la ficha de más arriba de 'columna'
-        * al menos uno de sus extremos es límite (no está contenida en otra más grande hacia ambos lados)
-
-    La idea de esta función es ver cuántas líneas de largo 'largo' me agrega
-    haber jugado en 'columna'. La decisión de contar solo las líneas que tienen
-    algún extremo límite surge de que, a primera vista, no parecería
-    interesante contar líneas que en realidad son más largas para ambos lados.
-    Interesa contar aquellas líneas de largo L, que en un futuro puedan llegar
-    a ser de largo L+1.
-
-    TODO: tal vez tenga sentido que la función tenga en
-    cuenta que la línea contada pueda ser expandida. Si hacemos eso, mejor
-    hacerlo en otra función, y conservar esta.
-    */
-    #ifdef ASSERT
-    assert(jugador==1 || jugador==2);
-    assert(largo > 0);
-    assert(columna < N);
-    assert(juego._alturas[columna] > 0);
-    assert(juego.tablero()[columna][juego._alturas[columna]-1]==jugador);
-    #endif
-
-    uint res = 0;
-
-    // busco en columna (para abajo nada más)
-    int contador = 0;
-    int fila = juego._alturas[columna]-1;
-    while(fila >= 0 && juego.tablero()[columna][fila]==jugador && contador < largo){
-        contador++;
-        fila--;
-    }
-    if (contador == largo) res++; // encontré una
-    // cout << "En columna: " << res << endl;
-
-    // busco en fila (hacia ambos lados)
-    // cuento a derecha
-    int contador_der = 0;
-    int col = columna+1;
-    while(col < N && juego.tablero()[col][juego._alturas[columna]-1]==jugador){
-        contador_der++;
-        col++;
-    }
-    // cuento a izquierda
-    int contador_izq = 0;
-    col = columna-1;
-    while(col >= 0 && juego.tablero()[col][juego._alturas[columna]-1]==jugador){
-        contador_izq++;
-        col--;
-    }
-    res += contar_lineas(contador_der, contador_izq, largo);
-    // cout << "En fila: " << res << endl;
-
-    // busco a 45° (hacia ambos lados)
-    // cuento a derecha (hacia arriba)
-    contador_der = 0;
-    col = columna+1;
-    fila = juego._alturas[columna]-1 +1;
-    while(col < N && fila < M && juego.tablero()[col][fila]==jugador){
-        contador_der++;
-        col++;
-        fila++;
-    }
-    // cuento a izquierda (hacia abajo)
-    contador_izq = 0;
-    col = columna-1;
-    fila = juego._alturas[columna]-1 -1;
-    while(col >= 0 && fila >= 0 && juego.tablero()[col][fila]==jugador){
-        contador_izq++;
-        col--;
-        fila--;
-    }
-    res += contar_lineas(contador_der, contador_izq, largo);
-    // cout << "En 45°: " << res << endl;
-
-    // busco a -45° (hacia ambos lados)
-    // cuento a derecha (hacia abajo)
-    contador_der = 0;
-    col = columna+1;
-    fila = juego._alturas[columna]-1 -1;
-    while(col < N && fila >= 0 && juego.tablero()[col][fila]==jugador){
-        contador_der++;
-        col++;
-        fila--;
-    }
-    // cuento a izquierda (hacia arriba)
-    contador_izq = 0;
-    col = columna-1;
-    fila = juego._alturas[columna]-1 +1;
-    while(col >= 0 && fila < M && juego.tablero()[col][fila]==jugador){
-        contador_izq++;
-        col--;
-        fila++;
-    }
-    res += contar_lineas(contador_der, contador_izq, largo);
-    // cout << "En -45°: " << res << endl;
-
-    return res;
-}
 
 uint golosa::exp_horizontal(const c_linea &juego, int col){
 	int fila=juego._alturas[col]-1;
@@ -360,12 +284,12 @@ float golosa::columna_media(const c_linea &juego, int jugador){
     return fichas_usadas==0 ? 0 : sumatoria_ponderada/fichas_usadas;
 }
 
-vector<float> golosa::lineas_extensibles(const c_linea &juego, int jugador){
+vector<int> golosa::lineas_extensibles(const c_linea &juego, int jugador){
     assert(juego.M == M);
     assert(juego.N == N);
     assert(juego.C == C);
     assert(jugador == 1 || jugador == 2);
-    vector<float> res(C);
+    vector<int> res(C);
 
     // busco líneas horizontales
     // NOTE: este está más o menos comentado. El vertical y diagonal son
@@ -497,6 +421,121 @@ vector<float> golosa::lineas_extensibles(const c_linea &juego, int jugador){
     return res;
 }
 
+bool golosa::imbatible(const c_linea &juego, int jugador){
+    /* determina si hay una línea de C-1 extendible a ambos lados,
+    por lo que el jugador ganaría en el próximo turno */
+
+    // busco en filas
+    for (int fil = 0; fil < M; fil++) {
+        bool vacia_al_principio = false;
+        int fichas_consec = 0;
+        for (int col = 0; col < N; col++) {
+            if (juego.tablero()[col][fil] == jugador) {
+                // otra ficha consecutiva
+                fichas_consec++;
+            }else if(juego.tablero()[col][fil] == 0){
+                // agujero. Si hubo C-1 fichas consecutivas, un vacío al
+                // principio, y pueden llenarse los dos extremos, IMBATIBLE!
+                if (fichas_consec == C-1 && vacia_al_principio && juego._alturas[col] == fil && juego._alturas[col-C] == fil){
+                    return true;
+                }else{
+                    // No soy imbatible, reseteo el contador de consecutivas
+                    fichas_consec = 0;
+                    vacia_al_principio = true;
+                }
+            }else{
+                // Ficha enemiga, empiezo de cero
+                vacia_al_principio = false;
+                fichas_consec = 0;
+            }
+        }
+    }
+
+    // busco en diagonales de 45°
+    for (int col_base = 0; col_base < N; col_base++) {
+        // desde la base de esa columna para arriba
+        bool vacia_al_principio = false;
+        int fichas_consec = 0;
+        for (int fil = 0; fil < M && col_base+fil<N; fil++) {
+            int col = col_base + fil;
+            if (juego.tablero()[col][fil] == jugador) {
+                fichas_consec++;
+            }else if(juego.tablero()[col][fil] == 0){
+                if (fichas_consec == C-1 && vacia_al_principio && juego._alturas[col] == fil && juego._alturas[col-C] == fil-C){
+                    return true;
+                }else{
+                    fichas_consec = 0;
+                    vacia_al_principio = true;
+                }
+            }else{
+                vacia_al_principio = false;
+                fichas_consec = 0;
+            }
+        }
+        // desde el tope de esa columna para abajo
+        vacia_al_principio = false;
+        fichas_consec = 0;
+        for (int fil = M-1; fil >= 0 && (col_base-(M-1-fil)) >= 0; fil--) {
+            int col = col_base - (M-1-fil);
+            if (juego.tablero()[col][fil] == jugador) {
+                fichas_consec++;
+            }else if(juego.tablero()[col][fil] == 0){
+                if (fichas_consec == C-1 && vacia_al_principio && juego._alturas[col] == fil && juego._alturas[col+C] == fil+C){
+                    return true;
+                }else{
+                    fichas_consec = 0;
+                    vacia_al_principio = true;
+                }
+            }else{
+                vacia_al_principio = false;
+                fichas_consec = 0;
+            }
+        }
+    }
+    // busco en diagonales de -45°
+    for (int col_base = 0; col_base < N; col_base++) {
+        // desde la base de esa columna para arriba
+        bool vacia_al_principio = false;
+        int fichas_consec = 0;
+        for (int fil = 0; fil < M && col_base-fil>=0; fil++) {
+            int col = col_base - fil;
+            if (juego.tablero()[col][fil] == jugador) {
+                fichas_consec++;
+            }else if(juego.tablero()[col][fil] == 0){
+                if (fichas_consec == C-1 && vacia_al_principio && juego._alturas[col] == fil && juego._alturas[col+C] == fil-C){
+                    return true;
+                }else{
+                    fichas_consec = 0;
+                    vacia_al_principio = true;
+                }
+            }else{
+                vacia_al_principio = false;
+                fichas_consec = 0;
+            }
+        }
+        // desde el tope de esa columna para abajo
+        vacia_al_principio = false;
+        fichas_consec = 0;
+        for (int fil = M-1; fil >= 0 && (col_base+(M-1-fil)) < N; fil--) {
+            int col = col_base + (M-1-fil);
+            if (juego.tablero()[col][fil] == jugador) {
+                fichas_consec++;
+            }else if(juego.tablero()[col][fil] == 0){
+                if (fichas_consec == C-1 && vacia_al_principio && juego._alturas[col] == fil && juego._alturas[col-C] == fil+C){
+                    return true;
+                }else{
+                    fichas_consec = 0;
+                    vacia_al_principio = true;
+                }
+            }else{
+                vacia_al_principio = false;
+                fichas_consec = 0;
+            }
+        }
+    }
+    return false;
+}
+
 /* /////////////////////////////////////// */
 //   AUXILIARES DE INICIALIZACIÓN Y OTROS  //
 //   (NO TIENEN QUE VER CON EL JUGADOR)    //
@@ -504,19 +543,19 @@ vector<float> golosa::lineas_extensibles(const c_linea &juego, int jugador){
 
 
 // Constructores y sus parsers
-golosa::golosa(int N, int M, int C, int yo) : parametros(PARAM_COUNT), N(N), M(M), C(C), yo(yo) {}
+golosa::golosa(int N, int M, int C, int yo) : parametros(PARAM_COUNT),pesos_lineas(C) ,N(N), M(M), C(C), yo(yo) {}
 
-golosa::golosa(vector<float> param, int N, int M, int C, int yo) : parametros(param), N(N), M(M), C(C), yo(yo) {
+golosa::golosa(vector<float> param, int N, int M, int C, int yo) : parametros(param.begin(),param.begin()+PARAM_COUNT), pesos_lineas(param.begin()+PARAM_COUNT,param.end()),N(N), M(M), C(C), yo(yo) {
     // say_hello();
     assert(param.size() == cuantos_parametros(N,  M, C));
 };
 
-golosa::golosa(int argc, char const *argv[], int N, int M, int C, int yo) : parametros(leer_parametros(argc, argv, C)), N(N), M(M), C(C), yo(yo) {
+golosa::golosa(int argc, char const *argv[], int N, int M, int C, int yo) : parametros(leer_parametros(argc, argv, C)), pesos_lineas(leer_pesos_lineas(argc, argv, C)), N(N), M(M), C(C), yo(yo) {
     // say_hello();
 };
 
 uint golosa::cuantos_parametros(int N, int M, int C){
-    return PARAM_COUNT;
+    return PARAM_COUNT + C;
 }
 
 
@@ -562,6 +601,19 @@ void golosa::say_hello(){
     for (size_t i = 0; i < PARAM_COUNT; i++) {
         cout << parametros[i] << endl;
     }
+    cout << "Pesos líneas: "<< endl;
+    for (int i = 0; i < C; i++) {
+        cout << pesos_lineas[i] << endl;
+    }
+}
+
+vector<float> golosa::leer_pesos_lineas(int argc, char const *argv[], int C){
+    vector<float> pesos;
+    for (int i = PARAM_COUNT + 1; i < PARAM_COUNT+1 + C; i++) {
+        pesos.push_back(stof(argv[i]));
+
+    }
+    return pesos;
 }
 
 vector<float> golosa::leer_parametros(int argc, char const *argv[], int C){
@@ -570,15 +622,15 @@ vector<float> golosa::leer_parametros(int argc, char const *argv[], int C){
     #define de c_linea.hpp. Esto es para hacer más fácil el agregado de
     parámetros.
     */
-    vector<float> pesos;
+    vector<float> params;
     for (size_t i = 1; i < PARAM_COUNT+1; i++) {
-        pesos.push_back(stof(argv[i]));
+        params.push_back(stof(argv[i]));
 
     }
-    pesos[PRIMERA_JUGADA] = int(pesos[PRIMERA_JUGADA]);
-    assert((int)pesos[PRIMERA_JUGADA] >= -1 && (int)pesos[PRIMERA_JUGADA] < C);
+    params[PRIMERA_JUGADA] = int(params[PRIMERA_JUGADA]);
+    assert((int)params[PRIMERA_JUGADA] >= -1 && (int)params[PRIMERA_JUGADA] < C);
 
-    return pesos;
+    return params;
     /* El código de abajo es el viejo, que usaba flags para identificarlos */
     /*
     for (int i = 0; i < argc; i++) {

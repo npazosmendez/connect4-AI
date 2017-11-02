@@ -26,6 +26,7 @@ class c_linea{
         void desjugar1(uint columna){desjugar(1,columna);};
         void desjugar2(uint columna){desjugar(2,columna);};
         void desjugar(uint columna){desjugar(yo,columna);};
+        void paso(){if (_turno==1) _turno = 2; else _turno = 1;};
 
 
         // Métodos para observar el juego

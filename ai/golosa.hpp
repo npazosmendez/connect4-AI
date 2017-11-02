@@ -30,6 +30,7 @@ Curiosidades a tener en cuenta:
 // Definiciones de parámetros
 // (la 'W' se refiere a weight, pero siéntanse libres de cambiarlo)
 enum{
+    PRIMERA_JUGADA,
     W_FICHAS1,
     W_FICHAS2,
     W_DISPERSION1,
@@ -38,7 +39,6 @@ enum{
     W_EXPH,
     W_EXPV,
     W_EXPO,
-    PRIMERA_JUGADA,
     // acá deben agregarse nuevos defines ...
 
     // Antes de este de abajo! No después
@@ -56,7 +56,7 @@ class golosa{
 
         // Métodos públicos
         int jugar(c_linea juego);
-        static int cuantos_parametros(int N, int M, int C); // devuelve cuántos parámetros variables necesita la clase
+        static uint cuantos_parametros(int N, int M, int C); // devuelve cuántos parámetros variables necesita la clase
 
         //Pongo los features publicos porque sino no se pueden testear. Igualmente seguro cambiemos todo esto
         float fila_media(const c_linea &juego, int jugador); // la media de al distribucion de las fichas por fila
@@ -72,7 +72,7 @@ class golosa{
         const int yo;
 
         // Métodos auxiliares para calcular jugada
-        float puntaje(c_linea &juego, int jugada_recien);
+        float puntaje(c_linea &juego, int jugada_recien, int yo);
 
         uint contar_lineas(int contador_der, int contador_izq, int largo);
         uint lineas_nuevas(const c_linea &juego, int largo, int columna, int jugador); // # líneas de long 'largo' que se formaron en la última jugada en 'columna' (de 'jugador')
@@ -87,6 +87,7 @@ class golosa{
         vector<float> leer_parametros(int argc, char const *argv[], int C);
         void print_help();
         string to_argv();
+        void say_hello();
 
 };
 

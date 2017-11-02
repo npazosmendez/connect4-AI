@@ -1,6 +1,6 @@
 #include "golosa.hpp"
 #include "c_linea.hpp"
-#include "limits.h"
+#include <limits>
 #include <string.h>
 #include <string>
 #include <cmath>
@@ -15,13 +15,14 @@ int golosa::jugar(c_linea juego){
     if (primera_jugada(juego) && (int)parametros[PRIMERA_JUGADA] != -1){
         return (int)parametros[PRIMERA_JUGADA];
     }
+    int yo = juego.turno();
     int res = -1;
     float puntaje_max = 0;
     for (int i = 0; i < juego.N; i++) {
         // para cada jugada posible
         if (juego.tablero()[i][juego.M-1]==0) {
             juego.jugar(yo, i);
-            float temp = puntaje(juego,i);
+            float temp = puntaje(juego,i, yo);
             if (temp > puntaje_max || res == -1) {
                 res = i;
                 puntaje_max = temp;
@@ -32,7 +33,7 @@ int golosa::jugar(c_linea juego){
     return res;
 }
 
-float golosa::puntaje(c_linea &juego, int jugada_recien){
+float golosa::puntaje(c_linea &juego, int jugada_recien, int yo){
 	float puntaje=0;
 
 	// parametros //
@@ -72,7 +73,7 @@ float golosa::puntaje(c_linea &juego, int jugada_recien){
 
 bool golosa::primera_jugada(const c_linea &juego){
     for (int i = 0; i < juego.N; i++) {
-        if (!juego.tablero()[i].empty())
+        if (!juego.tablero()[i][0] == 0)
             return false;
     }
     return true;
@@ -282,6 +283,9 @@ uint golosa::perjudica_rival(const c_linea &juego, int col){
 }
 
 uint golosa::dispersion(const c_linea &juego, int jugador){
+    // TODO: arreglar esta función, que tira float exception.
+    return 0;
+    /*
 	int distFila[M];
 	for(int i=0;i<M;i++)//inicializo en 0
 		distFila[i]=0;
@@ -310,6 +314,7 @@ uint golosa::dispersion(const c_linea &juego, int jugador){
 		}
 	}
 	return ((uint)(total/sumados));
+    */
 }
 
 float golosa::fila_media(const c_linea &juego, int jugador){
@@ -502,13 +507,15 @@ vector<float> golosa::lineas_extensibles(const c_linea &juego, int jugador){
 golosa::golosa(int N, int M, int C, int yo) : parametros(PARAM_COUNT), N(N), M(M), C(C), yo(yo) {}
 
 golosa::golosa(vector<float> param, int N, int M, int C, int yo) : parametros(param), N(N), M(M), C(C), yo(yo) {
-    assert(param.size() == PARAM_COUNT);
+    // say_hello();
+    assert(param.size() == cuantos_parametros(N,  M, C));
 };
 
 golosa::golosa(int argc, char const *argv[], int N, int M, int C, int yo) : parametros(leer_parametros(argc, argv, C)), N(N), M(M), C(C), yo(yo) {
+    // say_hello();
 };
 
-int golosa::cuantos_parametros(int N, int M, int C){
+uint golosa::cuantos_parametros(int N, int M, int C){
     return PARAM_COUNT;
 }
 
@@ -546,6 +553,17 @@ std::vector<std::string> string_to_argv(string argv){
 }
 
 
+void golosa::say_hello(){
+    cout << "Acabás de crear un goloso, con:"<< endl;
+    cout << "N: "<< N << endl;
+    cout << "M: "<< M << endl;
+    cout << "C: "<< C << endl;
+    cout << "Parámetros: "<< endl;
+    for (size_t i = 0; i < PARAM_COUNT; i++) {
+        cout << parametros[i] << endl;
+    }
+}
+
 vector<float> golosa::leer_parametros(int argc, char const *argv[], int C){
     /* NOTE: los parámetros se cargan secuencialmente, sin flags que indiquen
     qué son. Es decir, deben estar en el mismo orden en que se definen en los
@@ -553,10 +571,11 @@ vector<float> golosa::leer_parametros(int argc, char const *argv[], int C){
     parámetros.
     */
     vector<float> pesos;
-    for (size_t i = 1; i < PARAM_COUNT + 1; i++) {
+    for (size_t i = 1; i < PARAM_COUNT+1; i++) {
         pesos.push_back(stof(argv[i]));
+
     }
-    pesos[PRIMERA_JUGADA] = floor(pesos[PRIMERA_JUGADA]);
+    pesos[PRIMERA_JUGADA] = int(pesos[PRIMERA_JUGADA]);
     assert((int)pesos[PRIMERA_JUGADA] >= -1 && (int)pesos[PRIMERA_JUGADA] < C);
 
     return pesos;

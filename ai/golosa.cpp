@@ -206,10 +206,7 @@ uint golosa::perjudica_rival(const c_linea &juego, int col){
 	return (hayAdyEnemigo&&!hayAdyMio);
 }
 
-uint golosa::dispersion(const c_linea &juego, int jugador){
-    // TODO: arreglar esta función, que tira float exception.
-    return 0;
-    /*
+uint golosa::dispersion(const c_linea &juego, int jugador){ 
 	int distFila[M];
 	for(int i=0;i<M;i++)//inicializo en 0
 		distFila[i]=0;
@@ -237,8 +234,10 @@ uint golosa::dispersion(const c_linea &juego, int jugador){
 			sumados++;
 		}
 	}
-	return ((uint)(total/sumados));
-    */
+	if(sumados==0)
+		return 0;
+	else
+		return ((uint)(total/sumados));
 }
 
 float golosa::fila_media(const c_linea &juego, int jugador){

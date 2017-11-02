@@ -4,7 +4,7 @@
 #include <time.h>
 #include "golosa.hpp"
 using namespace std;
-typedef golosa::pesos_t pesos;
+typedef vector<float> pesos;
 
 class gen_trainer{
     private:
@@ -19,6 +19,8 @@ class gen_trainer{
         float p_mutation;
         pesos max_achieved;
 
+        // uso interno
+        string __to_argv(pesos p);
         float __get_rand_float();
 
     public:
@@ -30,8 +32,5 @@ class gen_trainer{
         pesos train(uint pop_size);
         pesos get_max() const;
 };
-
-
-
 
 #endif

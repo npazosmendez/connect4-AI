@@ -26,8 +26,9 @@
 */
 pesos gen_trainer::train(uint pop_size){
     // generate initial population
-    vector<pesos> pop = vector<pesos>(pop_size);
+    vector< pesos > pop = vector< pesos >(pop_size);
     vector<float> pop_fitness;
+    vector< pesos > new_pop;
     uint gen_count = 0;
     for (uint i = 0; i < pop_size; i++) {
         pop[i] = this->randon_genome();
@@ -35,7 +36,7 @@ pesos gen_trainer::train(uint pop_size){
     // empieza ciclo evolutivo
     do{
         gen_count++;
-        vector<pesos> new_pop = vector<pesos>(pop_size);
+        new_pop = vector< pesos >(pop_size);
         pop_fitness = vector<float>(pop_size , -1);
         for (uint i = 0; i < pop_size; i++) {
             // agarro dos padres
@@ -49,7 +50,7 @@ pesos gen_trainer::train(uint pop_size){
             new_pop[i] = child;
         }
         pop = new_pop;
-    }while(gen_count < this->gen_limit);
+    } while(gen_count < this->gen_limit);
     // pop_fitness y pop tiene las povlaciones y los correspondientes
     // valores de fitness de la última generación de individuos
     pesos max_pesos; float max_fit = -1;
@@ -67,53 +68,29 @@ pesos gen_trainer::train(uint pop_size){
 
 
 pesos gen_trainer::crossover(pesos p1, pesos p2){
-    uint cross_section = rand() % PESOS_COUNT + 1;
-    pesos p_son = pesos();
-    // inicio el vector de altura del hijo de p1 y p2
-    p_son.alturas = vector<float> (p1.alturas.size());
-    // casteo p1, p2 y p_son a float* para hacer el crossover mas facil
-    float* son_values = (float*) &p_son;
-    float* p1_values = (float*) &p1;
-    float* p2_values = (float*) &p2;
-    // copy first 'cross_section' float parameters
-    memcpy((void*) son_values, (void*) p1_values, sizeof(float)*cross_section);
-    // increment pointer in corresponding qty
-    son_values+=cross_section;
-    p2_values+=cross_section;
-    if (cross_section < PESOS_COUNT) {
-        // el crossover involucra parte del genonma de p2
-        // PESOS_COUNT-cross_section >= 1
-        memcpy((void*) son_values, (void*) p2_values, sizeof(float)*(PESOS_COUNT-cross_section));
-    } // up to this point, p1 and p2 float parameteres have been crossed over
-    // crossover array of heights
-    uint heights_cross_section = rand() % p1.alturas.size();
-    for (uint i = 0; i <= heights_cross_section; i++) {
-        p_son.alturas[i] = p1.alturas[i];
-    }
-    if (heights_cross_section < p1.alturas.size() - 1) {
-        for (uint i = heights_cross_section+1; i < p1.alturas.size(); i++) {
-            p_son.alturas[i] = p1.alturas[i];
+    uint cross_section = rand() % PARAM_COUNT + 1;
+    if (cross_section == PARAM_COUNT) {
+        return p1;
+    }else{
+        pesos p_son = pesos(PARAM_COUNT);
+        for (uint i = 0; i < PARAM_COUNT; i++) {
+            // copio los primeros cross_section parametros de p1, el resto de 2
+            p_son[i] = i < cross_section ?  p1[i] : p2[i];
         }
+        return p_son;
     }
-    return p_son;
 }
 
 void gen_trainer::mutate(pesos &p){
     float lottery = rand()/RAND_MAX; // lottery ~ U[0,1]
     if (lottery < this->p_mutation) {
         // mutation achieved
-        uint mutation_idx = rand() % PESOS_COUNT;
-        float* p_floats = (float*) &p;
-        int random_num = rand();
-        random_num &= 0x7FFFFFFF; // bit de signo en positivo
-        // copy int bytes assuming is float, in order to get random number 
-        memcpy((void*)&p_floats[mutation_idx], &random_num, sizeof(float));
-        // randomizo algun valor del vector alturas tambien? o lo cuento en mutation_idx y
-        // sale sorteado ahi?
+        uint mutation_idx = rand() % PARAM_COUNT;
+        p[mutation_idx] = this->__get_rand_float();
     }
 }
 
-pesos gen_trainer::random_selection(vector<pesos> ps, vector<float> &fs){
+pesos gen_trainer::random_selection(vector< pesos > ps, vector<float> &fs){
     // ps: poblacion de pesos actual
     // fs: fitness converetido en proba fs(p) = 1 - (1/fitness(p))
     // proba entre 0 y 1, cuanto mayor el fitness, mayor la proba
@@ -152,21 +129,20 @@ uint gen_trainer::fitness(pesos p){
     string command = "python c_linea.py -- blue_player ./random_player --first ";
     // primero empieza rojo (yo)
     string call = string(command);
-    call += "rojo --iterations ";
-    call += std::to_string(iterations/2);
+    call += "rojo --iterations " + std::to_string(iterations/2);
     call += " --red_player ./golosa ";
-    call += p.to_argv();
+    call += this->__to_argv(p);
     std::system(call.c_str());
     float wins_1 = (float)contar_victorias("rojo");
     // segundo empieza azul (random)
     call = string(command);
-    call += "rojo --iterations ";
+    call += "azul --iterations " + std::to_string(iterations/2);
     call += std::to_string(iterations/2);
     call += " --red_player ./golosa ";
-    call += p.to_argv();
+    call += this->__to_argv(p);
     std::system(call.c_str());
     float wins_2 = (float)contar_victorias("rojo");
-    return 1 - (1/(wins_1 + wins_2));
+    return (wins_1 + wins_2) / iterations;
 }
 
 pesos gen_trainer::get_max() const{
@@ -174,25 +150,9 @@ pesos gen_trainer::get_max() const{
 }
 
 pesos gen_trainer::randon_genome(){
-    pesos p;
-    // randomizo los pesos de los feature no altura
-    for (int i = 0; i < PESOS_COUNT; i++) {
-        float* p_floats = (float*) &p;
-        int random_num = rand();
-        random_num &= 0x7FFFFFFF; // bit de signo en positivo
-        // copy int bytes assuming is float, in order to get random number 
-        memcpy((void*)&p_floats[i], &random_num, sizeof(float));
-    }
-    // asumo n era columnas
-    p.alturas = vector<float>(this->n);
-    //float* p_alturas_floats = (float*) p.alturas.data();
-    // mismo de randomizar, pero con pesos alturas
-    for (uint i = 0; i < this->n; i++) {
-        p.alturas[i] = this->__get_rand_float();
-        //int random_num = rand();
-        //random_num &= 0x7FFFFFFF; // bit de signo en positivo
-        //// copy int bytes assuming is float, in order to get random number 
-        //memcpy((void*)&p_alturas_floats[i], &random_num, sizeof(float));
+    pesos p = pesos(PARAM_COUNT);
+    for (int i = 0; i < PARAM_COUNT; i++) {
+        p[i] = this->__get_rand_float();
     }
     return p;
 }
@@ -202,4 +162,12 @@ float gen_trainer::__get_rand_float(){
         random_num &= 0x7FFFFFFF; // bit de signo en positivo
         void* ptr = &random_num;
         return *((float*)ptr);
+}
+
+string gen_trainer::__to_argv(pesos p){
+    string s;
+    for (uint i = 0; i < p.size(); i++) {
+        s += std::to_string(p[i]);
+    }
+    return s;
 }

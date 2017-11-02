@@ -71,6 +71,9 @@ class golosa{
         inline vector<float> _ver_pesos() { return this->parametros; }
         vector<int> lineas_extensibles(const c_linea &juego, int jugador); // para 0 <= i <= C-1, indica la cantidad de líneas de longitud 'i' de color 'jugador' que sean extensibles a una de C
         bool imbatible(const c_linea &juego, int jugador); // determina si hay una línea de C-1 de 'jugador' extendible a ambos lados
+	
+	uint dispersion(const c_linea &juego, int jugador); // se fija la mayor distancia entre dos fichas de un jugador por cada linea (con al menos dos fichas de tal jugador) y las promedia
+
     private:
 
         // Variables privadas
@@ -87,7 +90,6 @@ class golosa{
         uint exp_vertical(const c_linea &juego, int columna); // 1 o 0 segun si se colocó arriba de otra ficha del mismo jugador
         uint exp_oblicua(const c_linea &juego, int columna); // 1 o 0 segun si se colocó en diagonal a otra ficha del mismo jugador
         uint perjudica_rival(const c_linea &juego, int columna); // 1 o 0 segun si se colocó arriba de otra ficha del mismo jugador
-        uint dispersion(const c_linea &juego, int jugador); // se fija la mayor distancia entre dos fichas de un jugador por cada linea (con al menos dos fichas de tal jugador) y las promedia
         bool primera_jugada(const c_linea &juego);
 
         // Otros métodos auxiliares

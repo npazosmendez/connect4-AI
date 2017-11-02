@@ -19,8 +19,9 @@ class gen_trainer{
         float p_mutation;
         pesos max_achieved;
 
+        // uso interno
+        string __to_argv(pesos p);
         float __get_rand_float();
-        int __get_rand_int();
 
     public:
         gen_trainer();

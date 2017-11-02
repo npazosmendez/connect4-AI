@@ -26,8 +26,9 @@
 */
 pesos gen_trainer::train(uint pop_size){
     // generate initial population
-    vector<pesos> pop = vector<pesos>(pop_size);
+    vector< pesos > pop = vector< pesos >(pop_size);
     vector<float> pop_fitness;
+    vector< pesos > new_pop;
     uint gen_count = 0;
     for (uint i = 0; i < pop_size; i++) {
         pop[i] = this->randon_genome();
@@ -35,7 +36,7 @@ pesos gen_trainer::train(uint pop_size){
     // empieza ciclo evolutivo
     do{
         gen_count++;
-        vector<pesos> new_pop = vector<pesos>(pop_size);
+        new_pop = vector< pesos >(pop_size);
         pop_fitness = vector<float>(pop_size , -1);
         for (uint i = 0; i < pop_size; i++) {
             // agarro dos padres
@@ -49,7 +50,7 @@ pesos gen_trainer::train(uint pop_size){
             new_pop[i] = child;
         }
         pop = new_pop;
-    }while(gen_count < this->gen_limit);
+    } while(gen_count < this->gen_limit);
     // pop_fitness y pop tiene las povlaciones y los correspondientes
     // valores de fitness de la última generación de individuos
     pesos max_pesos; float max_fit = -1;
@@ -128,21 +129,20 @@ uint gen_trainer::fitness(pesos p){
     string command = "python c_linea.py -- blue_player ./random_player --first ";
     // primero empieza rojo (yo)
     string call = string(command);
-    call += "rojo --iterations ";
-    call += std::to_string(iterations/2);
+    call += "rojo --iterations " + std::to_string(iterations/2);
     call += " --red_player ./golosa ";
-    call += p.to_argv();
+    call += this->__to_argv(p);
     std::system(call.c_str());
     float wins_1 = (float)contar_victorias("rojo");
     // segundo empieza azul (random)
     call = string(command);
-    call += "rojo --iterations ";
+    call += "azul --iterations " + std::to_string(iterations/2);
     call += std::to_string(iterations/2);
     call += " --red_player ./golosa ";
-    call += p.to_argv();
+    call += this->__to_argv(p);
     std::system(call.c_str());
     float wins_2 = (float)contar_victorias("rojo");
-    return 1 - (1/(wins_1 + wins_2));
+    return (wins_1 + wins_2) / iterations;
 }
 
 pesos gen_trainer::get_max() const{
@@ -150,7 +150,11 @@ pesos gen_trainer::get_max() const{
 }
 
 pesos gen_trainer::randon_genome(){
-
+    pesos p = pesos(PARAM_COUNT);
+    for (int i = 0; i < PARAM_COUNT; i++) {
+        p[i] = this->__get_rand_float();
+    }
+    return p;
 }
 
 float gen_trainer::__get_rand_float(){
@@ -160,8 +164,10 @@ float gen_trainer::__get_rand_float(){
         return *((float*)ptr);
 }
 
-int gen_trainer::__get_rand_int(){
-        int random_num = rand();
-        random_num &= 0x7FFFFFFF; // bit de signo en positivo
-        return random_num;
+string gen_trainer::__to_argv(pesos p){
+    string s;
+    for (uint i = 0; i < p.size(); i++) {
+        s += std::to_string(p[i]);
+    }
+    return s;
 }

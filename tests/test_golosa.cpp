@@ -36,10 +36,8 @@ TEST(golosa_test, dispersion) {
     EXPECT_EQ(golo.dispersion(juego, 2), 0);
     juego.jugar2(9);
     EXPECT_EQ(golo.dispersion(juego, 2), 8);
-    juego.jugar1(2);
+    juego.jugar1(1);
     juego.jugar2(1);
-    juego.jugar1(2);
-    juego.jugar2(1);
-    juego.jugar1(9);
+    juego.jugar1(8);
     EXPECT_EQ(golo.dispersion(juego, 1), 6);
 }

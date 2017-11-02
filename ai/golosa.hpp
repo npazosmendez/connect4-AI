@@ -30,6 +30,7 @@ Curiosidades a tener en cuenta:
 // Definiciones de parámetros
 // (la 'W' se refiere a weight, pero siéntanse libres de cambiarlo)
 enum{
+    PRIMERA_JUGADA,
     W_FICHAS1,
     W_FICHAS2,
     W_DISPERSION1,
@@ -55,11 +56,13 @@ class golosa{
 
         // Métodos públicos
         int jugar(c_linea juego);
+        static uint cuantos_parametros(int N, int M, int C); // devuelve cuántos parámetros variables necesita la clase
 
         //Pongo los features publicos porque sino no se pueden testear. Igualmente seguro cambiemos todo esto
         float fila_media(const c_linea &juego, int jugador); // la media de al distribucion de las fichas por fila
         float columna_media(const c_linea &juego, int jugador); // la media de al distribucion de las fichas por columna
         inline vector<float> _ver_pesos() { return this->parametros; }
+        vector<float> lineas_extensibles(const c_linea &juego, int jugador); // para 0 <= i <= C-1, indica la cantidad de líneas de longitud 'i' de color 'jugador' que sean extensibles a una de C
     private:
 
         // Variables privadas
@@ -69,7 +72,7 @@ class golosa{
         const int yo;
 
         // Métodos auxiliares para calcular jugada
-        float puntaje(c_linea &juego, int jugada_recien);
+        float puntaje(c_linea &juego, int jugada_recien, int yo);
 
         uint contar_lineas(int contador_der, int contador_izq, int largo);
         uint lineas_nuevas(const c_linea &juego, int largo, int columna, int jugador); // # líneas de long 'largo' que se formaron en la última jugada en 'columna' (de 'jugador')
@@ -78,11 +81,13 @@ class golosa{
         uint exp_oblicua(const c_linea &juego, int columna); // 1 o 0 segun si se colocó en diagonal a otra ficha del mismo jugador
         uint perjudica_rival(const c_linea &juego, int columna); // 1 o 0 segun si se colocó arriba de otra ficha del mismo jugador
         uint dispersion(const c_linea &juego, int jugador); // se fija la mayor distancia entre dos fichas de un jugador por cada linea (con al menos dos fichas de tal jugador) y las promedia
+        bool primera_jugada(const c_linea &juego);
 
         // Otros métodos auxiliares
-        vector<float> leer_pesos(int argc, char const *argv[]);
+        vector<float> leer_parametros(int argc, char const *argv[], int C);
         void print_help();
         string to_argv();
+        void say_hello();
 
 };
 

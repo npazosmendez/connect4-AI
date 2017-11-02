@@ -1,8 +1,9 @@
 #include "golosa.hpp"
 #include "c_linea.hpp"
-#include "limits.h"
+#include <limits>
 #include <string.h>
 #include <string>
+#include <cmath>
 
 using namespace std;
 
@@ -11,13 +12,17 @@ int golosa::jugar(c_linea juego){
     /* Dentro de las jugadas posibles, esta función elige la que lleva al juego
     al mejor tablero posible para el jugador, cuyo 'puntaje' se determina
     con la función de tal nombre, combinando features del tablero. */
+    if (primera_jugada(juego) && (int)parametros[PRIMERA_JUGADA] != -1){
+        return (int)parametros[PRIMERA_JUGADA];
+    }
+    int yo = juego.turno();
     int res = -1;
-    float puntaje_max;
+    float puntaje_max = 0;
     for (int i = 0; i < juego.N; i++) {
         // para cada jugada posible
         if (juego.tablero()[i][juego.M-1]==0) {
             juego.jugar(yo, i);
-            float temp = puntaje(juego,i);
+            float temp = puntaje(juego,i, yo);
             if (temp > puntaje_max || res == -1) {
                 res = i;
                 puntaje_max = temp;
@@ -28,9 +33,9 @@ int golosa::jugar(c_linea juego){
     return res;
 }
 
-float golosa::puntaje(c_linea &juego, int jugada_recien){
-	float puntaje=0; 
-   
+float golosa::puntaje(c_linea &juego, int jugada_recien, int yo){
+	float puntaje=0;
+
 	// parametros //
 	uint fichas1 = juego.fichas1 ();
 	uint fichas2 = juego.fichas2 ();
@@ -65,6 +70,15 @@ float golosa::puntaje(c_linea &juego, int jugada_recien){
 /* /////////////////////////////////////// */
 // FEATURES Y DEMÁS DE UN JUEGO PARTICULAR //
 /* /////////////////////////////////////// */
+
+bool golosa::primera_jugada(const c_linea &juego){
+    for (int i = 0; i < juego.N; i++) {
+        if (!juego.tablero()[i][0] == 0)
+            return false;
+    }
+    return true;
+}
+
 
 uint golosa::contar_lineas(int contador_der, int contador_izq, int largo){
     /* Auxiliar para lineas_nuevas(...):
@@ -269,6 +283,9 @@ uint golosa::perjudica_rival(const c_linea &juego, int col){
 }
 
 uint golosa::dispersion(const c_linea &juego, int jugador){
+    // TODO: arreglar esta función, que tira float exception.
+    return 0;
+    /*
 	int distFila[M];
 	for(int i=0;i<M;i++)//inicializo en 0
 		distFila[i]=0;
@@ -297,6 +314,7 @@ uint golosa::dispersion(const c_linea &juego, int jugador){
 		}
 	}
 	return ((uint)(total/sumados));
+    */
 }
 
 float golosa::fila_media(const c_linea &juego, int jugador){
@@ -342,7 +360,142 @@ float golosa::columna_media(const c_linea &juego, int jugador){
     return fichas_usadas==0 ? 0 : sumatoria_ponderada/fichas_usadas;
 }
 
+vector<float> golosa::lineas_extensibles(const c_linea &juego, int jugador){
+    assert(juego.M == M);
+    assert(juego.N == N);
+    assert(juego.C == C);
+    assert(jugador == 1 || jugador == 2);
+    vector<float> res(C);
 
+    // busco líneas horizontales
+    // NOTE: este está más o menos comentado. El vertical y diagonal son
+    // escencialmente iguales.
+    for (int fil = 0; fil < M; fil++) { // fila 'fil'
+        int contador = 0; // cuenta casilleros libres o de color 'jugador' consecutivos
+        int cant_completos = 0; // cuenta la cantidad de fichas propias en la línea que se está analizando actualmente
+        for (int col = 0; col < N; col++) { // columna 'col'
+            if (juego.tablero()[col][fil] == 0) {
+                // la línea sigue, y es otro espacio libre pa llenar
+                contador++;
+            }else if (juego.tablero()[col][fil] == jugador){
+                // la línea sigue, pero este ya lo llené
+                contador++;
+                cant_completos++;
+            }else{
+                // se cortó la línea
+                contador = 0;
+                cant_completos = 0;
+            }
+            /* si vengo con buena racha y sigo extendiendo la línea más
+             allá de C, me fijo si no acabo de dejar afuera una ficha mía
+             que había contado, que no llena las líneas extensibles que
+             contaré de ahora en más */
+            if (contador > C && juego.tablero()[col-C][fil] == jugador) {
+                cant_completos--;
+            }
+            if (contador >= C) {
+                // seguí y encontré una nueva línea extendible a C, con 'cant_completos' ya puestos
+                res[cant_completos]++;
+            }
+
+        }
+    }
+    // busco líneas verticales
+    for (int col = 0; col < N; col++) { // columna 'col'
+        int contador = 0;
+        int cant_completos = 0;
+        for (int fil = 0; fil < M; fil++) {  // fila 'fil'
+            if (juego.tablero()[col][fil] == 0) {
+                contador++;
+            }else if (juego.tablero()[col][fil] == jugador){
+                contador++;
+                cant_completos++;
+            }else{
+                contador = 0;
+                cant_completos = 0;
+            }
+            if (contador > C && juego.tablero()[col][fil-C] == jugador) cant_completos--;
+            if (contador >= C) res[cant_completos]++;
+        }
+    }
+
+    // busco líneas a  45°
+    for (int col_base = 0; col_base < N; col_base++) { // columna 'col_base'
+        // desde la base de 'col_base' para arriba
+        int contador = 0;
+        int cant_completos = 0;
+        for (int fil = 0; fil < M && col_base+fil<N; fil++) {
+            int col = col_base+fil;
+            if (juego.tablero()[col][fil] == 0) {
+                contador++;
+            }else if (juego.tablero()[col][fil] == jugador){
+                contador++;
+                cant_completos++;
+            }else{
+                contador = 0;
+                cant_completos = 0;
+            }
+            if (contador > C && juego.tablero()[col-C][fil-C] == jugador) cant_completos--;
+            if (contador >= C) res[cant_completos]++;
+        }
+        // desde el tope de 'col_base' para abajo
+        cant_completos = 0;
+        contador = 0;
+        for (int fil = M-1; fil >= 0 && (col_base-(M-1-fil)) >= 0; fil--) {
+            int col = col_base-(M-1-fil);
+            if (juego.tablero()[col][fil] == 0) {
+                contador++;
+            }else if (juego.tablero()[col][fil] == jugador){
+                contador++;
+                cant_completos++;
+            }else{
+                contador = 0;
+                cant_completos = 0;
+            }
+            if (contador > C && juego.tablero()[col+C][fil+C] == jugador) cant_completos--;
+            if (contador >= C) res[cant_completos]++;
+        }
+    }
+    // busco en diagonales de -45°
+    for (int col_base = 0; col_base < N; col_base++) {
+        int contador = 0;
+        int cant_completos = 0;
+        // desde la base de 'col_base' para arriba
+        for (int fil = 0; fil < M && col_base-fil>=0; fil++) {
+            int col = col_base-fil;
+            if (juego.tablero()[col][fil] == 0) {
+                contador++;
+            }else if (juego.tablero()[col][fil] == jugador){
+                contador++;
+                cant_completos++;
+            }else{
+                contador = 0;
+                cant_completos = 0;
+            }
+            if (contador > C && juego.tablero()[col+C][fil-C] == jugador) cant_completos--;
+            if (contador >= C) res[cant_completos]++;
+        }
+        // desde el tope de 'col_base' para abajo
+        cant_completos = 0;
+        contador = 0;
+        for (int fil = M-1; fil >= 0 && (col_base+(M-1-fil)) < N; fil--) {
+            int col = col_base+(M-1-fil);
+            if (juego.tablero()[col][fil] == 0) {
+                contador++;
+            }else if (juego.tablero()[col][fil] == jugador){
+                contador++;
+                cant_completos++;
+            }else{
+                contador = 0;
+                cant_completos = 0;
+            }
+            if (contador > C && juego.tablero()[col-C][fil+C] == jugador) cant_completos--;
+            if (contador >= C) res[cant_completos]++;
+        }
+    }
+
+    return res;
+}
 
 /* /////////////////////////////////////// */
 //   AUXILIARES DE INICIALIZACIÓN Y OTROS  //
@@ -354,10 +507,17 @@ float golosa::columna_media(const c_linea &juego, int jugador){
 golosa::golosa(int N, int M, int C, int yo) : parametros(PARAM_COUNT), N(N), M(M), C(C), yo(yo) {}
 
 golosa::golosa(vector<float> param, int N, int M, int C, int yo) : parametros(param), N(N), M(M), C(C), yo(yo) {
-    assert(param.size() == PARAM_COUNT);
+    // say_hello();
+    assert(param.size() == cuantos_parametros(N,  M, C));
 };
 
-golosa::golosa(int argc, char const *argv[], int N, int M, int C, int yo) : parametros(leer_pesos(argc, argv)), N(N), M(M), C(C), yo(yo) {};
+golosa::golosa(int argc, char const *argv[], int N, int M, int C, int yo) : parametros(leer_parametros(argc, argv, C)), N(N), M(M), C(C), yo(yo) {
+    // say_hello();
+};
+
+uint golosa::cuantos_parametros(int N, int M, int C){
+    return PARAM_COUNT;
+}
 
 
 // devuelve string que comienza con los parametros de la gololsa, y termina con " "
@@ -393,16 +553,31 @@ std::vector<std::string> string_to_argv(string argv){
 }
 
 
-vector<float> golosa::leer_pesos(int argc, char const *argv[]){
+void golosa::say_hello(){
+    cout << "Acabás de crear un goloso, con:"<< endl;
+    cout << "N: "<< N << endl;
+    cout << "M: "<< M << endl;
+    cout << "C: "<< C << endl;
+    cout << "Parámetros: "<< endl;
+    for (size_t i = 0; i < PARAM_COUNT; i++) {
+        cout << parametros[i] << endl;
+    }
+}
+
+vector<float> golosa::leer_parametros(int argc, char const *argv[], int C){
     /* NOTE: los parámetros se cargan secuencialmente, sin flags que indiquen
     qué son. Es decir, deben estar en el mismo orden en que se definen en los
     #define de c_linea.hpp. Esto es para hacer más fácil el agregado de
     parámetros.
     */
     vector<float> pesos;
-    for (size_t i = 1; i < PARAM_COUNT + 1; i++) {
+    for (size_t i = 1; i < PARAM_COUNT+1; i++) {
         pesos.push_back(stof(argv[i]));
+
     }
+    pesos[PRIMERA_JUGADA] = int(pesos[PRIMERA_JUGADA]);
+    assert((int)pesos[PRIMERA_JUGADA] >= -1 && (int)pesos[PRIMERA_JUGADA] < C);
+
     return pesos;
     /* El código de abajo es el viejo, que usaba flags para identificarlos */
     /*

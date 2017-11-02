@@ -56,8 +56,7 @@ int main(int argc, char const *argv[]) {
             el = 1;
         }
 
-
-        // Si soy la golosa, leo los pesos
+        // Si soy la golosa, leo los parámetros
         #if AI==GOLOSA
             golosa ai_golosa(argc,argv,columns,rows,c,yo);
         #endif

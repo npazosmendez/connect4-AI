@@ -1,11 +1,4 @@
-#include <string.h>
-#include <iostream>
-#include <stdio.h>
-#include <fstream>
-#include <stdlib.h>
-#include <cstdlib>
-
-#include "golosa.hpp"
+#include "training.hpp"
 
 using namespace std;
 

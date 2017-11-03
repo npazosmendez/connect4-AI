@@ -32,10 +32,10 @@ $(INCS):
 	$(CC) $(CFLAGS) -o $(AI_DIR)/$@.o -c $(AI_DIR)/$@.cpp
 
 clean:
-	-rm -f random_player *.o *~
+	-rm -f *.o *~
 	-rm -f $(AI_TYPES)
- 
-tags: 
+
+tags:
 	-rm tags
 	ctags -R *.cpp
 

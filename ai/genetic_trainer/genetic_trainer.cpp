@@ -126,7 +126,7 @@ y la misma cantidad en las que este va segundo. De parseo el log y veo cuantas g
 uint gen_trainer::fitness(pesos p){
     // TODO: Pasarle parametros al jugador goloso
     uint iterations = 50; // total
-    string command = "python c_linea.py -- blue_player ./random_player --first ";
+    string command = "python ../c_linea.py --blue_player ./random_player --first ";
     // primero empieza rojo (yo)
     string call = string(command);
     call += "rojo --iterations " + std::to_string(iterations/2);

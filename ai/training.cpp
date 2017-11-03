@@ -3,8 +3,8 @@
 using namespace std;
 
 // TODO: esto de abajo es bastante rígido, porque depende del 'pwd'
-#define BLUE_LOG_PATH "../log/player_communicator_azul.log"
-#define RED_LOG_PATH "../log/player_communicator_rojo.log"
+#define BLUE_LOG_PATH "log/player_communicator_azul.log"
+#define RED_LOG_PATH "log/player_communicator_rojo.log"
 
 int contar_victorias(const char* color){
     /* 'color' debe ser "azul" o "rojo" */
@@ -36,7 +36,7 @@ string to_argv(vector<float> pesos){
 }
 
 
-uint play_with_golosa(uint N, uint M, uint C, uint P, vector<float> pesos, uint games, string rival_exec, bool me_first, string root_loc) {
+uint play_with_golosa(uint N, uint M, uint C, uint P, vector<float> pesos, uint games, string rival_exec, bool me_first) {
     /*
     PARAMETROS:
     - N, M, C, P:   Descripcion del tablero
@@ -44,7 +44,6 @@ uint play_with_golosa(uint N, uint M, uint C, uint P, vector<float> pesos, uint 
     - games:        Cantidad de partidos a Jugar
     - rival_exec:   Comando para ejecutar el codigo del oponente
     - me_first:     Indica si el goloso juega primero
-    - root_loc:     Como se llega a la raiz del directorio (donde esta c_linea.py). Se se esta ahi, './', desde tests o ai, '../' y desde ai/grid_search, '../../'
 
     RETORNA:
     la cantidad de victorias del goloso de los games partidos
@@ -60,18 +59,18 @@ uint play_with_golosa(uint N, uint M, uint C, uint P, vector<float> pesos, uint 
     char command[1000];
     string color_first = me_first ? "rojo" : "azul";
     string params = to_argv(pesos);
-    sprintf (command, "python %sc_linea.py --blue_player %s --red_player %sgolosa %s --first %s --iterations %d --columns %d --rows %d --c %d --p %d",
-             root_loc.c_str(), rival_exec.c_str(), root_loc.c_str(), params.c_str(), color_first.c_str(), games, N, M, C, P);
+    sprintf (command, "python ../c_linea.py --blue_player %s --red_player ./golosa %s --first %s --iterations %d --columns %d --rows %d --c %d --p %d",
+             rival_exec.c_str(), params.c_str(), color_first.c_str(), games, N, M, C, P);
     cout << command << endl;
     system(command);
     return contar_victorias("rojo");
 }
 
-float regular_fitness(uint N, uint M, uint C, uint P, vector<float> pesos, string root_loc) {
+float regular_fitness(uint N, uint M, uint C, uint P, vector<float> pesos) {
     uint iterations_each = 25;
-    string rival = root_loc + "random_player";
-    uint wins_home = play_with_golosa(N,M,C,P,pesos,iterations_each,rival,true,root_loc);
-    uint wins_away = play_with_golosa(N,M,C,P,pesos,iterations_each,rival,false,root_loc);
+    string rival = "../random_player";
+    uint wins_home = play_with_golosa(N,M,C,P,pesos,iterations_each,rival,true);
+    uint wins_away = play_with_golosa(N,M,C,P,pesos,iterations_each,rival,false);
     cout << wins_home << ", " << wins_away << ", " << ((float)(wins_home+wins_away))/(iterations_each*2) << endl << endl;
     return ((float)(wins_home+wins_away))/(iterations_each*2);
 }

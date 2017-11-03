@@ -23,5 +23,5 @@ void grid_search::thorough_train(int inf_limit, int sup_limit, float step){
 
 
 float grid_search::fitness(pesos& params){
-    return regular_fitness(this->columnas, this->filas, this->c, this->p, params, "../../");
+    return regular_fitness(this->columnas, this->filas, this->c, this->p, params);
 }

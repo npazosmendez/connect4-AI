@@ -1,5 +1,5 @@
 #include "genetic_trainer.hpp"
-#include "training.cpp"
+#include "../training.cpp"
 #include <string.h>
 #include <cstdlib>
 #include <stdlib.h>  

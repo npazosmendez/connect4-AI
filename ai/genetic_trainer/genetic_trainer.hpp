@@ -2,7 +2,7 @@
 #define GENETIC_TRAINGER_H
 
 #include <time.h>
-#include "golosa.hpp"
+#include "../golosa.hpp"
 using namespace std;
 typedef vector<float> pesos;
 

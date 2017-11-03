@@ -14,11 +14,11 @@ install:
 
 tests: $(TESTS) $(SRC)
 	make -C ../ai/
-	$(CC) $(FLAGS) $(GOOGLE_SHIT) $(TESTS) $(OBJ) -o tests
+	$(CC) $(FLAGS) $(GOOGLE_SHIT) $(TESTS) $(OBJ) -o ../bin/tests
 
 tests_c_linea: test_c_linea.cpp $(SRC)
 	make -C ../ai/
-	$(CC) $(FLAGS) $(GOOGLE_SHIT) test_c_linea.cpp $(OBJ) -o tests_c_linea
+	$(CC) $(FLAGS) $(GOOGLE_SHIT) test_c_linea.cpp $(OBJ) -o ../bin/tests_c_linea
 
 test: all
 	./tests
@@ -27,3 +27,4 @@ clean:
 	rm -f *.o
 	rm -f tests
 	rm -f *.gch
+	-rm ../bin/tests ../bin/tests_c_linea

@@ -8,7 +8,8 @@ all: $(EXECS)
 # Ejecutables (AIs)
 
 grid_search: main.cpp $(OBJ)
-	$(CC) $(FLAGS) $(OBJ) $< -o $@
+	make -C ../
+	$(CC) $(FLAGS) $(OBJ) $< -o ../../bin/$@
 
 # Objetos
 
@@ -20,3 +21,4 @@ clean:
 	rm -f *.o
 	rm -f $(EXECS)
 	rm -f *.gch
+	-rm ../../bin/$(EXECS)

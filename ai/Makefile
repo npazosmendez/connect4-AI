@@ -8,16 +8,16 @@ all: $(EXECS)
 # Ejecutables (AIs)
 
 minimax: ai.cpp $(OBJ)
-	$(CC) $(FLAGS) -DAI=MINIMAX $(OBJ) $< -o $@
+	$(CC) $(FLAGS) -DAI=MINIMAX $(OBJ) $< -o ../bin/$@
 
 minimax_ab: ai.cpp $(OBJ)
-	$(CC) $(FLAGS) -DAI=MINIMAX_AB $(OBJ) $< -o $@
+	$(CC) $(FLAGS) -DAI=MINIMAX_AB $(OBJ) $< -o ../bin/$@
 
 minimax_hc: ai.cpp $(OBJ)
-	$(CC) $(FLAGS) -DAI=MINIMAX_HC $(OBJ) $< -o $@
+	$(CC) $(FLAGS) -DAI=MINIMAX_HC $(OBJ) $< -o ../bin/$@
 
 golosa: ai.cpp $(OBJ) c_linea.o
-	$(CC) $(FLAGS) -DAI=GOLOSA $(OBJ) $< -o $@
+	$(CC) $(FLAGS) -DAI=GOLOSA $(OBJ) $< -o ../bin/$@
 
 
 # Objetos
@@ -25,8 +25,8 @@ golosa: ai.cpp $(OBJ) c_linea.o
 %.o: %.cpp %.hpp
 	$(CC) $(FLAGS) -c $< -o $@
 
-
 clean:
-	rm -f *.o
-	rm -f $(EXECS)
-	rm -f *.gch
+	-rm -f *.o
+	-rm -f $(EXECS)
+	-rm -f *.gch
+	-rm ../bin/*

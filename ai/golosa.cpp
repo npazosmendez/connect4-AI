@@ -58,7 +58,7 @@ float golosa::puntaje(c_linea juego, int jugada_recien, int yo, int el){
     vector<int> lineas_ext_el = lineas_extensibles(juego, el);
 
     /* EMERGENCY BUTTON !!!! */
-    if (lineas_ext_el[C-1] > 0) {
+    if (servida(juego)) {
         // Le estoy dejando una línea servida!
         // Devuelvo -infinito
         float menos_infinito = - numeric_limits<float>::max();
@@ -83,6 +83,22 @@ float golosa::puntaje(c_linea juego, int jugada_recien, int yo, int el){
         puntaje -= pesos_lineas[i]*lineas_ext_el[i]; // las de él restan
     }
 
+    ///////////////////////////////////////////////////////
+    /* ¿Qué pasa si mi oponente ahora juega arriba mío ? */
+    ///////////////////////////////////////////////////////
+    if (juego.tablero()[jugada_recien][juego.M-1]==0) { // si es que puede jugar...
+        juego.jugar(el, jugada_recien);
+
+        /* EMERGENCY BUTTON !!!! */
+        if (imbatible(juego, el)) {
+            // Le estoy dejando imbatibilidad servida!
+            // Devuelvo -infinito
+            float menos_infinito = - numeric_limits<float>::max();
+            return menos_infinito;
+        }
+
+        juego.desjugar(el, jugada_recien);
+    }
 
     //////////////////////////////////////////////////////////////
     /* ¿Qué pasa si esta misma jugada se la dejo a mi oponente? */
@@ -108,6 +124,10 @@ float golosa::puntaje(c_linea juego, int jugada_recien, int yo, int el){
          Tomo la diferencia con lo que tiene en el turno anterior,
          midiendo de alguna manera qué tanto lo cagué recién. */
     }
+
+
+
+
 
     return puntaje;
 }
@@ -206,7 +226,7 @@ uint golosa::perjudica_rival(const c_linea &juego, int col){
 	return (hayAdyEnemigo&&!hayAdyMio);
 }
 
-uint golosa::dispersion(const c_linea &juego, int jugador){ 
+uint golosa::dispersion(const c_linea &juego, int jugador){
 	int distFila[M];
 	for(int i=0;i<M;i++)//inicializo en 0
 		distFila[i]=0;
@@ -284,6 +304,12 @@ float golosa::columna_media(const c_linea &juego, int jugador){
 }
 
 vector<int> golosa::lineas_extensibles(const c_linea &juego, int jugador){
+    /*
+    Esta función calcula la cantidad de líneas exentibles a una de C del
+    color del jugador, que ya tengan 'i' fichas del jugador
+    (no necesariamente inmediatamente extensibles, podría faltar
+    altura de columnas).
+    */
     assert(juego.M == M);
     assert(juego.N == N);
     assert(juego.C == C);
@@ -419,10 +445,152 @@ vector<int> golosa::lineas_extensibles(const c_linea &juego, int jugador){
 
     return res;
 }
+bool golosa::servida(const c_linea &juego){
+    /*
+    Esa función verifica si el jugador que debe jugar ahora tiene una
+    jugada que le da la victoria inmediata. Es decir, busca una línea
+    extensible a C a la que le falte una sola ficha, pero que tal ficha
+    pueda ser puesta ahora mismo (es decir, que de la altura de la columna)
+    */
+    int jugador = juego.turno();
+    assert(juego.M == M);
+    assert(juego.N == N);
+    assert(juego.C == C);
+    assert(jugador == 1 || jugador == 2);
+
+    // busco líneas horizontales
+    // NOTE: este está más o menos comentado. El vertical y diagonal son
+    // escencialmente iguales.
+    for (int fil = 0; fil < M; fil++) { // fila 'fil'
+        int contador = 0; // cuenta casilleros libres llenables inmediatamente o de color 'jugador' consecutivos
+        int cant_completos = 0; // cuenta la cantidad de fichas propias en la línea que se está analizando actualmente
+        for (int col = 0; col < N; col++) { // columna 'col'
+            if (juego.tablero()[col][fil] == 0 && juego._alturas[col] == fil) {
+                // la línea sigue, y es otro espacio libre pa llenar inmediatamente
+                contador++;
+            }else if (juego.tablero()[col][fil] == jugador){
+                // la línea sigue, pero este ya lo llené
+                contador++;
+                cant_completos++;
+            }else{
+                // se cortó la línea
+                contador = 0;
+                cant_completos = 0;
+            }
+            /* si vengo con buena racha y sigo extendiendo la línea más
+             allá de C, me fijo si no acabo de dejar afuera una ficha mía
+             que había contado, que no llena las líneas extensibles que
+             contaré de ahora en más */
+            if (contador > C && juego.tablero()[col-C][fil] == jugador) {
+                cant_completos--;
+            }
+            if (contador >= C && cant_completos == C-1) {
+                return true;
+            }
+
+        }
+    }
+    // busco líneas verticales
+    for (int col = 0; col < N; col++) { // columna 'col'
+        int contador = 0;
+        int cant_completos = 0;
+        for (int fil = 0; fil < M; fil++) {  // fila 'fil'
+            if (juego.tablero()[col][fil] == 0 && juego._alturas[col] == fil) {
+                contador++;
+            }else if (juego.tablero()[col][fil] == jugador){
+                contador++;
+                cant_completos++;
+            }else{
+                contador = 0;
+                cant_completos = 0;
+            }
+            if (contador > C && juego.tablero()[col][fil-C] == jugador) cant_completos--;
+            if (contador >= C && cant_completos == C-1) return true;
+        }
+    }
+
+    // busco líneas a  45°
+    for (int col_base = 0; col_base < N; col_base++) { // columna 'col_base'
+        // desde la base de 'col_base' para arriba
+        int contador = 0;
+        int cant_completos = 0;
+        for (int fil = 0; fil < M && col_base+fil<N; fil++) {
+            int col = col_base+fil;
+            if (juego.tablero()[col][fil] == 0 && juego._alturas[col] == fil) {
+                contador++;
+            }else if (juego.tablero()[col][fil] == jugador){
+                contador++;
+                cant_completos++;
+            }else{
+                contador = 0;
+                cant_completos = 0;
+            }
+            if (contador > C && juego.tablero()[col-C][fil-C] == jugador) cant_completos--;
+            if (contador >= C && cant_completos == C-1) return true;
+        }
+        // desde el tope de 'col_base' para abajo
+        cant_completos = 0;
+        contador = 0;
+        for (int fil = M-1; fil >= 0 && (col_base-(M-1-fil)) >= 0; fil--) {
+            int col = col_base-(M-1-fil);
+            if (juego.tablero()[col][fil] == 0 && juego._alturas[col] == fil) {
+                contador++;
+            }else if (juego.tablero()[col][fil] == jugador){
+                contador++;
+                cant_completos++;
+            }else{
+                contador = 0;
+                cant_completos = 0;
+            }
+            if (contador > C && juego.tablero()[col+C][fil+C] == jugador) cant_completos--;
+            if (contador >= C && cant_completos == C-1) return true;
+        }
+    }
+    // busco en diagonales de -45°
+    for (int col_base = 0; col_base < N; col_base++) {
+        int contador = 0;
+        int cant_completos = 0;
+        // desde la base de 'col_base' para arriba
+        for (int fil = 0; fil < M && col_base-fil>=0; fil++) {
+            int col = col_base-fil;
+            if (juego.tablero()[col][fil] == 0 && juego._alturas[col] == fil) {
+                contador++;
+            }else if (juego.tablero()[col][fil] == jugador){
+                contador++;
+                cant_completos++;
+            }else{
+                contador = 0;
+                cant_completos = 0;
+            }
+            if (contador > C && juego.tablero()[col+C][fil-C] == jugador) cant_completos--;
+            if (contador >= C && cant_completos == C-1) return true;
+        }
+        // desde el tope de 'col_base' para abajo
+        cant_completos = 0;
+        contador = 0;
+        for (int fil = M-1; fil >= 0 && (col_base+(M-1-fil)) < N; fil--) {
+            int col = col_base+(M-1-fil);
+            if (juego.tablero()[col][fil] == 0 && juego._alturas[col] == fil) {
+                contador++;
+            }else if (juego.tablero()[col][fil] == jugador){
+                contador++;
+                cant_completos++;
+            }else{
+                contador = 0;
+                cant_completos = 0;
+            }
+            if (contador > C && juego.tablero()[col-C][fil+C] == jugador) cant_completos--;
+            if (contador >= C && cant_completos == C-1) return true;
+        }
+    }
+
+    return false;
+}
 
 bool golosa::imbatible(const c_linea &juego, int jugador){
-    /* determina si hay una línea de C-1 extendible a ambos lados,
-    por lo que el jugador ganaría en el próximo turno */
+    /* determina si hay una línea de C-1 extendible a ambos lados de
+    forma inmediata (es decir, la altura de las columnas permite llenar
+    esos casillero), por lo que el jugador ganaría en el próximo turno */
 
     // busco en filas
     for (int fil = 0; fil < M; fil++) {

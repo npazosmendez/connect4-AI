@@ -70,8 +70,9 @@ class golosa{
         float columna_media(const c_linea &juego, int jugador); // la media de al distribucion de las fichas por columna
         inline vector<float> _ver_pesos() { return this->parametros; }
         vector<int> lineas_extensibles(const c_linea &juego, int jugador); // para 0 <= i <= C-1, indica la cantidad de líneas de longitud 'i' de color 'jugador' que sean extensibles a una de C
-        bool imbatible(const c_linea &juego, int jugador); // determina si hay una línea de C-1 de 'jugador' extendible a ambos lados
-	
+        bool imbatible(const c_linea &juego, int jugador); // determina si hay una línea de C-1 de 'jugador' inmediatamente extendible a ambos lados
+        bool servida(const c_linea &juego); // determina si quien debe jugar ahora (turno) tiene una jugada ganadora inmediata
+
 	uint dispersion(const c_linea &juego, int jugador); // se fija la mayor distancia entre dos fichas de un jugador por cada linea (con al menos dos fichas de tal jugador) y las promedia
 
     private:

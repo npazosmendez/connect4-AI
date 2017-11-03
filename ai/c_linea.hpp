@@ -40,11 +40,11 @@ class c_linea{
         bool perdio1(){return perdio(1);};
         bool perdio2(){return perdio(2);};
         bool perdi(){return perdio(yo);};
-        uint turno() {return _turno;};
-        bool metoca() {return _turno==yo;};
-        uint fichas1(){return _p1;};
-        uint fichas2(){return _p2;};
-        uint fichas(){if (yo == 1) return fichas1(); else return fichas2();};
+        uint turno() const {return _turno;};
+        bool metoca() const {return _turno==yo;};
+        uint fichas1()const {return _p1;};
+        uint fichas2() const{return _p2;};
+        uint fichas() const {if (yo == 1) return fichas1(); else return fichas2();};
 
 
         // Variables públicas

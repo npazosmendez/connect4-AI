@@ -59,10 +59,11 @@ uint play_with_golosa(uint N, uint M, uint C, uint P, vector<float> pesos, uint 
     char command[1000];
     string color_first = me_first ? "rojo" : "azul";
     string params = to_argv(pesos);
-    sprintf (command, "python ../c_linea.py --blue_player %s --red_player ./golosa %s --first %s --iterations %d --columns %d --rows %d --c %d --p %d",
+    sprintf (command, "python ../c_linea.py --blue_player %s --red_player ./golosa %s --first %s --iterations %d --columns %d --rows %d --c %d --p %d --q True > /dev/null",
              rival_exec.c_str(), params.c_str(), color_first.c_str(), games, N, M, C, P);
     cout << command << endl;
-    system(command);
+    int code = system(command);
+    if (code) exit(1);
     return contar_victorias("rojo");
 }
 
@@ -71,6 +72,6 @@ float regular_fitness(uint N, uint M, uint C, uint P, vector<float> pesos) {
     string rival = "./random_player";
     uint wins_home = play_with_golosa(N,M,C,P,pesos,iterations_each,rival,true);
     uint wins_away = play_with_golosa(N,M,C,P,pesos,iterations_each,rival,false);
-    cout << wins_home << ", " << wins_away << ", " << ((float)(wins_home+wins_away))/(iterations_each*2) << endl << endl;
+    // cout << wins_home << ", " << wins_away << ", " << ((float)(wins_home+wins_away))/(iterations_each*2) << endl << endl;
     return ((float)(wins_home+wins_away))/(iterations_each*2);
 }

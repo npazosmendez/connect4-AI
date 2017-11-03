@@ -12,13 +12,14 @@ class gen_trainer{
         void mutate(pesos &p);
         pesos random_selection(vector<pesos> ps, vector<float> &fs);
         pesos randon_genome();
-        uint fitness(pesos p);
+        float fitness(pesos p);
 
         uint n,m,c;
         uint gen_limit;
         uint param_count;
         float p_mutation;
         pesos max_achieved;
+        float max_fitness_achieved;
 
         // uso interno
         string __to_argv(pesos p);
@@ -33,6 +34,7 @@ class gen_trainer{
         };
         pesos train(uint pop_size);
         pesos get_max() const;
+        inline float get_max_fitness(){ return this->max_fitness_achieved; };
 };
 
 #endif

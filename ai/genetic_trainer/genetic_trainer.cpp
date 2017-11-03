@@ -1,5 +1,5 @@
 #include "genetic_trainer.hpp"
-#include "../training.cpp"
+#include "../training.hpp"
 #include <string.h>
 #include <cstdlib>
 #include <stdlib.h>  
@@ -36,6 +36,7 @@ pesos gen_trainer::train(uint pop_size){
     // empieza ciclo evolutivo
     do{
         gen_count++;
+        std::cout << "generacion " << gen_count << std::endl;
         new_pop = vector< pesos >(pop_size);
         pop_fitness = vector<float>(pop_size , -1);
         for (uint i = 0; i < pop_size; i++) {
@@ -53,6 +54,7 @@ pesos gen_trainer::train(uint pop_size){
     } while(gen_count < this->gen_limit);
     // pop_fitness y pop tiene las povlaciones y los correspondientes
     // valores de fitness de la última generación de individuos
+    std::cout << "la evolucion a terminado!" << std::endl;
     pesos max_pesos; float max_fit = -1;
     for (uint i = 0; i < pop_size; i++) {
         if (pop_fitness[i] == -1) {
@@ -63,6 +65,8 @@ pesos gen_trainer::train(uint pop_size){
             max_fit = pop_fitness[i];
         }
     }
+    this->max_achieved = max_pesos;
+    this->max_fitness_achieved = max_fit;
     return max_pesos;
 }
 
@@ -97,10 +101,11 @@ pesos gen_trainer::random_selection(vector< pesos > ps, vector<float> &fs){
     // Si fs tiene -1, es que no fue calculado rodavía
     while(true){
         uint chosen_index = rand() % ps.size();
-        float lottery_num = rand() % RAND_MAX;
+        float lottery_num = rand() / RAND_MAX;
         if (fs[chosen_index] == -1) 
             // todavia no se calculo el fintess de ese genoma
             fs[chosen_index] = this->fitness(ps[chosen_index]);
+            std::cout << "Se calculo el fitness de " << chosen_index << " y dio " << fs[chosen_index] << std::endl;
         if (lottery_num < fs[chosen_index]) {
             // si el float en [0,1] sorteado es menor a la proba
             // que sale de evaluar el fitness, de forma que si es alta,
@@ -122,7 +127,7 @@ y la misma cantidad en las que este va segundo. De parseo el log y veo cuantas g
 */
 
 //"python2 c_linea.py —blue_player ./random_player —first rojo —red_player ./random_player —iterations 50"
-
+/*
 uint gen_trainer::fitness(pesos p){
     // TODO: Pasarle parametros al jugador goloso
     uint iterations = 50; // total
@@ -143,6 +148,10 @@ uint gen_trainer::fitness(pesos p){
     std::system(call.c_str());
     float wins_2 = (float)contar_victorias("rojo");
     return (wins_1 + wins_2) / iterations;
+}
+*/
+float gen_trainer::fitness(pesos p){
+    return regular_fitness(this->n, this->m, this->c, 100000, p);
 }
 
 pesos gen_trainer::get_max() const{

@@ -5,10 +5,10 @@ CFLAGS= -std=c++11 -O3 -Wall
 INCS= c_linea
 AI_TYPES= minimax minimax_ab golosa
 
-all: clean $(AI_TYPES)
+all: clean random_player
 
 random_player:
-	g++ -std=c++11 random_player.cpp -o random_player
+	g++ -std=c++11 random_player.cpp -o bin/random_player
 
 ## g++ -DAI=<ai> ...
 ## Por ejemplo: g++ -DAI=MINIMAX ai.cpp minimax.cpp -o minimax

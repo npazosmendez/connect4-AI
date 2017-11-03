@@ -16,6 +16,7 @@ class gen_trainer{
 
         uint n,m,c;
         uint gen_limit;
+        uint param_count;
         float p_mutation;
         pesos max_achieved;
 
@@ -27,6 +28,7 @@ class gen_trainer{
         gen_trainer();
         gen_trainer(uint _n, uint _m, uint _c, uint gl, float pm) :
             n(_n), m(_m), c(_c), gen_limit(gl), p_mutation(pm){
+            this->param_count = golosa::cuantos_parametros(this->n, this->m, this->c);
             srand (time(NULL));
         };
         pesos train(uint pop_size);

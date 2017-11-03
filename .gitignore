@@ -15,7 +15,8 @@ golosa
 tags
 tests/tests
 tests/tests_c_linea
-!bin/
 bin/*
+!bin/
+!bin/dog
 *main
 .Makefile

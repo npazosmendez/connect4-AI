@@ -12,7 +12,7 @@ int golosa::jugar(c_linea juego){
     /* Dentro de las jugadas posibles, esta función elige la que lleva al juego
     al mejor tablero posible para el jugador, cuyo 'puntaje' se determina
     con la función de tal nombre, combinando features del tablero. */
-    if (primera_jugada(juego) && (int)parametros[PRIMERA_JUGADA] != -1){
+    if (primera_jugada(juego) && (int)parametros[PRIMERA_JUGADA] > -1){
         return (int)parametros[PRIMERA_JUGADA];
     }
     int yo = juego.turno();
@@ -795,7 +795,7 @@ vector<float> golosa::leer_parametros(int argc, char const *argv[], int C){
 
     }
     params[PRIMERA_JUGADA] = int(params[PRIMERA_JUGADA]);
-    assert((int)params[PRIMERA_JUGADA] >= -1 && (int)params[PRIMERA_JUGADA] < C);
+    // assert((int)params[PRIMERA_JUGADA] >= -1 && (int)params[PRIMERA_JUGADA] < C);
 
     return params;
     /* El código de abajo es el viejo, que usaba flags para identificarlos */

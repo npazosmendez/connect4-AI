@@ -21,3 +21,12 @@ TEST(training_test, to_argv) {
 //     EXPECT_GT(contar_victorias("azul"), 0);
 //     EXPECT_GT(contar_victorias("rojo"), 0);
 // }
+
+// TEST(training_test, regular_fitness) {
+//     uint N = 4;
+//     uint M = 4;
+//     uint C = 3;
+//     std::vector<float> pesos(golosa::cuantos_parametros(N,M,C), 1);
+//
+//     cout << regular_fitness(N,M,C,20,pesos,"../") << endl;
+// }

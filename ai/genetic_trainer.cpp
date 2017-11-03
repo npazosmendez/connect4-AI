@@ -68,12 +68,12 @@ pesos gen_trainer::train(uint pop_size){
 
 
 pesos gen_trainer::crossover(pesos p1, pesos p2){
-    uint cross_section = rand() % PARAM_COUNT + 1;
-    if (cross_section == PARAM_COUNT) {
+    uint cross_section = rand() % this->param_count + 1;
+    if (cross_section == this->param_count) {
         return p1;
     }else{
-        pesos p_son = pesos(PARAM_COUNT);
-        for (uint i = 0; i < PARAM_COUNT; i++) {
+        pesos p_son = pesos(this->param_count);
+        for (uint i = 0; i < this->param_count; i++) {
             // copio los primeros cross_section parametros de p1, el resto de 2
             p_son[i] = i < cross_section ?  p1[i] : p2[i];
         }
@@ -85,7 +85,7 @@ void gen_trainer::mutate(pesos &p){
     float lottery = rand()/RAND_MAX; // lottery ~ U[0,1]
     if (lottery < this->p_mutation) {
         // mutation achieved
-        uint mutation_idx = rand() % PARAM_COUNT;
+        uint mutation_idx = rand() % this->param_count;
         p[mutation_idx] = this->__get_rand_float();
     }
 }
@@ -150,8 +150,8 @@ pesos gen_trainer::get_max() const{
 }
 
 pesos gen_trainer::randon_genome(){
-    pesos p = pesos(PARAM_COUNT);
-    for (int i = 0; i < PARAM_COUNT; i++) {
+    pesos p = pesos(this->param_count);
+    for (int i = 0; i < this->param_count; i++) {
         p[i] = this->__get_rand_float();
     }
     return p;

@@ -8,6 +8,7 @@ all: $(EXECS)
 # Ejecutables (AIs)
 
 grid_search: main.cpp $(OBJ)
+	make -C ../
 	$(CC) $(FLAGS) $(OBJ) $< -o ../../bin/$@
 
 # Objetos

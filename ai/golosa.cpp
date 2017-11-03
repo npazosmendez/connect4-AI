@@ -48,8 +48,8 @@ float golosa::puntaje(c_linea juego, int jugada_recien, int yo, int el){
 
 	// uint fichas1 = juego.fichas1 ();
 	// uint fichas2 = juego.fichas2 ();
-	uint dispersionJ1 = dispersion (juego, 1);
-	uint dispersionJ2 = dispersion (juego, 2);
+	uint dispersionJ1 = dispersion (juego, yo);
+	uint dispersionJ2 = dispersion (juego, el);
 	uint perjudica = perjudica_rival (juego, jugada_recien);
 	uint expHorizontal = exp_horizontal (juego, jugada_recien);
 	uint expVertical = exp_vertical (juego, jugada_recien);
@@ -74,9 +74,9 @@ float golosa::puntaje(c_linea juego, int jugada_recien, int yo, int el){
 	puntaje += dispersionJ1 * parametros[W_DISPERSION1];
 	puntaje += dispersionJ2 * parametros[W_DISPERSION2];
 	puntaje += perjudica * parametros[W_AGRESS];
-	puntaje += expHorizontal * parametros[W_EXPH];
-	puntaje += expVertical * parametros[W_EXPV];
-	puntaje += expOblicua * parametros[W_EXPO];
+	puntaje += expHorizontal * parametros[W_EXP];
+	puntaje += expVertical * parametros[W_EXP];
+	puntaje += expOblicua * parametros[W_EXP];
     for (int i = 0; i < C; i++) {
         // cantidad de líneas extensibles a C de longitud 'i'
         puntaje += pesos_lineas[i]*lineas_ext_yo[i]; // las mías suman

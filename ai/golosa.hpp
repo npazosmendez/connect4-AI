@@ -36,9 +36,7 @@ enum{
     W_DISPERSION1,
     W_DISPERSION2,
     W_AGRESS,
-    W_EXPH,
-    W_EXPV,
-    W_EXPO,
+    W_EXP,
     // acá deben agregarse nuevos defines ...
 
     // Antes de este de abajo! No después

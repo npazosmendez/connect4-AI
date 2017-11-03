@@ -1,18 +1,23 @@
-CC= g++
-CFLAGS= -std=c++11 -O3 -Wall
-INCS= ../golosa
-BIN= main
+CC = g++
+FLAGS = -std=c++11 -ggdb -Wall -O3
+OBJ = ../golosa.o ../c_linea.o genetic_trainer.o
+EXECS = genetic_trainer
 
-all: clean deps main
+all: $(EXECS)
 
-main:
-	$(CC) $(CFLAGS) -o $@ $@.cpp
+# Ejecutables (AIs)
 
-deps:
-	make -C ..
+genetic_trainer: main.cpp $(OBJ)
+	$(CC) $(FLAGS) $(OBJ) $< -o ../../bin/$@
+
+# Objetos
+
+%.o: %.cpp %.hpp
+	$(CC) $(FLAGS) -c $< -o $@
+
 
 clean:
-	-rm -f *.o *~
-	-rm -f $(AI_TYPES)
-
-.PHONY:clean
+	rm -f *.o
+	rm -f $(EXECS)
+	rm -f *.gch
+	-rm ../../bin/$(EXECS)

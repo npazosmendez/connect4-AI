@@ -16,5 +16,6 @@ tags
 tests/tests
 tests/tests_c_linea
 !bin/
-!bin/*
+bin/*
 *main
+.Makefile

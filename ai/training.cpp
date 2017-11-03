@@ -68,7 +68,7 @@ uint play_with_golosa(uint N, uint M, uint C, uint P, vector<float> pesos, uint 
 
 float regular_fitness(uint N, uint M, uint C, uint P, vector<float> pesos) {
     uint iterations_each = 25;
-    string rival = "../random_player";
+    string rival = "./random_player";
     uint wins_home = play_with_golosa(N,M,C,P,pesos,iterations_each,rival,true);
     uint wins_away = play_with_golosa(N,M,C,P,pesos,iterations_each,rival,false);
     cout << wins_home << ", " << wins_away << ", " << ((float)(wins_home+wins_away))/(iterations_each*2) << endl << endl;

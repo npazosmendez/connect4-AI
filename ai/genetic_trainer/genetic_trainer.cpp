@@ -5,7 +5,6 @@
 #include <stdlib.h>  
 #include <string>
 
-
 /*
     ----------------------------
     Search via Genetic Algorithm
@@ -24,7 +23,10 @@
     while !individual fit enough || generation limit
     return best individual from population
 */
+
 pesos gen_trainer::train(uint pop_size){
+    // asser que las poblaciones sean de tamaño mayor a 2
+    assert(pop_size >= 2);
     // generate initial population
     vector< pesos > pop = vector< pesos >(pop_size);
     vector<float> pop_fitness;
@@ -33,16 +35,31 @@ pesos gen_trainer::train(uint pop_size){
     for (uint i = 0; i < pop_size; i++) {
         pop[i] = this->randon_genome();
     }
+
+    // primer jugador golosa, va a ser uno random entre los genomas
+
     // empieza ciclo evolutivo
     do{
         gen_count++;
-        std::cout << "generacion " << gen_count << std::endl;
+        std::cout << "-------------------------------------------------------" << gen_count << std::endl;
+        std::cout << "> generacion " << gen_count << std::endl;
+        std::cout << "-------------------------------------------------------" << gen_count << std::endl;
         new_pop = vector< pesos >(pop_size);
-        pop_fitness = vector<float>(pop_size , -1);
+        // genero golosas a partir de poblacion
+        std::cout << "> genereando golosas" << std::endl;
+        list<golosa> pob_golosas = this->golosas_from_pop(pop);
+        // hago que todos jueguen el fixture
+        std::cout << "> corriendo fixture" << std::endl;
+        list<golosa> pob_rankings = 
+            fixture_golosas(this->n, this->m, this->c, this->p, pob_golosas);
+        // agarro dos padres
+        // estos serán los correspondientes a las dos golosas mejor rakeadas
+        auto it_rankings = pob_rankings.begin();
+        pesos p1 = (*it_rankings).join_params();
+        it_rankings++;
+        pesos p2 = (*it_rankings).join_params();
+        std::cout << "> genereando nueva población" << std::endl;
         for (uint i = 0; i < pop_size; i++) {
-            // agarro dos padres
-            pesos p1 = this->random_selection(pop, pop_fitness);
-            pesos p2 = this->random_selection(pop, pop_fitness);
             // nace hijo
             pesos child = this->crossover(p1, p2);
             // muta
@@ -55,26 +72,34 @@ pesos gen_trainer::train(uint pop_size){
     // pop_fitness y pop tiene las povlaciones y los correspondientes
     // valores de fitness de la última generación de individuos
     std::cout << "la evolucion a terminado!" << std::endl;
-    pesos max_pesos; float max_fit = -1;
-    for (uint i = 0; i < pop_size; i++) {
-        if (pop_fitness[i] == -1) {
-            pop_fitness[i] = this->fitness(pop[i]);
-        }
-        if (max_fit < pop_fitness[i]) {
-            max_pesos = pop[i];
-            max_fit = pop_fitness[i];
-        }
-    }
+    // genero golosas a partir de poblacion
+    list<golosa> pob_golosas = this->golosas_from_pop(pop);
+    // hago que todos jueguen el fixture
+    list<golosa> pob_rankings = 
+        fixture_golosas(this->n, this->m, this->c, this->p, pob_golosas);
+    // agarro dos padres
+    // estos serán los correspondientes a las dos golosas mejor rakeadas
+    auto it_rankings = pob_rankings.begin();
+    pesos max_pesos = (*it_rankings).join_params();
     this->max_achieved = max_pesos;
-    this->max_fitness_achieved = max_fit;
     return max_pesos;
 }
 
+list<golosa> gen_trainer::golosas_from_pop( vector<pesos> ps ){
+    list<golosa> l;
+    for (vector<pesos>::const_iterator it = ps.begin();
+           it != ps.end(); it++) {
+        l.push_front(golosa(*it, this->n, this->m, this->c));
+    }
+    return l;
+}
 
 pesos gen_trainer::crossover(pesos p1, pesos p2){
-    uint cross_section = rand() % this->param_count + 1;
-    if (cross_section == this->param_count) {
+    uint cross_section = rand() % this->param_count;
+    if (cross_section == this->param_count - 1) {
         return p1;
+    }else if (cross_section == 0) {
+        return p2;
     }else{
         pesos p_son = pesos(this->param_count);
         for (uint i = 0; i < this->param_count; i++) {
@@ -85,12 +110,37 @@ pesos gen_trainer::crossover(pesos p1, pesos p2){
     }
 }
 
+
+golosa gen_trainer::crossover(golosa g1, golosa g2){
+    uint cross_section = rand() % this->param_count; // 0 <= cross_section <= this->param_count - 1
+    if (cross_section == this->param_count - 1) {
+        // g1 queda en el crossover
+        return g1;
+    }else if(cross_section == 0){
+        // g2 queda en el crossover
+        return g2;
+    }else{ // 0 < cross_section < this->param_count - 1 
+        vector<float> cross_p(this->param_count); 
+        for (uint i = 0; i < this->param_count; i++) {
+            if (i < PARAM_COUNT) {
+                // copiando de parametros
+                cross_p[i] = i < cross_section ?  g1.ver_parametros()[i] : g1.ver_parametros()[i];
+            }else{
+                // copiando de pesos lineales
+                cross_p[i] = i < cross_section ?  g1.ver_pesos_lineas()[i] : g2.ver_pesos_lineas()[i];
+            }
+        }
+        return golosa(cross_p, this->n, this->m, this->c);
+    }
+}
+
+
 void gen_trainer::mutate(pesos &p){
     float lottery = rand()/RAND_MAX; // lottery ~ U[0,1]
     if (lottery < this->p_mutation) {
-        std::cout << "mutando perro" << std::endl;
         // mutation achieved
         uint mutation_idx = rand() % this->param_count;
+        std::cout << "> hubo mutación en el gen " << mutation_idx << std::endl;
         if (mutation_idx != PRIMERA_JUGADA) {
             p[mutation_idx] = (int)this->__get_rand_float() % this->n;
         }else{
@@ -124,40 +174,6 @@ pesos gen_trainer::random_selection(vector< pesos > ps, vector<float> &fs){
 }
 
 
-/*
-   IDEA
-Pongo a correr c_linea una cierta cantidad de iteraciones en las que este empieza,
-y la misma cantidad en las que este va segundo. De parseo el log y veo cuantas gane.
- - Jugar X/2 veces contra el random siendo primero
- - Jugar X/2 veces contra el random siendo último
- - fitness = 1 - 1/wins
-*/
-
-//"python2 c_linea.py —blue_player ./random_player —first rojo —red_player ./random_player —iterations 50"
-/*
-uint gen_trainer::fitness(pesos p){
-    // TODO: Pasarle parametros al jugador goloso
-    uint iterations = 50; // total
-    string command = "python ../c_linea.py --blue_player ./random_player --first ";
-    // primero empieza rojo (yo)
-    string call = string(command);
-    call += "rojo --iterations " + std::to_string(iterations/2);
-    call += " --red_player ./golosa ";
-    call += this->__to_argv(p);
-    std::system(call.c_str());
-    float wins_1 = (float)contar_victorias("rojo");
-    // segundo empieza azul (random)
-    call = string(command);
-    call += "azul --iterations " + std::to_string(iterations/2);
-    call += std::to_string(iterations/2);
-    call += " --red_player ./golosa ";
-    call += this->__to_argv(p);
-    std::system(call.c_str());
-    float wins_2 = (float)contar_victorias("rojo");
-    return (wins_1 + wins_2) / iterations;
-}
-*/
-
 float gen_trainer::fitness(pesos p){
     return regular_fitness(this->n, this->m, this->c, 100000, p);
 }
@@ -169,8 +185,9 @@ pesos gen_trainer::get_max() const{
 pesos gen_trainer::randon_genome(){
     pesos p = pesos(this->param_count);
     for (uint i = 0; i < this->param_count; i++) {
-        int rand_int = (int)this->__get_rand_float();
         if (i == PRIMERA_JUGADA) {
+            int rand_int = rand() * ((rand() < RAND_MAX/2) ? -1 : 1);
+            // primera jugada debe ser entre -1 y N-1
             p[i] = rand_int < 0 ? -1 : rand_int % this->n;
         }else{
             p[i] = this->__get_rand_float();

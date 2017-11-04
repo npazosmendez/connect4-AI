@@ -136,7 +136,7 @@ golosa gen_trainer::crossover(golosa g1, golosa g2){
 
 
 void gen_trainer::mutate(pesos &p){
-    float lottery = rand()/RAND_MAX; // lottery ~ U[0,1]
+    float lottery = float(rand())/float(RAND_MAX); // lottery ~ U[0,1]
     if (lottery < this->p_mutation) {
         // mutation achieved
         uint mutation_idx = rand() % this->param_count;
@@ -144,7 +144,8 @@ void gen_trainer::mutate(pesos &p){
         if (mutation_idx != PRIMERA_JUGADA) {
             p[mutation_idx] = (int)this->__get_rand_float() % this->n;
         }else{
-            p[mutation_idx] = this->__get_rand_float();
+            int r = rand();
+            p[mutation_idx] = r < RAND_MAX/2 ? -1 : r % this->n;
         }
     }
 }

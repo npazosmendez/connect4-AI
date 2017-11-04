@@ -20,7 +20,7 @@ int main(int argc, char const *argv[]) {
     int pop = atoi(argv[6]);
 
     std::cout << "Creando entrenador..." << std::endl;
-    gen_trainer gt = gen_trainer(n, m, c, p, gen_limit, 0.05);
+    gen_trainer gt = gen_trainer(n, m, c, p, gen_limit, 0.005);
     std::cout << "Entrenando..." << std::endl;
     auto pesos_posta = gt.train(pop);
     std::cout << "imprimo parametros alcanzados: ";

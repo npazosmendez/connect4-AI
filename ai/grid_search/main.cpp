@@ -16,14 +16,7 @@ int main(int argc, char const *argv[]) {
     int p = read_int();
 
     grid_search gridsearch(n,m,c,p);
-    gridsearch.minecraft_train(0,1,0.20);
-    vector<float> v = gridsearch.get_optimal_weigths();
-    for (uint i=0; i<v.size();i++){
-        cout << v[i] << ", ";
-    }
-    cout << endl << endl;
-
-    cout << "fitness optimo " << gridsearch.get_optimal_fitness() << endl << endl;
+    gridsearch.minecraft_train(-1,1,0.5);
     return 0;
 }
 

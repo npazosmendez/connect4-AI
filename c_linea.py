@@ -13,13 +13,13 @@ from HumanPlayer import *
 def main(args):
 
     assert args.c <= args.columns and args.c <= args. rows
-
-    print "----- Parámetros -----"
-    print "columnas: \t", args.columns
-    print "filas: \t\t", args.rows
-    print "c: \t\t", args.c
-    print "p: \t\t", args.p
-    print "----------------------"
+    if not args.q:
+        print "----- Parámetros -----"
+        print "columnas: \t", args.columns
+        print "filas: \t\t", args.rows
+        print "c: \t\t", args.c
+        print "p: \t\t", args.p
+        print "----------------------"
 
     if args.blue_player is None:
         blue_player = HumanPlayer(BLUE)
@@ -95,6 +95,10 @@ if __name__ == '__main__':
                         type=bool,
                         default=False,
                         help="Si es True, la aplicacion muestra una interfaz grafica.")
+    parser.add_argument('--q',
+                        type=bool,
+                        default=False,
+                        help="Si es True, no printea nada.")
     args = parser.parse_args()
 
     assert args.c <= min(args.columns, args.rows)

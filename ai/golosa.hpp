@@ -30,13 +30,14 @@ Curiosidades a tener en cuenta:
 // Definiciones de parámetros
 // (la 'W' se refiere a weight, pero siéntanse libres de cambiarlo)
 enum{
-    PRIMERA_JUGADA,
+    PRIMERA_JUGADA, /* Rango: (-1) a (N-1) DISCRETO */
     // W_FICHAS1, /* creo que tendría más sentido un peso de "progreso del juego" */
     // W_FICHAS2,
-    W_DISPERSION1,
-    W_DISPERSION2,
-    W_AGRESS,
-    W_EXP,
+    W_DISPERSION1,  /* Rango de feature asociado: 0 - N */
+    W_DISPERSION2,  /* Rango de feature asociado: 0 - N */
+    W_AGRESS,   /* Rango de feature asociado: 0 ó N/2 */
+    W_EXPH,  /* Rango de feature asociado: 0 ó N/2 */
+    W_EXPVO,  /* Rango de feature asociado: 0 ó N/2 */
     // acá deben agregarse nuevos defines ...
 
     // Antes de este de abajo! No después

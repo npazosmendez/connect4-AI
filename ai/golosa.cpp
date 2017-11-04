@@ -50,10 +50,10 @@ float golosa::puntaje(c_linea juego, int jugada_recien, int yo, int el){
 	// uint fichas2 = juego.fichas2 ();
 	uint dispersionJ1 = dispersion (juego, yo);
 	uint dispersionJ2 = dispersion (juego, el);
-	uint perjudica = perjudica_rival (juego, jugada_recien);
-	uint expHorizontal = exp_horizontal (juego, jugada_recien);
-	uint expVertical = exp_vertical (juego, jugada_recien);
-	uint expOblicua = exp_oblicua (juego, jugada_recien);
+	uint perjudica = perjudica_rival (juego, jugada_recien) * N/2; /* 0-1 -> 0 - N/2 */
+	uint expHorizontal = exp_horizontal (juego, jugada_recien) * N/2;
+	uint expVertical = exp_vertical (juego, jugada_recien) * N/2;
+	uint expOblicua = exp_oblicua (juego, jugada_recien) * N/2;
     vector<int> lineas_ext_yo = lineas_extensibles(juego, yo);
     vector<int> lineas_ext_el = lineas_extensibles(juego, el);
 
@@ -74,13 +74,13 @@ float golosa::puntaje(c_linea juego, int jugada_recien, int yo, int el){
 	puntaje += dispersionJ1 * parametros[W_DISPERSION1];
 	puntaje += dispersionJ2 * parametros[W_DISPERSION2];
 	puntaje += perjudica * parametros[W_AGRESS];
-	puntaje += expHorizontal * parametros[W_EXP];
-	puntaje += expVertical * parametros[W_EXP];
-	puntaje += expOblicua * parametros[W_EXP];
+	puntaje += expHorizontal * parametros[W_EXPH];
+	puntaje += expVertical * parametros[W_EXPVO];
+	puntaje += expOblicua * parametros[W_EXPVO];
     for (int i = 0; i < C; i++) {
         // cantidad de líneas extensibles a C de longitud 'i'
-        puntaje += pesos_lineas[i]*lineas_ext_yo[i]; // las mías suman
-        puntaje -= pesos_lineas[i]*lineas_ext_el[i]; // las de él restan
+        puntaje += pesos_lineas[i]*lineas_ext_yo[i]/(N*M/2); // las mías suman
+        puntaje -= pesos_lineas[i]*lineas_ext_el[i]/(N*M/2); // las de él restan
     }
 
     ///////////////////////////////////////////////////////
@@ -119,7 +119,7 @@ float golosa::puntaje(c_linea juego, int jugada_recien, int yo, int el){
 
     vector<int> lineas_ext_el_hipoteticas = lineas_extensibles(juego, el); // gran nombre para una variable
     for (int i = 0; i < C; i++) {
-        puntaje += pesos_lineas[i]*(lineas_ext_el_hipoteticas[i]-lineas_ext_el[i]);
+        puntaje += pesos_lineas[i]*(lineas_ext_el_hipoteticas[i]-lineas_ext_el[i])/(N*M/2);
         /* Esto suma, porque se lo estoy cagando.
          Tomo la diferencia con lo que tiene en el turno anterior,
          midiendo de alguna manera qué tanto lo cagué recién. */

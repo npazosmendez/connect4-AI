@@ -1,5 +1,6 @@
 #include "genetic_trainer.hpp"
 #include <iostream>
+#include <iomanip> 
 
 using namespace std;
 
@@ -23,10 +24,10 @@ int main(int argc, char const *argv[]) {
     gen_trainer gt = gen_trainer(n, m, c, p, gen_limit, 0.005);
     std::cout << "Entrenando..." << std::endl;
     auto pesos_posta = gt.train(pop);
-    std::cout << "imprimo parametros alcanzados: ";
+    std::cout << "imprimo parametros alcanzados: \n";
     for (uint i = 0; i < pesos_posta.size(); i++) {
-        std::cout << pesos_posta[i] << "  " << std::endl;
-    }
+        std::cout << std::setprecision(9) << pesos_posta[i] << " ";
+    }cout << "\n";
     return 0;
 }
 

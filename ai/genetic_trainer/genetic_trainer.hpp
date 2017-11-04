@@ -27,6 +27,7 @@ class gen_trainer{
         // uso interno
         string __to_argv(pesos p);
         float __get_rand_float();
+        vector<float> clip_float_values(vector<float>);
         list<golosa> golosas_from_pop( vector<pesos> );
 
     public:

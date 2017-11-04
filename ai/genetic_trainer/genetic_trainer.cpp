@@ -6,7 +6,10 @@
 #include <string>
 #include <limits>
 
+// los params se van a mover entre -CLIP_ABS_LIMIT y CLIP_ABS_LIMIT
 #define CLIP_ABS_LIMIT 1000
+// si el parametro es |parametro| < ZERO_CLIP, se clipea a 0
+#define ZERO_CLIP 1e-20
 
 /*
     ----------------------------
@@ -85,7 +88,7 @@ pesos gen_trainer::train(uint pop_size){
     auto it_rankings = pob_rankings.begin();
     pesos max_pesos = (*it_rankings).join_params();
     this->max_achieved = max_pesos;
-    return max_pesos;
+    return this->clip_float_values(max_pesos);
 }
 
 list<golosa> gen_trainer::golosas_from_pop( vector<pesos> ps ){
@@ -190,9 +193,7 @@ pesos gen_trainer::randon_genome(){
     pesos p = pesos(this->param_count);
     for (uint i = 0; i < this->param_count; i++) {
         if (i == PRIMERA_JUGADA) {
-            int rand_int = rand() * ((rand() < RAND_MAX/2) ? -1 : 1);
-            // primera jugada debe ser entre -1 y N-1
-            p[i] = rand_int < 0 ? -1 : rand_int % this->n;
+            p[i] = -1 + rand()%(this->n+1);
         }else{
             p[i] = this->__get_rand_float();
         }
@@ -202,12 +203,15 @@ pesos gen_trainer::randon_genome(){
 
 // ADDED: Clipping
 float gen_trainer::__get_rand_float(){
-        int random_num = rand();
-        // random_num &= 0x7FFFFFFF; // bit de signo en positivo
-        void* ptr = &random_num;
-        float res =  *((float*)ptr) / std::numeric_limits<float>::max(); 
-        // res va de 0 a 1, positivo o negativos
-        return CLIP_ABS_LIMIT * res;
+        //int random_num = rand();
+        //// random_num &= 0x7FFFFFFF; // bit de signo en positivo
+        //void* ptr = &random_num;
+        //float res =  *((float*)ptr) / std::numeric_limits<float>::max(); 
+        //// res va de 0 a 1, positivo o negativos
+        //return CLIP_ABS_LIMIT * res;
+
+        return -CLIP_ABS_LIMIT + (static_cast <float> (rand()) / static_cast <float>(RAND_MAX))*
+            (CLIP_ABS_LIMIT*2);
 }
 
 string gen_trainer::__to_argv(pesos p){
@@ -221,4 +225,13 @@ string gen_trainer::__to_argv(pesos p){
         }
     }
     return s;
+}
+
+vector<float> gen_trainer::clip_float_values(vector<float> v){
+    for (uint i = 0; i < v.size(); i++) {
+        if (-ZERO_CLIP <= v[i] && v[i] <= ZERO_CLIP) {
+            v[i] = 0;
+        }
+    }
+    return v;
 }

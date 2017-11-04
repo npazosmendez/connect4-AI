@@ -53,6 +53,7 @@ Puede usarse la función cuantos_parametros(...) para obtener el númeroe exacto
 
 class golosa{
     friend class c_linea;
+    friend class gen_trainer;
     public:
 
         // Constructores
@@ -80,6 +81,8 @@ class golosa{
         // Variables privadas
         const vector<float> parametros; // Cantidad de params == PARAM_COUNT
         const vector<float> pesos_lineas; // Cantidad de params == C
+
+        vector<float> join_params();
 
         const int N, M, C;
 

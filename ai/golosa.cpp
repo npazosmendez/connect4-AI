@@ -821,3 +821,14 @@ vector<float> golosa::leer_parametros(int argc, char const *argv[], int C){
     }
     */
 }
+
+vector<float> golosa::join_params(){
+    vector<float> j(this->cuantos_parametros(this->N, this->M, this->C));
+    for (uint i = 0; i < PARAM_COUNT; i++) {
+        j[i] = this->parametros[i];
+    }
+    for (uint i = PARAM_COUNT; i < j.size(); i++) {
+        j[i] = this->pesos_lineas[i];
+    }
+    return j;
+}

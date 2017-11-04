@@ -16,12 +16,7 @@ int main(int argc, char const *argv[]) {
     int p = read_int();
 
     grid_search gridsearch(n,m,c,p);
-    gridsearch.thorough_train(-5,5,1.0);
-    vector<float> v = gridsearch.get_optimal_weigths();
-    for (uint i=0; i<v.size();i++){
-        cout << v[i] << ", ";
-    }
-    cout << endl << endl;
+    gridsearch.minecraft_train(-1,1,0.5);
     return 0;
 }
 

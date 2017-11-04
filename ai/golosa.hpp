@@ -53,12 +53,13 @@ Puede usarse la función cuantos_parametros(...) para obtener el númeroe exacto
 
 class golosa{
     friend class c_linea;
+    friend class gen_trainer;
     public:
 
         // Constructores
-        golosa(int N, int M, int C, int yo); // con parámetros basura (para testear otras cosas)
-        golosa(vector<float> param, int N, int M, int C, int yo);
-        golosa(int argc, char const *argv[], int N, int M, int C, int yo); // parsear argv para parámetros
+        golosa(int N, int M, int C); // con parámetros basura (para testear otras cosas)
+        golosa(vector<float> param, int N, int M, int C);
+        golosa(int argc, char const *argv[], int N, int M, int C); // parsear argv para parámetros
 
         // Métodos públicos
         int jugar(c_linea juego);
@@ -67,21 +68,23 @@ class golosa{
         //Pongo los features publicos porque sino no se pueden testear. Igualmente seguro cambiemos todo esto
         float fila_media(const c_linea &juego, int jugador); // la media de al distribucion de las fichas por fila
         float columna_media(const c_linea &juego, int jugador); // la media de al distribucion de las fichas por columna
-        inline vector<float> _ver_pesos() { return this->parametros; }
+        inline const vector<float> &ver_parametros() { return this->parametros; }
+        inline const vector<float> &ver_pesos_lineas() { return this->pesos_lineas; }
         vector<int> lineas_extensibles(const c_linea &juego, int jugador); // para 0 <= i <= C-1, indica la cantidad de líneas de longitud 'i' de color 'jugador' que sean extensibles a una de C
         bool imbatible(const c_linea &juego, int jugador); // determina si hay una línea de C-1 de 'jugador' inmediatamente extendible a ambos lados
         bool servida(const c_linea &juego); // determina si quien debe jugar ahora (turno) tiene una jugada ganadora inmediata
 
-	uint dispersion(const c_linea &juego, int jugador); // se fija la mayor distancia entre dos fichas de un jugador por cada linea (con al menos dos fichas de tal jugador) y las promedia
+	    uint dispersion(const c_linea &juego, int jugador); // se fija la mayor distancia entre dos fichas de un jugador por cada linea (con al menos dos fichas de tal jugador) y las promedia
 
     private:
 
         // Variables privadas
-        const vector<float> parametros;
-        const vector<float> pesos_lineas;
-
+        const vector<float> parametros; // Cantidad de params == PARAM_COUNT
+        const vector<float> pesos_lineas; // Cantidad de params == C
         const int N, M, C;
-        const int yo;
+
+        vector<float> join_params();
+
 
         // Métodos auxiliares para calcular jugada
         float puntaje(c_linea juego, int jugada_recien, int yo, int el);

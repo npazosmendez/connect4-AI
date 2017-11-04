@@ -24,7 +24,7 @@ int golosa::jugar(c_linea juego){
         // para cada jugada posible
         if (juego.tablero()[i][juego.M-1]==0) {
             juego.jugar(yo, i);
-            if (juego.gano(yo) || imbatible(juego, yo)) {
+            if (juego.gano(yo)) {
                 // Gané o puedo ganar en la próxima seguro
                 return i;
             }
@@ -57,11 +57,18 @@ float golosa::puntaje(c_linea juego, int jugada_recien, int yo, int el){
     vector<int> lineas_ext_yo = lineas_extensibles(juego, yo);
     vector<int> lineas_ext_el = lineas_extensibles(juego, el);
 
+    if (imbatible(juego,yo)) {
+        // Soy imbatible!
+        // Devuelvo casi infinito. Podría ser que me convenga cortarle una línea
+        float casi_infinito = numeric_limits<float>::max();
+        return casi_infinito;
+    }
+    
     /* EMERGENCY BUTTON !!!! */
     if (servida(juego)) {
         // Le estoy dejando una línea servida!
         // Devuelvo -infinito
-        float menos_infinito = - numeric_limits<float>::max();
+        float menos_infinito = -INFINITY;
         return menos_infinito;
     }
 
@@ -93,7 +100,7 @@ float golosa::puntaje(c_linea juego, int jugada_recien, int yo, int el){
         if (imbatible(juego, el)) {
             // Le estoy dejando imbatibilidad servida!
             // Devuelvo -infinito
-            float menos_infinito = - numeric_limits<float>::max();
+            float menos_infinito = - INFINITY;
             return menos_infinito;
         }
 
@@ -113,7 +120,7 @@ float golosa::puntaje(c_linea juego, int jugada_recien, int yo, int el){
         // Si juega acá es imbatible!
         // Es el mejor movimiento que puedo hacer, para intentar cagarle
         // la imbatibilidad
-        float infinito = numeric_limits<float>::max();
+        float infinito = INFINITY;
         return infinito;
     }
 

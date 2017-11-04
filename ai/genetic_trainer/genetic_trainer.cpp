@@ -4,6 +4,9 @@
 #include <cstdlib>
 #include <stdlib.h>  
 #include <string>
+#include <limits>
+
+#define CLIP_ABS_LIMIT 1000
 
 /*
     ----------------------------
@@ -197,11 +200,14 @@ pesos gen_trainer::randon_genome(){
     return p;
 }
 
+// ADDED: Clipping
 float gen_trainer::__get_rand_float(){
         int random_num = rand();
         // random_num &= 0x7FFFFFFF; // bit de signo en positivo
         void* ptr = &random_num;
-        return *((float*)ptr);
+        float res =  *((float*)ptr) / std::numeric_limits<float>::max(); 
+        // res va de 0 a 1, positivo o negativos
+        return CLIP_ABS_LIMIT * res;
 }
 
 string gen_trainer::__to_argv(pesos p){

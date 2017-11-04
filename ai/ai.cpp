@@ -58,12 +58,12 @@ int main(int argc, char const *argv[]) {
 
         // Si soy la golosa, leo los parámetros
         #if AI==GOLOSA
-            golosa ai_golosa(argc,argv,columns,rows,c,yo);
+            golosa ai_golosa(argc,argv,columns,rows,c);
         #endif
 
         // Acá empieza el juego
         int jugada;
-        c_linea juego(c,columns,rows,p,yo);
+        c_linea juego(c,columns,rows,p);
         if (yo==1) {
             // me toca primero
             #if AI==MINIMAX

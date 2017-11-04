@@ -710,14 +710,14 @@ bool golosa::imbatible(const c_linea &juego, int jugador){
 
 
 // Constructores y sus parsers
-golosa::golosa(int N, int M, int C, int yo) : parametros(PARAM_COUNT),pesos_lineas(C) ,N(N), M(M), C(C), yo(yo) {}
+golosa::golosa(int N, int M, int C) : parametros(PARAM_COUNT),pesos_lineas(C) ,N(N), M(M), C(C) {}
 
-golosa::golosa(vector<float> param, int N, int M, int C, int yo) : parametros(param.begin(),param.begin()+PARAM_COUNT), pesos_lineas(param.begin()+PARAM_COUNT,param.end()),N(N), M(M), C(C), yo(yo) {
+golosa::golosa(vector<float> param, int N, int M, int C) : parametros(param.begin(),param.begin()+PARAM_COUNT), pesos_lineas(param.begin()+PARAM_COUNT,param.end()),N(N), M(M), C(C) {
     // say_hello();
     assert(param.size() == cuantos_parametros(N,  M, C));
 };
 
-golosa::golosa(int argc, char const *argv[], int N, int M, int C, int yo) : parametros(leer_parametros(argc, argv, C)), pesos_lineas(leer_pesos_lineas(argc, argv, C)), N(N), M(M), C(C), yo(yo) {
+golosa::golosa(int argc, char const *argv[], int N, int M, int C) : parametros(leer_parametros(argc, argv, C)), pesos_lineas(leer_pesos_lineas(argc, argv, C)), N(N), M(M), C(C){
     // say_hello();
 };
 
@@ -820,4 +820,15 @@ vector<float> golosa::leer_parametros(int argc, char const *argv[], int C){
         // ...
     }
     */
+}
+
+vector<float> golosa::join_params(){
+    vector<float> j(this->cuantos_parametros(this->N, this->M, this->C));
+    for (uint i = 0; i < PARAM_COUNT; i++) {
+        j[i] = this->parametros[i];
+    }
+    for (uint i = PARAM_COUNT; i < j.size(); i++) {
+        j[i] = this->pesos_lineas[i];
+    }
+    return j;
 }

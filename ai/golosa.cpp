@@ -19,7 +19,7 @@ int golosa::jugar(c_linea juego){
     int el = 0;
     if (yo == 1) el = 2; else el = 1;
     int res = -1;
-    float puntaje_max = 0;
+    float puntaje_max = - INFINITY;
     for (int i = 0; i < juego.N; i++) {
         // para cada jugada posible
         if (juego.tablero()[i][juego.M-1]==0) {
@@ -63,7 +63,7 @@ float golosa::puntaje(c_linea juego, int jugada_recien, int yo, int el){
         float casi_infinito = numeric_limits<float>::max();
         return casi_infinito;
     }
-    
+
     /* EMERGENCY BUTTON !!!! */
     if (servida(juego)) {
         // Le estoy dejando una línea servida!
@@ -102,6 +102,12 @@ float golosa::puntaje(c_linea juego, int jugada_recien, int yo, int el){
             // Devuelvo -infinito
             float menos_infinito = - INFINITY;
             return menos_infinito;
+        }
+
+        vector<int> lineas_ext_el_arriba = lineas_extensibles(juego, el);
+        for (int i = 0; i < C; i++) {
+            puntaje -= pesos_lineas[i]*lineas_ext_el_arriba[i]/(N*M/2);
+            /* Esto resta, porque se lo estoy permitiendo. */
         }
 
         juego.desjugar(el, jugada_recien);

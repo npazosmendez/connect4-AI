@@ -11,11 +11,28 @@ using namespace std;
 /*  Para medir fitness en C++ de un goloso contra el random  */
 ///////////////////////////////////////////////////////////////
 
+
+uint golosa_vs_random(uint N, uint M, uint C, uint P, golosa &ai, bool empieza_ai){
+    c_linea juego(C,N,M,P);
+    uint turno_ai = empieza_ai ? 1 : 2;
+    while (!juego.termino()) {
+        if (juego.turno() == turno_ai)
+            juego.jugar1(ai.jugar(juego));
+        else
+            juego.jugar2(ai.jugar(juego));
+    }
+    if (juego.gano1())
+        return PRIMERO;
+    else if(juego.gano2())
+        return SEGUNDO;
+    else
+        return EMPATE;
+}
+
 /////////////////////////////////////////////////////////
 /*  Para medir fitness en C++ entre distintos golosos  */
 /////////////////////////////////////////////////////////
 
-enum{EMPATE, PRIMERO, SEGUNDO};
 
 list<golosa> fixture_golosas(uint N, uint M, uint C, uint P, list<golosa> aaii){
     /* Esta función toma una lista de golosos y crea un torneo entre ellos.
@@ -25,6 +42,11 @@ list<golosa> fixture_golosas(uint N, uint M, uint C, uint P, list<golosa> aaii){
     */
     list<golosa> posiciones;
     while (!aaii.empty()) {
+        // std::cout << "quedan " << aaii.size() << " en aaii..." << std::endl;
+        if (aaii.size() == 1) {
+            posiciones.push_front(aaii.front());
+            break;
+        }
         /* Mientras la lista no esté vacía, quedan jugadores en el torneo. */
         for (list<golosa>::iterator it = aaii.begin(); it != aaii.end(); ) {
             /* Tomo los dos siguientes (si es que hay 2) y los hago jugar.
@@ -33,8 +55,6 @@ list<golosa> fixture_golosas(uint N, uint M, uint C, uint P, list<golosa> aaii){
             list<golosa>::iterator ai1 = it;
             it++;
             if (it == aaii.end()) {
-                // Es el último, el ganador
-                posiciones.push_front(*ai1);
                 break;
             }
             list<golosa>::iterator ai2 = it;

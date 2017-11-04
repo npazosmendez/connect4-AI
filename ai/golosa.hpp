@@ -81,10 +81,10 @@ class golosa{
         // Variables privadas
         const vector<float> parametros; // Cantidad de params == PARAM_COUNT
         const vector<float> pesos_lineas; // Cantidad de params == C
+        const int N, M, C;
 
         vector<float> join_params();
 
-        const int N, M, C;
 
         // Métodos auxiliares para calcular jugada
         float puntaje(c_linea juego, int jugada_recien, int yo, int el);

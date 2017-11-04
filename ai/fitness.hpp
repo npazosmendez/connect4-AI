@@ -12,10 +12,13 @@
 
 #include "golosa.hpp"
 
+enum{EMPATE, PRIMERO, SEGUNDO};
+
 using namespace std;
 
 /*  Para medir fitness en C++ entre distintos golosos  */
 uint golosa_vs_golosa(uint N, uint M, uint C, uint P, golosa &ai1, golosa &ai2);
+uint golosa_vs_random(uint N, uint M, uint C, uint P, golosa &ai);
 list<golosa> fixture_golosas(uint N, uint M, uint C, uint P, list<golosa> aaii);
 
 /* Para medir fitness usando varias llamadas al Python */

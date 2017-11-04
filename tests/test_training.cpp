@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "../ai/training.cpp"
+#include "../ai/fitness.hpp"
 #include "../ai/golosa.hpp"
 using namespace std;
 

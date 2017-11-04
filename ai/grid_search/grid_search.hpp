@@ -4,7 +4,7 @@
 #include <cassert>
 
 #include "../golosa.hpp"
-#include "../training.hpp"
+#include "../fitness.hpp"
 
 using namespace std;
 typedef vector<float> pesos;

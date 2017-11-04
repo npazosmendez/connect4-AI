@@ -1,6 +1,6 @@
 CC = g++
 FLAGS = -std=c++11 -ggdb -Wall -O3
-OBJ = grid_search.o ../golosa.o ../c_linea.o ../training.o
+OBJ = grid_search.o ../golosa.o ../c_linea.o ../fitness.o
 EXECS = grid_search
 
 all: $(EXECS)

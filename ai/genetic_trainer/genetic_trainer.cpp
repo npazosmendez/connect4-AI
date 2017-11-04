@@ -1,5 +1,5 @@
 #include "genetic_trainer.hpp"
-#include "../training.hpp"
+#include "../fitness.hpp"
 #include <string.h>
 #include <cstdlib>
 #include <stdlib.h>  

@@ -35,7 +35,6 @@ pesos gen_trainer::train(uint pop_size){
     assert(pop_size >= 2);
     // generate initial population
     vector< pesos > pop = vector< pesos >(pop_size);
-    vector<float> pop_fitness;
     vector< pesos > new_pop;
     uint gen_count = 0;
     for (uint i = 0; i < pop_size; i++) {
@@ -112,34 +111,10 @@ pesos gen_trainer::crossover(pesos p1, pesos p2){
             // copio los primeros cross_section parametros de p1, el resto de 2
             p_son[i] = i < cross_section ?  p1[i] : p2[i];
         }
+        assert(-1 <= p_son[PRIMERA_JUGADA] && p_son[PRIMERA_JUGADA] <= this->n-1);
         return p_son;
     }
 }
-
-
-golosa gen_trainer::crossover(golosa g1, golosa g2){
-    uint cross_section = rand() % this->param_count; // 0 <= cross_section <= this->param_count - 1
-    if (cross_section == this->param_count - 1) {
-        // g1 queda en el crossover
-        return g1;
-    }else if(cross_section == 0){
-        // g2 queda en el crossover
-        return g2;
-    }else{ // 0 < cross_section < this->param_count - 1 
-        vector<float> cross_p(this->param_count); 
-        for (uint i = 0; i < this->param_count; i++) {
-            if (i < PARAM_COUNT) {
-                // copiando de parametros
-                cross_p[i] = i < cross_section ?  g1.ver_parametros()[i] : g1.ver_parametros()[i];
-            }else{
-                // copiando de pesos lineales
-                cross_p[i] = i < cross_section ?  g1.ver_pesos_lineas()[i] : g2.ver_pesos_lineas()[i];
-            }
-        }
-        return golosa(cross_p, this->n, this->m, this->c);
-    }
-}
-
 
 void gen_trainer::mutate(pesos &p){
     float lottery = float(rand())/float(RAND_MAX); // lottery ~ U[0,1]
@@ -149,11 +124,11 @@ void gen_trainer::mutate(pesos &p){
         std::cout << "> hubo mutación en el gen " << mutation_idx << std::endl;
         if (mutation_idx != PRIMERA_JUGADA) {
             p[mutation_idx] = (int)this->__get_rand_float() % this->n;
-        }else{
-            int r = rand();
-            p[mutation_idx] = r < RAND_MAX/2 ? -1 : r % this->n;
+        }else{ // mutation_idx == PRIMERA_JUGADA
+            p[mutation_idx] = -1 + rand()%(this->n+1);
         }
     }
+    assert(-1 <= p[PRIMERA_JUGADA] && p[PRIMERA_JUGADA] <= this->n-1);
 }
 
 pesos gen_trainer::random_selection(vector< pesos > ps, vector<float> &fs){
@@ -193,23 +168,19 @@ pesos gen_trainer::randon_genome(){
     pesos p = pesos(this->param_count);
     for (uint i = 0; i < this->param_count; i++) {
         if (i == PRIMERA_JUGADA) {
-            p[i] = -1 + rand()%(this->n+1);
+            // estoy en PRIMERA_JUGADA
+            int r = -1 + rand()%(this->n+1);
+            p[PRIMERA_JUGADA] = float(r);
         }else{
             p[i] = this->__get_rand_float();
         }
     }
+    assert(-1 <= p[PRIMERA_JUGADA] && p[0] <= this->n-1);
     return p;
 }
 
 // ADDED: Clipping
 float gen_trainer::__get_rand_float(){
-        //int random_num = rand();
-        //// random_num &= 0x7FFFFFFF; // bit de signo en positivo
-        //void* ptr = &random_num;
-        //float res =  *((float*)ptr) / std::numeric_limits<float>::max(); 
-        //// res va de 0 a 1, positivo o negativos
-        //return CLIP_ABS_LIMIT * res;
-
         return -CLIP_ABS_LIMIT + (static_cast <float> (rand()) / static_cast <float>(RAND_MAX))*
             (CLIP_ABS_LIMIT*2);
 }
@@ -229,9 +200,9 @@ string gen_trainer::__to_argv(pesos p){
 
 vector<float> gen_trainer::clip_float_values(vector<float> v){
     for (uint i = 0; i < v.size(); i++) {
-        if (-ZERO_CLIP <= v[i] && v[i] <= ZERO_CLIP) {
-            v[i] = 0;
-        }
+        if (i != PRIMERA_JUGADA)
+            if (-ZERO_CLIP <= v[i] && v[i] <= ZERO_CLIP)
+                v[i] = 0;
     }
     return v;
 }

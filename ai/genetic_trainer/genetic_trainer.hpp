@@ -10,9 +10,7 @@ typedef vector<float> pesos;
 class gen_trainer{
     private:
         pesos crossover(pesos p1, pesos p2);
-        golosa crossover(golosa g1, golosa g2);
         void mutate(pesos &p);
-        void mutate(golosa &g);
         pesos random_selection(vector<pesos> ps, vector<float> &fs);
         pesos randon_genome();
         float fitness(pesos p);

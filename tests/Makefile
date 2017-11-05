@@ -14,6 +14,7 @@ install:
 
 tests: $(TESTS) $(SRC)
 	make -C ../ai/
+	make -C ../ai/genetic_trainer/
 	$(CC) $(FLAGS) $(GOOGLE_SHIT) $(TESTS) $(OBJ) -o ../bin/tests
 
 tests_c_linea: test_c_linea.cpp $(SRC)
@@ -22,6 +23,7 @@ tests_c_linea: test_c_linea.cpp $(SRC)
 
 test_training: $(SRC)
 	make -C ../ai/
+	make -C ../ai/genetic_trainer/
 	$(CC) $(FLAGS) $(GOOGLE_SHIT) $@.cpp $(OBJ) -o ../bin/$@
 
 test: all

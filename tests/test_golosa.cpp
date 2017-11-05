@@ -5,7 +5,7 @@ using namespace std;
 TEST(golosa_test, columna_media) {
     int C = 4; int N = 10; int M = 6; int p = 100;
     c_linea juego(C,N,M,p);
-    golosa golo(N, M, C, 1);
+    golosa golo(N, M, C);
 
     EXPECT_EQ(golo.columna_media(juego, 1), 0);
     EXPECT_EQ(golo.columna_media(juego, 2), 0);
@@ -26,7 +26,7 @@ TEST(golosa_test, columna_media) {
 TEST(golosa_test, dispersion) {
     int C = 4; int N = 10; int M = 6; int p = 100;
     c_linea juego(C,N,M,p);
-    golosa golo(N, M, C, 1);
+    golosa golo(N, M, C);
     EXPECT_EQ(golo.dispersion(juego, 1), 0);
     EXPECT_EQ(golo.dispersion(juego, 2), 0);
     juego.jugar1(3);

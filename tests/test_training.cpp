@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 #include "../ai/fitness.hpp"
 #include "../ai/golosa.hpp"
+#include "../ai/genetic_trainer/genetic_trainer.hpp"
 #include <list>
 using namespace std;
 
@@ -58,6 +59,28 @@ TEST(training_test, fixture_golosas){
     auto fix_s = fixture_golosas(7,5,4,100, gs);
 
     EXPECT_EQ(fix_s.size(), params_ps.size());
+}
+
+TEST(training_test, gen_test_clipping){
+    int n = 7, m = 5, c = 4;
+    gen_trainer gt(n,m,c,n*m,25,0.0005);
+    bool CLIP_OK = true;
+    for (int i = 0; i < 50 && CLIP_OK; i++) {
+        std::cout << "IT: " << i << std::endl;
+        vector<float> result = gt.train(10);
+        for (uint j = 0; j < result.size(); j++) {
+            if (j == 0) {
+                CLIP_OK &= (-1 <= result[j] && result[j] <= n-1);
+            }else{
+                CLIP_OK &= -1000 <= result[j] && result[j] <= 1000;
+            }
+            if (!CLIP_OK) {
+                std::cout << "FALLO! en j = " << j << std::endl;
+                std::cout << "con v[j] = " << result[j] << std::endl;
+            }
+        }
+    }
+    EXPECT_EQ(CLIP_OK, true);
 }
 
 

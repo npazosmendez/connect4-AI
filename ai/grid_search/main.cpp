@@ -16,7 +16,7 @@ int main(int argc, char const *argv[]) {
     int p = read_int();
 
     grid_search gridsearch(n,m,c,p);
-    gridsearch.minecraft_train(-1,1,0.5);
+    gridsearch.minecraft_train(-1,1,0.25);
     return 0;
 }
 

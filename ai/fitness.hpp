@@ -25,7 +25,7 @@ list<golosa> fixture_golosas(uint N, uint M, uint C, uint P, list<golosa> aaii);
 int contar_victorias(const char* color);
 string to_argv(vector<float> pesos);
 uint play_with_golosa(uint N, uint M, uint C, uint P, vector<float> pesos, uint games, string rival_exec, bool me_first);
-float regular_fitness(uint N, uint M, uint C, uint P, vector<float> pesos);
-
+bool regular_fitness(uint N, uint M, uint C, uint P, vector<float> pesos1, vector<float> pesosmax);
+float vs_random_fitnes(uint N, uint M, uint C, uint P, vector<float> pesos);
 
 #endif

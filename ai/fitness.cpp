@@ -171,7 +171,17 @@ uint play_with_golosa(uint N, uint M, uint C, uint P, vector<float> pesos, uint 
     return contar_victorias("rojo");
 }
 
-float regular_fitness(uint N, uint M, uint C, uint P, vector<float> pesos) {
+bool regular_fitness(uint N, uint M, uint C, uint P, vector<float> pesos1, vector<float> pesosmax) {
+    // RETORNA True sii el retador gano ambos encuentros
+
+    golosa retador(pesos1, N, M, C);
+    golosa maximo(pesosmax, N, M, C);
+    int match1 = golosa_vs_golosa(N, M, C, P, retador, maximo); // primero ai1
+    int match2 = golosa_vs_golosa(N, M, C, P, maximo, retador); // primero ai2
+    return match1 == PRIMERO && match2 == SEGUNDO;
+}
+
+float vs_random_fitnes(uint N, uint M, uint C, uint P, vector<float> pesos) {
     uint iterations_each = 25;
     string rival = "./random_player";
     uint wins_home = play_with_golosa(N,M,C,P,pesos,iterations_each,rival,true);

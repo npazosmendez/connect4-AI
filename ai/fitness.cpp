@@ -3,6 +3,7 @@
 #include "c_linea.hpp"
 #include <vector>
 #include <list>
+#include <cstdlib>
 
 using namespace std;
 
@@ -12,14 +13,49 @@ using namespace std;
 ///////////////////////////////////////////////////////////////
 
 
-uint golosa_vs_random(uint N, uint M, uint C, uint P, golosa &ai, bool empieza_ai){
+// uint golosa_vs_random(uint N, uint M, uint C, uint P, golosa &ai, bool empieza_ai){
+//     c_linea juego(C,N,M,P);
+//     uint turno_ai = empieza_ai ? 1 : 2;
+//     while (!juego.termino()) {
+//         if (juego.turno() == turno_ai)
+//             juego.jugar1(ai.jugar(juego));
+//         else
+//             juego.jugar2(ai.jugar(juego));
+//     }
+//     if (juego.gano1())
+//         return PRIMERO;
+//     else if(juego.gano2())
+//         return SEGUNDO;
+//     else
+//         return EMPATE;
+// }
+
+int random_play(c_linea juego){
+    uint col = juego.N * (static_cast <float> (rand()))/( static_cast <float> (RAND_MAX));
+    while (juego.altura(col) >= juego.M) {
+        col = (col + 1) % juego.N;
+    }
+    return col;
+};
+
+uint golosa_vs_random(uint N, uint M, uint C, uint P, golosa &golo, bool rand_primero){
     c_linea juego(C,N,M,P);
-    uint turno_ai = empieza_ai ? 1 : 2;
-    while (!juego.termino()) {
-        if (juego.turno() == turno_ai)
-            juego.jugar1(ai.jugar(juego));
-        else
-            juego.jugar2(ai.jugar(juego));
+    if (rand_primero) {
+        while (!juego.termino()) {
+            if (juego.turno() == 1) {
+                juego.jugar1(random_play(juego));
+            } else {
+                juego.jugar2(golo.jugar(juego));
+            }
+        }
+    } else {
+        while (!juego.termino()) {
+            if (juego.turno() == 1) {
+                juego.jugar1(golo.jugar(juego));
+            } else {
+                juego.jugar2(random_play(juego));
+            }
+        }
     }
     if (juego.gano1())
         return PRIMERO;
@@ -28,6 +64,27 @@ uint golosa_vs_random(uint N, uint M, uint C, uint P, golosa &ai, bool empieza_a
     else
         return EMPATE;
 }
+
+uint play_golosa_vs_random(uint N, uint M, uint C, uint P, vector<float> pesos, uint games, bool rand_first) {
+    golosa goloso(pesos, N, M, C);
+    int ganados = 0;
+    uint goloso_orden = rand_first ? SEGUNDO : PRIMERO;
+    for (uint i=0; i<games; i++){
+        if (golosa_vs_random(N,M,C,P,goloso,rand_first) == goloso_orden)
+            ganados ++;
+    }
+    return ganados;
+}
+
+float regular_fitness(uint N, uint M, uint C, uint P, vector<float> pesos)  {
+    uint iterations_each = 10000;
+    uint wins_home = play_golosa_vs_random(N,M,C,P,pesos,iterations_each,true);
+    uint wins_away = play_golosa_vs_random(N,M,C,P,pesos,iterations_each,false);
+
+    cout << wins_home << ", " << wins_away << ", " << ((float)(wins_home+wins_away))/(iterations_each*2) << endl << endl;
+    return ((float)(wins_home+wins_away))/(iterations_each*2);
+}
+
 
 /////////////////////////////////////////////////////////
 /*  Para medir fitness en C++ entre distintos golosos  */
@@ -181,11 +238,15 @@ bool regular_fitness(uint N, uint M, uint C, uint P, vector<float> pesos1, vecto
     return match1 == PRIMERO && match2 == SEGUNDO;
 }
 
-float regular_fitness(uint N, uint M, uint C, uint P, vector<float> pesos) {
-    uint iterations_each = 25;
-    string rival = "./random_player";
-    uint wins_home = play_with_golosa(N,M,C,P,pesos,iterations_each,rival,true);
-    uint wins_away = play_with_golosa(N,M,C,P,pesos,iterations_each,rival,false);
-    // cout << wins_home << ", " << wins_away << ", " << ((float)(wins_home+wins_away))/(iterations_each*2) << endl << endl;
-    return ((float)(wins_home+wins_away))/(iterations_each*2);
-}
+
+////// ESTO QUEDA COMENTADO PORQUE SI IMPLEMENTO ARRIBA CON CPP MUCHO MAS RAPIDO
+
+
+// float regular_fitness(uint N, uint M, uint C, uint P, vector<float> pesos) {
+//     uint iterations_each = 25;
+//     string rival = "./random_player";
+//     uint wins_home = play_with_golosa(N,M,C,P,pesos,iterations_each,rival,true);
+//     uint wins_away = play_with_golosa(N,M,C,P,pesos,iterations_each,rival,false);
+//     // cout << wins_home << ", " << wins_away << ", " << ((float)(wins_home+wins_away))/(iterations_each*2) << endl << endl;
+//     return ((float)(wins_home+wins_away))/(iterations_each*2);
+// }

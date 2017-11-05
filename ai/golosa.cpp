@@ -841,7 +841,7 @@ vector<float> golosa::join_params(){
         j[i] = this->parametros[i];
     }
     for (uint i = PARAM_COUNT; i < j.size(); i++) {
-        j[i] = this->pesos_lineas[i];
+        j[i] = this->pesos_lineas[i-PARAM_COUNT];
     }
     return j;
 }

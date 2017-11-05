@@ -190,56 +190,45 @@ pesos grid_search::get_random_params() {
 list<golosa> grid_search::get_neighbors_golosos(const pesos& params){
     // Retorna los vecinos golosos y a si mismo
 
-    vector<pesos> neighbors;
+    list<golosa> golosos;
+    golosa g = golosa(params, this->columnas, this->filas, this->c);
+    golosos.push_back(g);
     if (params[0]> -1) {
         pesos copy = params;
         copy[0] = params[0] -1;
-        neighbors.push_back(copy);
+        golosa g = golosa(copy, this->columnas, this->filas, this->c);
+        golosos.push_back(g);
     }
-    if (params[0]<(int)this->columnas) {
+    if (params[0]<(int)this->columnas-1) {
         pesos copy = params;
         copy[0] = params[0] +1;
-        neighbors.push_back(copy);
+        golosa g = golosa(copy, this->columnas, this->filas, this->c);
+        golosos.push_back(g);
     }
 
     for(uint i=1; i<params.size(); i++) {
         if (params[i] - this->step >= this->inf_limit) {
             pesos copy = params;
             copy[i] = params[i] - this->step;
-            neighbors.push_back(copy);
+            golosa g = golosa(copy, this->columnas, this->filas, this->c);
+            golosos.push_back(g);
         }
         if (params[i] + this->step <= this->sup_limit) {
             pesos copy = params;
             copy[i] = params[i] +this->step;
-            neighbors.push_back(copy);
+            golosa g = golosa(copy, this->columnas, this->filas, this->c);
+            golosos.push_back(g);
         }
     }
-    cout << "PESOS" << endl;
-    for (uint i=0; i< neighbors.size();i++) {
-        pesos params = neighbors[i];
-        for (uint i=0; i<params.size();i++){
-            cout << params[i] << '\t';
-        }
-        cout << endl;
-    }
+    // cout << "GOLOSO" << endl;
+    // for (list<golosa>::iterator it = golosos.begin(); it != golosos.end(); ++it) {
+    //     pesos params = (*it).join_params();
+    //     for (uint i=0; i<params.size();i++){
+    //         cout << params[i] << '\t';
+    //     }
+    //     cout << endl;
+    // }
 
-    // paso el vector de pesos a vector de golosa
-
-    list<golosa> golosos;
-    for(uint i=0;i<neighbors.size();i++){
-        golosos.push_back(golosa(neighbors[i], this->columnas, this->filas, this->c));
-    }
-
-    golosos.push_back(golosa(params, this->columnas, this->filas, this->c));
-
-    cout << "GOLOSO" << endl;
-    for (list<golosa>::iterator it = golosos.begin(); it != golosos.end(); ++it) {
-        pesos params = (*it).join_params();
-        for (uint i=0; i<params.size();i++){
-            cout << params[i] << '\t';
-        }
-        cout << endl;
-    }
     return golosos;
 }
 
@@ -249,27 +238,33 @@ void grid_search::randomized_train() {
 
     pesos centro = this->get_random_params();
     pesos current_winner = centro;
-    // cout << "RANDOM" << endl;
-    // for (uint i=0; i<current_winner.size();i++){
-    //     cout << current_winner[i] << '\t';
-    // }
-    // cout << endl;
+    cout << "RANDOM" << endl;
+    for (uint i=0; i<current_winner.size();i++){
+        cout << current_winner[i] << '\t';
+    }
+    cout << endl;
 
     int jugados = 0;
     do {
         list<golosa> competidores = this->get_neighbors_golosos(centro);
 
-        // for (list<golosa>::iterator it = competidores.begin(); it != competidores.end(); ++it) {
-        //     pesos params = (*it).join_params();
-        //     cout << "Jugador" << endl;
-        //     for (uint i=0; i<params.size();i++){
-        //         cout << params[i] << '\t';
-        //     }
-        //     cout << endl;
-        // }
+        for (list<golosa>::iterator it = competidores.begin(); it != competidores.end(); ++it) {
+            pesos params = (*it).join_params();
+            // cout << "Jugador" << endl;
+            // for (uint i=0; i<params.size();i++){
+            //     cout << params[i] << '\t';
+            // }
+            // cout << endl;
+        }
         cout << endl;
+        centro = current_winner;
         list<golosa> results = fixture_golosas(this->columnas, this->filas, this->c, this->p, competidores);
         current_winner = results.front().join_params();
+        cout << "current_winner" << endl;
+        for (uint i=0; i<current_winner.size();i++){
+            cout << current_winner[i] << '\t';
+        }
+        cout << endl;
         jugados ++;
     } while (centro != current_winner);
 

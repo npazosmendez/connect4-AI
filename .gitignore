@@ -17,7 +17,7 @@ tests/tests
 tests/tests_c_linea
 bin/*
 !bin/
-!bin/dog
+!bin/odio_travis
 *main
 .Makefile
 *.test

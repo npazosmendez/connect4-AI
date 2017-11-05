@@ -34,3 +34,5 @@ clean:
 	rm -f tests
 	rm -f *.gch
 	-rm ../bin/tests ../bin/tests_c_linea
+	-make -C  ../ai/ clean
+	-make -C  ../ai/genetic_trainer/ clean

@@ -181,7 +181,7 @@ bool regular_fitness(uint N, uint M, uint C, uint P, vector<float> pesos1, vecto
     return match1 == PRIMERO && match2 == SEGUNDO;
 }
 
-float vs_random_fitnes(uint N, uint M, uint C, uint P, vector<float> pesos) {
+float regular_fitness(uint N, uint M, uint C, uint P, vector<float> pesos) {
     uint iterations_each = 25;
     string rival = "./random_player";
     uint wins_home = play_with_golosa(N,M,C,P,pesos,iterations_each,rival,true);

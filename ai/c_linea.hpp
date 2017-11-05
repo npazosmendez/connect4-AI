@@ -46,7 +46,7 @@ class c_linea{
         uint fichas2() const{return _p2;};
         uint fichas() const {if (yo == 1) return fichas1(); else return fichas2();};
 
-
+        int altura(int col) {return _alturas[col];};
         // Variables públicas
         const int C;
         const int N;

@@ -1,6 +1,7 @@
 #include "grid_search.hpp"
 #include <cstdlib>
 #include <cmath>
+#include <list>
 
 bool avanzar(vector<float> &params, int inf_limit, int sup_limit, float step, uint param_init, uint param_fin){
     for (size_t i = param_init; i < param_fin; i++) {
@@ -186,7 +187,7 @@ pesos grid_search::get_random_params() {
 }
 
 
-vector<golosa> grid_search::get_neighbors_golosos(const pesos& params){
+list<golosa> grid_search::get_neighbors_golosos(const pesos& params){
     // Retorna los vecinos golosos y a si mismo
 
     vector<pesos> neighbors;
@@ -213,14 +214,70 @@ vector<golosa> grid_search::get_neighbors_golosos(const pesos& params){
             neighbors.push_back(copy);
         }
     }
+    cout << "PESOS" << endl;
+    for (uint i=0; i< neighbors.size();i++) {
+        pesos params = neighbors[i];
+        for (uint i=0; i<params.size();i++){
+            cout << params[i] << '\t';
+        }
+        cout << endl;
+    }
 
     // paso el vector de pesos a vector de golosa
 
-    vector<golosa> golosos;
+    list<golosa> golosos;
     for(uint i=0;i<neighbors.size();i++){
         golosos.push_back(golosa(neighbors[i], this->columnas, this->filas, this->c));
     }
 
     golosos.push_back(golosa(params, this->columnas, this->filas, this->c));
+
+    cout << "GOLOSO" << endl;
+    for (list<golosa>::iterator it = golosos.begin(); it != golosos.end(); ++it) {
+        pesos params = (*it).join_params();
+        for (uint i=0; i<params.size();i++){
+            cout << params[i] << '\t';
+        }
+        cout << endl;
+    }
     return golosos;
+}
+
+
+void grid_search::randomized_train() {
+    list<golosa> triunfadores;
+
+    pesos centro = this->get_random_params();
+    pesos current_winner = centro;
+    // cout << "RANDOM" << endl;
+    // for (uint i=0; i<current_winner.size();i++){
+    //     cout << current_winner[i] << '\t';
+    // }
+    // cout << endl;
+
+    int jugados = 0;
+    do {
+        list<golosa> competidores = this->get_neighbors_golosos(centro);
+
+        // for (list<golosa>::iterator it = competidores.begin(); it != competidores.end(); ++it) {
+        //     pesos params = (*it).join_params();
+        //     cout << "Jugador" << endl;
+        //     for (uint i=0; i<params.size();i++){
+        //         cout << params[i] << '\t';
+        //     }
+        //     cout << endl;
+        // }
+        cout << endl;
+        list<golosa> results = fixture_golosas(this->columnas, this->filas, this->c, this->p, competidores);
+        current_winner = results.front().join_params();
+        jugados ++;
+    } while (centro != current_winner);
+
+    //Cuando se repite 2 veces el mismo campeon salimos
+    for (uint i=0; i<current_winner.size();i++){
+        cout << current_winner[i] << '\t';
+    }
+    cout << endl;
+    cout << "TRAS JUGAR " << jugados << "PARTIDOS" << endl;
+
 }

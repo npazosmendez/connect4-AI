@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <stdlib.h>     /* srand, rand */
+#include <time.h> 
 
 #include "grid_search.hpp"
 
@@ -15,7 +17,7 @@ void print(vector<float> a) {
 }
 
 int main(int argc, char const *argv[]) {
-
+    srand (time(NULL));
     // Qué forma tiene el juego?
     int n = read_int();
     int m = read_int();
@@ -25,15 +27,16 @@ int main(int argc, char const *argv[]) {
     // grid_search gridsearch(n,m,c,p,-1,1,0.25);
     // gridsearch.minecraft_train(-1,1,0.25);
     grid_search grid(n,m,c,p,-2,2,0.5);
-    pesos a = grid.get_random_params();
-    cout<< "RANDOM VECTOR " << endl;
-    print(a);
-    vector<golosa> list = grid.get_neighbors_golosos(a);
-    for (uint i=0;i<list.size();i++){
-        cout << "VECINO " << endl;
-        print(list[i].ver_parametros());
-        print(list[i].ver_pesos_lineas());
-    }
+    // pesos a = grid.get_random_params();
+    // cout<< "RANDOM VECTOR " << endl;
+    // print(a);
+    // vector<golosa> list = grid.get_neighbors_golosos(a);
+    // for (uint i=0;i<list.size();i++){
+    //     cout << "VECINO " << endl;
+    //     print(list[i].ver_parametros());
+    //     print(list[i].ver_pesos_lineas());
+    // }
+    grid.randomized_train();
 
     return 0;
 }

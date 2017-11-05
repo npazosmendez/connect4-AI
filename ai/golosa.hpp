@@ -54,6 +54,7 @@ Puede usarse la función cuantos_parametros(...) para obtener el númeroe exacto
 class golosa{
     friend class c_linea;
     friend class gen_trainer;
+    friend class grid_search;
     public:
 
         // Constructores

@@ -7,5 +7,5 @@ notifications:
 script: 
     - make -C tests/ install
     - make -C tests/
-    - ./bin/tests
+    - ./bin/tests > /dev/null
 

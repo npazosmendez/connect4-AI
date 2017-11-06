@@ -158,6 +158,20 @@ uint golosa_vs_golosa(uint N, uint M, uint C, uint P, golosa &ai1, golosa &ai2){
         return EMPATE;
 }
 
+uint ida_y_vuelta(uint N, uint M, uint C, uint P, golosa &ai1, golosa &ai2) {
+    //Hace jugar a 2 golosos ida y vuelta.
+    uint ida = golosa_vs_golosa(N,M,C,P,ai1,ai2);
+    uint vuelta = golosa_vs_golosa(N,M,C,P,ai2,ai1);
+    if ((ida == PRIMERO && (vuelta == SEGUNDO || vuelta == EMPATE)) ||
+        (ida == EMPATE && vuelta == SEGUNDO)) {
+        return PRIMERO;
+    } else if ((ida == SEGUNDO && (vuelta == PRIMERO || vuelta == EMPATE)) ||
+               (ida == EMPATE && vuelta == PRIMERO)) {
+        return SEGUNDO;
+    } else {
+        return EMPATE;
+    }
+}
 
 /////////////////////////////////////////////////////////
 /* Para medir fitness usando varias llamadas al Python */

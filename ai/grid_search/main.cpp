@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <stdlib.h>     /* srand, rand */
-#include <time.h> 
+#include <time.h>
 
 #include "grid_search.hpp"
 
@@ -26,7 +26,7 @@ int main(int argc, char const *argv[]) {
 
     // grid_search gridsearch(n,m,c,p,-1,1,0.25);
     // gridsearch.minecraft_train(-1,1,0.25);
-    grid_search grid(n,m,c,p,-2,2,0.5);
+    grid_search grid(n,m,c,p,-1000,1000,10);
     // pesos a = grid.get_random_params();
     // cout<< "RANDOM VECTOR " << endl;
     // print(a);

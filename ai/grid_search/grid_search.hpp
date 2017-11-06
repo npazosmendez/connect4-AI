@@ -21,6 +21,7 @@ class grid_search{
         void randomized_train();
         pesos get_random_params();
         list<golosa> get_neighbors_golosos(const pesos& params);
+        golosa random_busqueda_local_con_fixture();
 
 
     private:

@@ -25,14 +25,18 @@ vector<int> jugadas_previas;
 
 int main(int argc, char const *argv[]) {
     /* Úsese --help como argumento para información */
+	if (argc <= 5) {
+		print_help(argv);
+		exit(0);
+	}
 
     N = stoi(argv[1]);
     M = stoi(argv[2]);
     C = stoi(argv[3]);
     P = stoi(argv[4]);
     assert(C <= N && C <= M);
-    get_flags(argc,argv);
 
+    get_flags(argc,argv);
     c_linea juego(C,N,M,P);
 
     // Juego las 'jugadas_previas'

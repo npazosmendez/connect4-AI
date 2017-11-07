@@ -21,8 +21,9 @@ class grid_search{
         void randomized_train();
         pesos get_random_params();
         list<golosa> get_neighbors_golosos(const pesos& params);
+        vector<golosa> get_neighbors_golosos_v(const pesos& params);
         golosa random_busqueda_local_con_fixture();
-
+        golosa random_busqueda_local_first_lose();
 
     private:
         uint columnas,filas,c,p; //Caracteristicas del tablero a utilizar

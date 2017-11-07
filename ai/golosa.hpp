@@ -80,9 +80,9 @@ class golosa{
     private:
 
         // Variables privadas
-        const vector<float> parametros; // Cantidad de params == PARAM_COUNT
-        const vector<float> pesos_lineas; // Cantidad de params == C
-        const int N, M, C;
+        vector<float> parametros; // Cantidad de params == PARAM_COUNT
+        vector<float> pesos_lineas; // Cantidad de params == C
+        int N, M, C;
 
         vector<float> join_params();
 

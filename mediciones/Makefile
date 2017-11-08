@@ -19,13 +19,20 @@ victorias: $(SRC) victorias.cpp
 	make -C ../ai/genetic_trainer/
 	$(CC) $(FLAGS) $(OBJ) victorias.cpp -o tiempos
 
-grid: $(SRC) $(SRC_GRID) grid.cpp
+grid_steps_vict: $(SRC) $(SRC_GRID) grid.cpp
 	make -C ../ai/
 	make -C ../ai/grid_search/
-	$(CC) $(FLAGS) $(OBJ_GRID) grid.cpp -o grid
+	$(CC) -DEXP=CANT_STEPS_VICT $(FLAGS) $(OBJ_GRID) grid.cpp -o grid_steps_vict
+
+grid_steps_emp: $(SRC) $(SRC_GRID) grid.cpp
+	make -C ../ai/
+	make -C ../ai/grid_search/
+	$(CC) -DEXP=CANT_STEPS_EMP $(FLAGS) $(OBJ_GRID) grid.cpp -o grid_steps_emp
+
 
 clean:
 	rm -f *.o
 	rm -f tiempos
 	rm -f victorias
-	rm -f grid
+	rm -f grid_steps_emp
+	rm -f grid_steps_vict

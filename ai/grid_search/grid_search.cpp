@@ -344,7 +344,7 @@ golosa grid_search::random_busqueda_local_solo_victoria() {
         }
         jugados ++;
     } while (centro != current_winner && jugados < 100);
-    cout << jugados << endl;
+    cerr << jugados << endl;
     return golosa(current_winner, this->columnas, this->filas, this->c);
 }
 
@@ -394,7 +394,7 @@ golosa grid_search::random_busqueda_local_first_lose() {
         // }
         // cout << endl;
         jugados ++;
-    } while (centro != current_winner && empates < 30 && jugados < 100);
+    } while (centro != current_winner && empates < 15 && jugados < 100);
 
     //Cuando se repite 2 veces el mismo campeon salimos
     // for (uint i=0; i<current_winner.size();i++){
@@ -403,7 +403,7 @@ golosa grid_search::random_busqueda_local_first_lose() {
     // cout << endl;
     // cout << "TRAS JUGAR " << jugados << " PARTIDOS" << endl;
     // cout << ganados << endl;
-    cout << ganados << endl;
+    cerr << ganados << endl;
     return golosa(current_winner, this->columnas, this->filas, this->c);
 }
 

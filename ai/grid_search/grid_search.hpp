@@ -23,6 +23,7 @@ class grid_search{
         list<golosa> get_neighbors_golosos(const pesos& params);
         vector<golosa> get_neighbors_golosos_v(const pesos& params);
         golosa random_busqueda_local_con_fixture();
+        golosa random_busqueda_local_solo_victoria();
         golosa random_busqueda_local_first_lose();
 
     private:

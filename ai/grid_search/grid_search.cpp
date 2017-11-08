@@ -321,6 +321,33 @@ golosa grid_search::random_busqueda_local_con_fixture(){
     return golosa(current_winner, this->columnas, this->filas, this->c);
 }
 
+golosa grid_search::random_busqueda_local_solo_victoria() {
+    pesos centro = this->get_random_params();
+    pesos anterior = centro;
+    pesos current_winner = centro;
+
+    int jugados = 0;
+    int ganados = 0;
+    do {
+        anterior = centro;
+        centro = current_winner;
+        vector<golosa> competidores = this->get_neighbors_golosos_v(centro);
+
+        golosa g_centro = golosa(centro, this->columnas, this->filas, this->c);
+        for (uint i = 0; i< competidores.size(); i++) {
+            int result = ida_y_vuelta(this->columnas, this->filas, this->c, this->p, g_centro, competidores[i]);
+            if (result == SEGUNDO){
+                current_winner = (competidores[i]).join_params();
+                ganados++;
+                break;
+            }
+        }
+        jugados ++;
+    } while (centro != current_winner && jugados < 100);
+    cerr << jugados << endl;
+    return golosa(current_winner, this->columnas, this->filas, this->c);
+}
+
 golosa grid_search::random_busqueda_local_first_lose() {
     pesos centro = this->get_random_params();
     pesos anterior = centro;
@@ -367,7 +394,7 @@ golosa grid_search::random_busqueda_local_first_lose() {
         // }
         // cout << endl;
         jugados ++;
-    } while (centro != current_winner && empates < 30 && jugados < 100);
+    } while (centro != current_winner && empates < 15 && jugados < 100);
 
     //Cuando se repite 2 veces el mismo campeon salimos
     // for (uint i=0; i<current_winner.size();i++){
@@ -376,6 +403,7 @@ golosa grid_search::random_busqueda_local_first_lose() {
     // cout << endl;
     // cout << "TRAS JUGAR " << jugados << " PARTIDOS" << endl;
     // cout << ganados << endl;
+    cerr << ganados << endl;
     return golosa(current_winner, this->columnas, this->filas, this->c);
 }
 
@@ -386,11 +414,11 @@ void grid_search::randomized_train() {
     golosa current_goloso = partial_best;
     while(championships < 100 && total_matches < 6000) {
         total_matches++;
-        cout << championships << endl;
         current_goloso = this->random_busqueda_local_first_lose();
         int result = ida_y_vuelta(this->columnas, this->filas, this->c, this->p, partial_best, current_goloso);
         if (result == SEGUNDO) {
             partial_best = current_goloso;
+            cout << championships << endl;
             championships = 0;
         } else {
             championships ++;

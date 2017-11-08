@@ -403,6 +403,7 @@ golosa grid_search::random_busqueda_local_first_lose() {
     // cout << endl;
     // cout << "TRAS JUGAR " << jugados << " PARTIDOS" << endl;
     // cout << ganados << endl;
+    cout << ganados << endl;
     return golosa(current_winner, this->columnas, this->filas, this->c);
 }
 

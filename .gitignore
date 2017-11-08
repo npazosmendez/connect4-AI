@@ -12,6 +12,7 @@ random_player
 minimax_ab
 minimax_hc
 golosa
+mediciones/grid
 tags
 tests/tests
 tests/tests_c_linea

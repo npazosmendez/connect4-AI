@@ -10,13 +10,6 @@ using namespace std;
 int read_int();
 float read_float();
 
-void print(vector<float> a) {
-    for (uint i=0; i<a.size();i++){
-        cout << a[i] << '\t';
-    }
-    cout << endl;
-}
-
 int main(int argc, char const *argv[]) {
     srand (time(NULL));
     // Qué forma tiene el juego?

@@ -46,9 +46,9 @@ pesos gen_trainer::train(uint pop_size){
     // empieza ciclo evolutivo
     do{
         gen_count++;
-        std::cout << "-------------------------------------------------------" << gen_count << std::endl;
+        std::cout << "-------------------------------------------------------" << std::endl;
         std::cout << "> generacion " << gen_count << std::endl;
-        std::cout << "-------------------------------------------------------" << gen_count << std::endl;
+        std::cout << "-------------------------------------------------------" << std::endl;
         new_pop = vector< pesos >(pop_size);
         // genero golosas a partir de poblacion
         std::cout << "> genereando golosas" << std::endl;
@@ -61,6 +61,10 @@ pesos gen_trainer::train(uint pop_size){
         // estos serán los correspondientes a las dos golosas mejor rakeadas
         auto it_rankings = pob_rankings.begin();
         pesos p1 = (*it_rankings).join_params();
+        // printeando fitness padre 1
+        std::cerr << gen_count << "," << 
+            threaded_regular_fitness(this->n, this->m, this->c, this->p, p1) << std::endl;
+
         it_rankings++;
         pesos p2 = (*it_rankings).join_params();
         std::cout << "> genereando nueva población" << std::endl;
@@ -116,6 +120,7 @@ pesos gen_trainer::crossover(pesos p1, pesos p2){
     }
 }
 
+#define TOLERATION_LIMIT 0.01
 void gen_trainer::mutate(pesos &p){
     float lottery = float(rand())/float(RAND_MAX); // lottery ~ U[0,1]
     if (lottery < this->p_mutation) {
@@ -125,10 +130,12 @@ void gen_trainer::mutate(pesos &p){
         if (mutation_idx != PRIMERA_JUGADA) {
             p[mutation_idx] = (int)this->__get_rand_float() % this->n;
         }else{ // mutation_idx == PRIMERA_JUGADA
-            p[mutation_idx] = -1 + rand()%(this->n+1);
+            uint r = -1 + rand()%(this->n+1);
+            p[mutation_idx] = float(r);
         }
     }
-    assert(-1 <= p[PRIMERA_JUGADA] && p[PRIMERA_JUGADA] <= this->n-1);
+    assert(-1 - TOLERATION_LIMIT <= p[PRIMERA_JUGADA] &&
+            p[PRIMERA_JUGADA] <= this->n-1 + TOLERATION_LIMIT);
 }
 
 pesos gen_trainer::random_selection(vector< pesos > ps, vector<float> &fs){

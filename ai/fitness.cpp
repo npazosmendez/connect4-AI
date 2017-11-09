@@ -4,6 +4,7 @@
 #include <vector>
 #include <list>
 #include <cstdlib>
+#include "random.hpp"
 
 using namespace std;
 
@@ -83,6 +84,56 @@ float regular_fitness(uint N, uint M, uint C, uint P, vector<float> pesos)  {
 
     cout << wins_home << ", " << wins_away << ", " << ((float)(wins_home+wins_away))/(iterations_each*2) << endl << endl;
     return ((float)(wins_home+wins_away))/(iterations_each*2);
+}
+
+float threaded_regular_fitness(uint N, uint M, uint C, uint P, vector<float> pesos)  {
+    std::cout << "parallel fitness" << std::endl;
+    uint num_threads = NUM_THREADS;
+    uint iterations_each = 10000;
+    uint its_per_thread = iterations_each/num_threads;
+    vector<pthread_t> ps;
+    vector<uint> res(num_threads, 0);
+    params_fitness ex = params_fitness(N,M,C,P,its_per_thread,pesos,NULL);
+    vector<params_fitness> params_s(num_threads, ex);
+
+    for (uint i = 0; i < num_threads; i++) {
+        pthread_t un_thread;
+        ps.push_back(un_thread);
+        params_s[i].result = &res[i];
+        int r = pthread_create(&ps[i], NULL, regular_fitness_caller, (void*)&params_s[i]);
+        if (r) {
+           cerr << "pthreads: creando\n";
+           exit(1);
+        }
+    }
+    uint sum_wins = 0;
+    for (uint i = 0; i < num_threads; i++) {
+        int r = pthread_join(ps[i], NULL);       
+        if (r) {
+           cerr << "pthreads: join\n";
+           exit(1);
+        }
+        sum_wins+= (*(params_s[i].result));
+    }
+    return float(sum_wins)/(its_per_thread*num_threads*2);
+}
+
+// IN : parametros
+// OUT : NULL
+// guardo en p->result la suma de la wins_home + wins_away para 2*p->its
+
+void* regular_fitness_caller(void* params){
+    params_fitness* p = (params_fitness*) params;
+    int N = p->n, M = p->m, C = p->c, P = p->p; 
+    vector<float> pesos = std::vector<float>(p->pesos);
+    uint iterations_each = p->its;
+
+    uint wins_home = play_golosa_vs_random(N,M,C,P,pesos,iterations_each,true);
+    uint wins_away = play_golosa_vs_random(N,M,C,P,pesos,iterations_each,false);
+
+    uint r = (wins_home + wins_away);
+    *(p->result) = r;
+    return NULL;
 }
 
 

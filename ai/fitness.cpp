@@ -87,7 +87,7 @@ float regular_fitness(uint N, uint M, uint C, uint P, vector<float> pesos)  {
 }
 
 float threaded_regular_fitness(uint N, uint M, uint C, uint P, vector<float> pesos)  {
-    std::cout << "parallel fitness" << std::endl;
+    // std::cout << "parallel fitness" << std::endl;
     uint num_threads = NUM_THREADS;
     uint iterations_each = 10000;
     uint its_per_thread = iterations_each/num_threads;

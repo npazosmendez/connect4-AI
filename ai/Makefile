@@ -20,6 +20,9 @@ minimax_hc: ai.cpp $(OBJ)
 golosa: ai.cpp $(OBJ) c_linea.o
 	$(CC) $(FLAGS) -DAI=GOLOSA $(OBJ) $< -o ../bin/$@ $(LDFLAGS)
 
+random_fitness: random_fitness.cpp $(OBJ)
+	$(CC) $(FLAGS) $(OBJ) $< -o ../bin/$@ $(LDFLAGS)
+
 
 # Objetos
 

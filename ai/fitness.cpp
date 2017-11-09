@@ -4,6 +4,7 @@
 #include <vector>
 #include <list>
 #include <cstdlib>
+#include <time.h>
 #include "random.hpp"
 
 using namespace std;
@@ -32,10 +33,11 @@ using namespace std;
 // }
 
 int random_play(c_linea juego){
-    uint col = juego.N * (static_cast <float> (rand()))/( static_cast <float> (RAND_MAX));
-    while (juego.altura(col) >= juego.M) {
-        col = (col + 1) % juego.N;
-    }
+    srand(time(NULL));
+    uint col;
+    do {
+        col = rand() % juego.N;
+    } while (juego.altura(col) >= juego.M);
     return col;
 };
 

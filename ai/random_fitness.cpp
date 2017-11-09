@@ -37,7 +37,7 @@ int main(int argc, const char *argv[]){
 
     for (uint i = 0; i < qty; i++) {
         vector<float> pesos = random_params(n,m,c);
-        float r = threaded_regular_fitness(n,m,c,p,pesos);
+        float r = threaded_regular_fitness(n,m,c,p,pesos, 20000);
         std::cout << "# " << i << " -> " << r  << std::endl;
         cerr << std::setprecision(5) << r << "\n";
     }

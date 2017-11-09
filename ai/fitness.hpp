@@ -41,7 +41,7 @@ uint ida_y_vuelta(uint N, uint M, uint C, uint P, golosa &ai1, golosa &ai2);
 
 // paralelizando cosas
 void* regular_fitness_caller(void* params);
-float threaded_regular_fitness(uint N, uint M, uint C, uint P, vector<float> pesos);
+float threaded_regular_fitness(uint N, uint M, uint C, uint P, vector<float> pesos, uint trys);
 
 
 /* Para medir fitness usando varias llamadas al Python */

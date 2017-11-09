@@ -86,10 +86,10 @@ float regular_fitness(uint N, uint M, uint C, uint P, vector<float> pesos)  {
     return ((float)(wins_home+wins_away))/(iterations_each*2);
 }
 
-float threaded_regular_fitness(uint N, uint M, uint C, uint P, vector<float> pesos)  {
+float threaded_regular_fitness(uint N, uint M, uint C, uint P, vector<float> pesos, uint trys)  {
     // std::cout << "parallel fitness" << std::endl;
     uint num_threads = NUM_THREADS;
-    uint iterations_each = 10000;
+    uint iterations_each = trys/2;
     uint its_per_thread = iterations_each/num_threads;
     vector<pthread_t> ps;
     vector<uint> res(num_threads, 0);
@@ -115,7 +115,7 @@ float threaded_regular_fitness(uint N, uint M, uint C, uint P, vector<float> pes
         }
         sum_wins+= (*(params_s[i].result));
     }
-    return float(sum_wins)/(its_per_thread*num_threads*2);
+    return float(sum_wins)/(trys);
 }
 
 // IN : parametros

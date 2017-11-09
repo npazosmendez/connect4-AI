@@ -63,7 +63,7 @@ pesos gen_trainer::train(uint pop_size){
         pesos p1 = (*it_rankings).join_params();
         // printeando fitness padre 1
         std::cerr << gen_count << "," << 
-            threaded_regular_fitness(this->n, this->m, this->c, this->p, p1) << std::endl;
+            threaded_regular_fitness(this->n, this->m, this->c, this->p, p1,20000) << std::endl;
 
         it_rankings++;
         pesos p2 = (*it_rankings).join_params();
@@ -90,7 +90,6 @@ pesos gen_trainer::train(uint pop_size){
     // estos serán los correspondientes a las dos golosas mejor rakeadas
     auto it_rankings = pob_rankings.begin();
     pesos max_pesos = (*it_rankings).join_params();
-    this->max_achieved = max_pesos;
     return this->clip_float_values(max_pesos);
 }
 
@@ -132,10 +131,11 @@ void gen_trainer::mutate(pesos &p){
         }else{ // mutation_idx == PRIMERA_JUGADA
             uint r = -1 + rand()%(this->n+1);
             p[mutation_idx] = float(r);
+            std::cout << "Muto el gen 0: " << p[mutation_idx] << std::endl;
         }
     }
-    assert(-1 - TOLERATION_LIMIT <= p[PRIMERA_JUGADA] &&
-            p[PRIMERA_JUGADA] <= this->n-1 + TOLERATION_LIMIT);
+    //assert(-1 - TOLERATION_LIMIT <= p[PRIMERA_JUGADA] &&
+            //p[PRIMERA_JUGADA] <= this->n-1 + TOLERATION_LIMIT);
 }
 
 pesos gen_trainer::random_selection(vector< pesos > ps, vector<float> &fs){
@@ -165,10 +165,6 @@ pesos gen_trainer::random_selection(vector< pesos > ps, vector<float> &fs){
 
 float gen_trainer::fitness(pesos p){
     return regular_fitness(this->n, this->m, this->c, 100000, p);
-}
-
-pesos gen_trainer::get_max() const{
-    return this->max_achieved;
 }
 
 pesos gen_trainer::randon_genome(){

@@ -19,8 +19,7 @@ class gen_trainer{
         uint gen_limit;
         uint param_count;
         float p_mutation;
-        pesos max_achieved;
-        float max_fitness_achieved;
+        uint pop_size;
 
         // uso interno
         string __to_argv(pesos p);
@@ -32,12 +31,29 @@ class gen_trainer{
         gen_trainer();
         gen_trainer(uint _n, uint _m, uint _c, uint _p, uint gl, float pm) :
             n(_n), m(_m), c(_c), p(_p), gen_limit(gl), p_mutation(pm){
-        this->param_count = golosa::cuantos_parametros(this->n, this->m, this->c);
-            srand (time(NULL));
+            this->param_count = golosa::cuantos_parametros(this->n, this->m, this->c);
+                srand (time(NULL));
+        };
+        gen_trainer(uint _n, uint _m, uint _c, uint _p, uint gl, float pm, uint pop_size) :
+            n(_n), m(_m), c(_c), p(_p), gen_limit(gl), p_mutation(pm), pop_size(pop_size){
+            this->param_count = golosa::cuantos_parametros(this->n, this->m, this->c);
+                srand (time(NULL));
         };
         pesos train(uint pop_size);
-        pesos get_max() const;
-        inline float get_max_fitness(){ return this->max_fitness_achieved; };
+
+        void setPopulationSize(uint p){
+            this->pop_size = p;
+        }
+        uint getPopulationSize(){
+            return this->pop_size;
+        }
+        void setMutationRate(float p_mut){
+            this->p_mutation = p_mut;
+        }
+        float getMutationRate(){
+            return this->p_mutation;
+        }
+
 };
 
 #endif

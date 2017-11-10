@@ -10,7 +10,7 @@
 #define CLIP_ABS_LIMIT 1000
 // si el parametro es |parametro| < ZERO_CLIP, se clipea a 0
 #define ZERO_CLIP 1e-20
-
+#define MAX_TH_VALUE .85
 
 #define EQUALS_FLOAT(a,b) ((-1e-4 <= a - b) && (a - b <= 1e-4))
 
@@ -26,6 +26,9 @@ pesos gen_trainer::train_random_fitness(){
         pop[i] = this->randon_genome();
     }
 
+    // threshold in random selection, itialize in random
+    float fitnes_th  = this->fitness_against_random(pop[rand()%this->pop_size]);
+
     // primer jugador golosa, va a ser uno random entre los genomas
 
     // empieza ciclo evolutivo
@@ -40,11 +43,14 @@ pesos gen_trainer::train_random_fitness(){
 
         std::cout << "> seleccionando progenitores" << std::endl;
 
-        pesos p1 = this->random_selection(pop, pop_fitness);
+        // pesos p1 = this->random_selection(pop, pop_fitness);
+        pesos p1 = this->random_selection(pop, pop_fitness, fitnes_th);
         float p1_fitness = this->fitness_against_random(p1);
         std::cerr << gen_count << "," << 
             p1_fitness << std::endl;
-        pesos p2 = this->random_selection(pop, pop_fitness);
+
+        // pesos p2 = this->random_selection(pop, pop_fitness);
+        pesos p2 = this->random_selection(pop, pop_fitness, fitnes_th);
         float p2_fitness = this->fitness_against_random(p2);
 
         std::cout << "> p1: " << p1_fitness << " ; p2: " << p2_fitness << std::endl;
@@ -224,6 +230,33 @@ pesos gen_trainer::random_selection(vector< pesos > ps, vector<float> &fs){
             // es más probableq que quede en ese intervalo, se elige ese 
             // peso 
             return ps[chosen_index];
+        }
+    }
+}
+
+
+pesos gen_trainer::random_selection(vector< pesos > ps, vector<float> &fs, float &f_th){
+    // ps: poblacion de pesos actual
+    // fs: fitness converetido en proba fs(p) = 1 - (1/fitness(p))
+    // proba entre 0 y 1, cuanto mayor el fitness, mayor la proba
+    // Si fs tiene -1, es que no fue calculado rodavía
+    while(true){
+        uint chosen_index = rand() % ps.size();
+        float lottery_num = rand() / RAND_MAX;
+        if (EQUALS_FLOAT(fs[chosen_index],-1)) {
+            // todavia no se calculo el fintess de ese genoma
+            fs[chosen_index] = this->fitness_against_random(ps[chosen_index]);
+            if (f_th < fs[chosen_index]) f_th = fs[chosen_index];
+        }
+        if (lottery_num < fs[chosen_index]) {
+            // si el float en [0,1] sorteado es menor a la proba
+            // que sale de evaluar el fitness, de forma que si es alta,
+            // es más probableq que quede en ese intervalo, se elige ese 
+            // peso 
+            if (f_th*MAX_TH_VALUE > fs[chosen_index]) {
+                // si suepra el THRESHOLD, lo devuelvo, sino sigo
+                return ps[chosen_index];
+            }
         }
     }
 }

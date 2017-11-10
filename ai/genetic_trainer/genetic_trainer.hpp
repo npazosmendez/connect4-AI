@@ -12,6 +12,7 @@ class gen_trainer{
         pesos crossover(pesos p1, pesos p2);
         void mutate(pesos &p);
         pesos random_selection(vector<pesos> ps, vector<float> &fs);
+        pesos random_selection(vector<pesos> ps, vector<float> &fs, float& f_th);
         pesos randon_genome();
         float fitness_against_random(pesos p);
 

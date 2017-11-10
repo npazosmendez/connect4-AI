@@ -11,6 +11,74 @@
 // si el parametro es |parametro| < ZERO_CLIP, se clipea a 0
 #define ZERO_CLIP 1e-20
 
+
+#define EQUALS_FLOAT(a,b) ((-1e-4 <= a - b) && (a - b <= 1e-4))
+
+pesos gen_trainer::train_random_fitness(){
+    // asser que las poblaciones sean de tamaño mayor a 2
+    assert(pop_size >= 2);
+    // generate initial population
+    vector< pesos > pop = vector< pesos >(this->pop_size);
+    vector< pesos > new_pop;
+    vector< float > pop_fitness(this->pop_size, -1);
+    uint gen_count = 0;
+    for (uint i = 0; i < pop_size; i++) {
+        pop[i] = this->randon_genome();
+    }
+
+    // primer jugador golosa, va a ser uno random entre los genomas
+
+    // empieza ciclo evolutivo
+    do{
+        gen_count++;
+        std::cout << "-------------------------------------------------------" << std::endl;
+        std::cout << "> generacion " << gen_count << std::endl;
+        std::cout << "-------------------------------------------------------" << std::endl;
+        new_pop = vector< pesos >(pop_size);
+
+        // selecciono segun su fitness lo progenitores
+
+        std::cout << "> seleccionando progenitores" << std::endl;
+
+        pesos p1 = this->random_selection(pop, pop_fitness);
+        float p1_fitness = this->fitness_against_random(p1);
+        std::cerr << gen_count << "," << 
+            p1_fitness << std::endl;
+        pesos p2 = this->random_selection(pop, pop_fitness);
+        float p2_fitness = this->fitness_against_random(p2);
+
+        std::cout << "> p1: " << p1_fitness << " ; p2: " << p2_fitness << std::endl;
+        std::cout << "> genereando nueva población" << std::endl;
+
+        for (uint i = 0; i < pop_size; i++) {
+            // nace hijo
+            pesos child = this->crossover(p1, p2);
+            // muta
+            this->mutate(child);
+            // es wolverine
+            new_pop[i] = child;
+        }
+        pop = new_pop;
+        pop_fitness = vector<float>(pop.size(),-1);
+    } while(gen_count < this->gen_limit);
+    // pop_fitness y pop tiene las povlaciones y los correspondientes
+    // valores de fitness de la última generación de individuos
+    std::cout << "la evolucion a terminado!" << std::endl;
+
+    pesos max_pesos; float max_fitness = -1;
+    for (uint i = 0; i < pop.size(); i++) {
+        if (EQUALS_FLOAT(pop_fitness[i], -1)) {
+            pop_fitness[i] = this->fitness_against_random(pop[i]);
+        }
+        if (pop_fitness[i] > max_fitness) {
+            max_fitness = pop_fitness[i];
+            max_pesos = pop[i];
+        }
+    }
+    std::cout << "Mayor fitness encontrado: " << max_fitness << std::endl;
+    return this->clip_float_values(max_pesos);
+}
+
 /*
     ----------------------------
     Search via Genetic Algorithm
@@ -146,11 +214,9 @@ pesos gen_trainer::random_selection(vector< pesos > ps, vector<float> &fs){
     while(true){
         uint chosen_index = rand() % ps.size();
         float lottery_num = rand() / RAND_MAX;
-        if (fs[chosen_index] == -1) {
+        if (EQUALS_FLOAT(fs[chosen_index],-1)) {
             // todavia no se calculo el fintess de ese genoma
-            fs[chosen_index] = this->fitness(ps[chosen_index]);
-            std::cout << "Se calculo el fitness de " << chosen_index << " y dio " << fs[chosen_index] << std::endl;
-        
+            fs[chosen_index] = this->fitness_against_random(ps[chosen_index]);
         }
         if (lottery_num < fs[chosen_index]) {
             // si el float en [0,1] sorteado es menor a la proba
@@ -163,8 +229,9 @@ pesos gen_trainer::random_selection(vector< pesos > ps, vector<float> &fs){
 }
 
 
-float gen_trainer::fitness(pesos p){
-    return regular_fitness(this->n, this->m, this->c, 100000, p);
+
+float gen_trainer::fitness_against_random(pesos p){
+    return threaded_regular_fitness(this->n, this->m, this->c, this->p, p,10000);
 }
 
 pesos gen_trainer::randon_genome(){

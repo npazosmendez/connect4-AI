@@ -13,7 +13,7 @@ class gen_trainer{
         void mutate(pesos &p);
         pesos random_selection(vector<pesos> ps, vector<float> &fs);
         pesos randon_genome();
-        float fitness(pesos p);
+        float fitness_against_random(pesos p);
 
         uint n,m,c,p;
         uint gen_limit;
@@ -30,7 +30,7 @@ class gen_trainer{
     public:
         gen_trainer();
         gen_trainer(uint _n, uint _m, uint _c, uint _p, uint gl, float pm) :
-            n(_n), m(_m), c(_c), p(_p), gen_limit(gl), p_mutation(pm){
+            n(_n), m(_m), c(_c), p(_p), gen_limit(gl), p_mutation(pm), pop_size(50){
             this->param_count = golosa::cuantos_parametros(this->n, this->m, this->c);
                 srand (time(NULL));
         };
@@ -40,6 +40,7 @@ class gen_trainer{
                 srand (time(NULL));
         };
         pesos train(uint pop_size);
+        pesos train_random_fitness();
 
         void setPopulationSize(uint p){
             this->pop_size = p;

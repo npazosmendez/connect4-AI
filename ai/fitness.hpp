@@ -36,6 +36,7 @@ using namespace std;
 /*  Para medir fitness en C++ entre distintos golosos  */
 uint golosa_vs_golosa(uint N, uint M, uint C, uint P, golosa &ai1, golosa &ai2);
 uint golosa_vs_random(uint N, uint M, uint C, uint P, golosa &ai);
+uint golosa_vs_random(uint N, uint M, uint C, uint P, golosa &golo, bool rand_primero);
 list<golosa> fixture_golosas(uint N, uint M, uint C, uint P, list<golosa> aaii);
 uint ida_y_vuelta(uint N, uint M, uint C, uint P, golosa &ai1, golosa &ai2);
 

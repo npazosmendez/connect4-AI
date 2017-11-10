@@ -5,27 +5,36 @@
 #include <time.h>
 #include "../golosa.hpp"
 using namespace std;
-typedef vector<float> pesos;
 
 class gen_trainer{
     private:
-        pesos crossover(pesos p1, pesos p2);
-        void mutate(pesos &p);
-        pesos random_selection(vector<pesos> ps, vector<float> &fs);
-        pesos randon_genome();
-        float fitness_against_random(pesos p);
+        // Crossovers
+        vector<float>  crossover_binario(vector<float>  p1, vector<float>  p2);
+        vector<float>  crossover_completo(vector<float>  p1, vector<float>  p2);
 
+        // Mutations
+        bool mono_mutate(vector<float>  &p);
+        bool multi_mutate(vector<float>  &p);
+
+        // Selections
+        void progenitores_por_fitness(vector<float> &p1, vector<float> &p2, const vector<float> &pop_fitness, const vector< vector<float> > &pop);
+        void progenitores_probabilisticos(vector<float> &p1, vector<float> &p2, const vector<float> &pop_fitness, const vector< vector<float> > &pop);
+        vector<float>  random_selection(vector<vector<float> > ps, vector<float> &fs);
+
+        // Fitness
+        float fitness_against_random(vector<float>  p);
+        float fitness_against_golosos(vector<float> &chabon);
+        vector<float> fitness_fixture(const vector< vector<float> > &pop);
+
+        // Otros
+        vector<float>  randon_genome();
+        
         uint n,m,c,p;
         uint gen_limit;
         uint param_count;
         float p_mutation;
         uint pop_size;
 
-        // uso interno
-        string __to_argv(pesos p);
-        float __get_rand_float();
-        vector<float> clip_float_values(vector<float>);
-        list<golosa> golosas_from_pop( vector<pesos> );
 
     public:
         gen_trainer();
@@ -39,8 +48,8 @@ class gen_trainer{
             this->param_count = golosa::cuantos_parametros(this->n, this->m, this->c);
                 srand (time(NULL));
         };
-        pesos train(uint pop_size);
-        pesos train_random_fitness();
+        vector<float>  train(uint pop_size);
+        vector<float>  train();
 
         void setPopulationSize(uint p){
             this->pop_size = p;

@@ -1,0 +1,335 @@
+Creando entrenador...
+Entrenando...
+-------------------------------------------------------
+Población: 	10
+Generaciones: 	1000
+P(mutación): 	0.1
+Fitness: 	vs random
+Crossover: 	completo
+Selección: 	por rank
+Mutación: 	multi
+-------------------------------------------------------
+-------------------------------------------------------
+> generacion 1
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.98395
+> seleccionando 2 progenitores
+	3	53	-59	62	23	71	69	67	39	90	
+	-1	3	-53	-67	-100	-34	-28	26	-80	-39	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 2
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.98935
+> seleccionando 2 progenitores
+	3	3	-53	0	-100	71	69	26	-80	-39	
+	-1	3	-0	-67	23	71	-28	26	39	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 3
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.9968
+> seleccionando 2 progenitores
+	3	3	-53	-67	-100	71	69	26	-80	90	
+	3	3	-53	0	-100	71	69	-0	-0	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 4
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.99755
+> seleccionando 2 progenitores
+	3	3	-53	-67	-100	71	69	26	-0	90	
+	3	3	-53	-67	-100	71	69	26	-0	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 5
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.9978
+> seleccionando 2 progenitores
+	3	3	-53	-67	-100	71	69	26	-0	90	
+	3	3	-53	-67	-100	71	69	26	-0	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 6
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.99775
+> seleccionando 2 progenitores
+	3	3	-0	-67	-100	71	69	26	-0	90	
+	3	3	-53	-67	-100	71	69	26	-0	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 7
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.9978
+> seleccionando 2 progenitores
+	3	3	-0	-67	-0	71	69	26	-0	90	
+	3	3	-53	-67	-100	71	69	26	-0	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 8
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.9979
+> seleccionando 2 progenitores
+	3	3	-0	-67	-0	71	69	26	-0	90	
+	3	3	-0	-67	-0	71	69	26	-0	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 9
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.9979
+> seleccionando 2 progenitores
+	3	3	-0	-67	-0	71	69	26	-0	90	
+	3	3	-0	-67	-0	71	69	26	-0	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 10
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.99815
+> seleccionando 2 progenitores
+	3	3	-0	-67	-0	71	69	26	-0	90	
+	3	3	-0	-67	-0	71	69	26	-0	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 11
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.9979
+> seleccionando 2 progenitores
+	3	3	-0	0	-0	71	69	0	0	90	
+	3	3	-0	-67	-0	71	69	26	-0	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 12
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.9979
+> seleccionando 2 progenitores
+	3	3	-0	0	-0	71	69	0	0	90	
+	3	3	-0	-67	-0	71	69	26	-0	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 13
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.99785
+> seleccionando 2 progenitores
+	3	3	-0	0	-0	71	69	0	0	90	
+	3	3	-0	0	-0	71	69	-0	-0	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 14
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.9984
+> seleccionando 2 progenitores
+	3	3	-0	0	-0	71	69	0	0	90	
+	3	3	-0	0	-0	71	69	0	0	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 15
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.9986
+> seleccionando 2 progenitores
+	3	3	-0	0	-0	71	69	0	0	90	
+	3	3	-0	0	-0	71	69	0	0	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 16
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.9983
+> seleccionando 2 progenitores
+	3	3	-0	0	-0	71	69	0	0	90	
+	3	3	-0	0	-0	71	69	0	0	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 17
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.99795
+> seleccionando 2 progenitores
+	3	3	-0	0	-0	71	69	0	0	90	
+	3	3	-0	0	-0	71	69	0	0	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 18
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.99815
+> seleccionando 2 progenitores
+	-1	0	-0	0	-0	71	69	0	0	90	
+	3	3	-0	0	-0	71	69	0	0	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 19
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.9987
+> seleccionando 2 progenitores
+	3	0	-0	-0	-0	71	69	0	0	90	
+	-1	-0	-0	0	-0	71	69	0	0	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 20
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.99835
+> seleccionando 2 progenitores
+	-1	-0	-0	-0	-0	71	69	0	-5	90	
+	3	0	-0	-0	-0	71	69	0	0	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 21
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.99845
+> seleccionando 2 progenitores
+	3	-0	-0	-0	-0	71	69	-0	-5	90	
+	-1	0	-0	-0	-0	71	69	0	0	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 22
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.99825
+> seleccionando 2 progenitores
+	-1	0	-0	-0	-0	71	69	-0	-5	90	
+	3	0	-0	-0	-0	71	69	-0	-5	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 23
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.99835
+> seleccionando 2 progenitores
+	3	0	-0	-0	-0	71	69	-0	-5	90	
+	3	0	-0	-0	-0	71	69	-0	-5	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 24
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.9984
+> seleccionando 2 progenitores
+	3	0	-0	-0	-0	71	69	-0	-5	90	
+	3	0	-0	-0	-0	71	69	-0	-5	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 25
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.9984
+> seleccionando 2 progenitores
+	3	0	57	-0	-0	71	69	-0	-5	90	
+	3	0	53	-0	-0	71	69	-0	-5	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 26
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.998
+> seleccionando 2 progenitores
+	3	0	57	-0	-0	71	69	-0	-5	90	
+	3	0	57	-0	-0	71	69	-0	-5	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 27
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.99835
+> seleccionando 2 progenitores
+	3	0	57	-0	-0	71	69	-0	-5	90	
+	3	0	57	-0	-0	71	69	-0	-5	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 28
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.9982
+> seleccionando 2 progenitores
+	3	0	57	-0	-0	71	69	-0	-5	90	
+	3	0	57	-0	-0	71	69	-0	-5	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 29
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.99835
+> seleccionando 2 progenitores
+	3	0	57	-0	-0	71	69	-0	-5	90	
+	3	0	57	-0	-0	71	69	-0	-5	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 30
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.99845
+> seleccionando 2 progenitores
+	3	0	57	-0	-0	71	69	-0	-5	90	
+	3	0	57	-0	-0	71	69	-0	-5	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 31
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.9983
+> seleccionando 2 progenitores
+	3	0	57	-0	-0	71	69	-0	-5	90	
+	3	0	57	-0	-0	71	69	-0	-5	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 32
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.9986
+> seleccionando 2 progenitores
+	3	0	57	-0	-0	71	69	-0	-5	90	
+	3	0	57	-0	-0	71	69	-0	-5	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 33
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.99825
+> seleccionando 2 progenitores
+	3	0	57	-0	-0	71	69	-0	0	90	
+	3	0	57	-0	-0	71	69	-0	-5	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 34
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.9983
+> seleccionando 2 progenitores
+	3	0	57	-0	-0	71	69	-0	0	90	
+	3	0	57	-0	-0	71	69	-0	-5	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 35
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.99845
+> seleccionando 2 progenitores
+	3	0	57	-0	-0	71	69	-0	0	90	
+	3	0	57	-0	-0	71	69	-0	-5	90	
+> genereando nueva población
+-------------------------------------------------------
+> generacion 36
+-------------------------------------------------------
+> calculando fitness
+	mejor fitness de la generación: 0.9985
+> seleccionando 2 progenitores
+	3	0	57	-0	-0	71	69	-0	-5	90	
+	3	0	57	-0	-0	71	69	-0	-5	90	
+> genereando nueva población

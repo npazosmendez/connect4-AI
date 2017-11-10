@@ -5,7 +5,6 @@
 #include <list>
 #include <cstdlib>
 #include <time.h>
-#include "random.hpp"
 
 using namespace std;
 
@@ -109,7 +108,7 @@ float threaded_regular_fitness(uint N, uint M, uint C, uint P, vector<float> pes
     }
     uint sum_wins = 0;
     for (uint i = 0; i < num_threads; i++) {
-        int r = pthread_join(ps[i], NULL);       
+        int r = pthread_join(ps[i], NULL);
         if (r) {
            cerr << "pthreads: join\n";
            exit(1);
@@ -125,7 +124,7 @@ float threaded_regular_fitness(uint N, uint M, uint C, uint P, vector<float> pes
 
 void* regular_fitness_caller(void* params){
     params_fitness* p = (params_fitness*) params;
-    int N = p->n, M = p->m, C = p->c, P = p->p; 
+    int N = p->n, M = p->m, C = p->c, P = p->p;
     vector<float> pesos = std::vector<float>(p->pesos);
     uint iterations_each = p->its;
 

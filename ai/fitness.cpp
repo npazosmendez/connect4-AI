@@ -33,7 +33,6 @@ using namespace std;
 // }
 
 int random_play(c_linea juego){
-    srand(time(NULL));
     uint col;
     do {
         col = rand() % juego.N;

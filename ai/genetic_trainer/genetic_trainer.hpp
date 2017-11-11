@@ -7,6 +7,11 @@
 using namespace std;
 
 class gen_trainer{
+    public:
+        enum fitness_t{VS_RANDOM, FIXTURE, VS_GOLOSOS};
+        enum seleccion_t{PROBABILISTICA,RANK};
+        enum crossover_t{COMPLETO, BINARIO};
+        enum mutation_t{MONO,MULTI};
     private:
         // Crossovers
         vector<float>  crossover_binario(vector<float>  p1, vector<float>  p2);
@@ -28,13 +33,17 @@ class gen_trainer{
 
         // Otros
         vector<float>  randon_genome();
-        
+
         uint n,m,c,p;
         uint gen_limit;
         uint param_count;
         float p_mutation;
         uint pop_size;
 
+        fitness_t FITNESS;
+        crossover_t CROSSOVER;
+        seleccion_t SELECCION;
+        mutation_t MUTATION;
 
     public:
         gen_trainer();
@@ -45,6 +54,13 @@ class gen_trainer{
         };
         gen_trainer(uint _n, uint _m, uint _c, uint _p, uint gl, float pm, uint pop_size) :
             n(_n), m(_m), c(_c), p(_p), gen_limit(gl), p_mutation(pm), pop_size(pop_size){
+            this->param_count = golosa::cuantos_parametros(this->n, this->m, this->c);
+                srand (time(NULL));
+        };
+        gen_trainer(uint _n, uint _m, uint _c, uint _p, uint gl, float pm, uint pop_size,
+                    fitness_t fit, crossover_t cross, seleccion_t sel, mutation_t mut) :
+            n(_n), m(_m), c(_c), p(_p), gen_limit(gl), p_mutation(pm), pop_size(pop_size),
+            FITNESS(fit), CROSSOVER(cross), SELECCION(sel), MUTATION(mut){
             this->param_count = golosa::cuantos_parametros(this->n, this->m, this->c);
                 srand (time(NULL));
         };
@@ -63,6 +79,7 @@ class gen_trainer{
         float getMutationRate(){
             return this->p_mutation;
         }
+
 
 };
 

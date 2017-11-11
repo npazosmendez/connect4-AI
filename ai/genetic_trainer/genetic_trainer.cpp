@@ -100,7 +100,10 @@ vector<float> gen_trainer::train(){
                 max = pop_fitness[i];
             }
         }
-        if (max > global_max_fitness) alfa = pop[k];
+        if (max > global_max_fitness){
+            alfa = pop[k];
+            global_max_fitness = max;
+        }
         log(2) << "\tmejor fitness de la generación: " << max << endl;
         best_fitness_log << max << endl; // Imprimio el mejor fitness
 
@@ -123,9 +126,11 @@ vector<float> gen_trainer::train(){
         for (size_t i = 0; i < p2.size(); i++) log(2) << p2[i] << "\t";
         log(2) << endl;
         // Log
-        for (size_t i = 0; i < p1.size(); i++) progenitores_log << p1[i] << "\t";
+        progenitores_log << p1[0];
+        for (size_t i = 1; i < p1.size(); i++) progenitores_log <<","<< p1[i];
         progenitores_log << endl;
-        for (size_t i = 0; i < p2.size(); i++) progenitores_log << p2[i] << "\t";
+        progenitores_log << p2[0];
+        for (size_t i = 1; i < p2.size(); i++) progenitores_log <<","<< p2[i];
         progenitores_log << endl;
 
 
@@ -168,7 +173,8 @@ vector<float> gen_trainer::train(){
     log(1) << "Mayor fitness encontrado: " << global_max_fitness << endl;
 
     champion_log << global_max_fitness << endl;
-    for (size_t i = 0; i < alfa.size(); i++) champion_log << alfa[i] << ",";
+    champion_log << alfa[0];
+    for (size_t i = 1; i < alfa.size(); i++) champion_log <<","<< alfa[i];
     champion_log << endl;
 
     close_log();

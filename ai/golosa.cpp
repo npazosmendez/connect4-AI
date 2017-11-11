@@ -601,121 +601,202 @@ bool golosa::servida(const c_linea &juego){
 }
 
 bool golosa::imbatible(const c_linea &juego, int jugador){
-    /* determina si hay una línea de C-1 extendible a ambos lados de
-    forma inmediata (es decir, la altura de las columnas permite llenar
-    esos casillero), por lo que el jugador ganaría en el próximo turno */
+    /*
+    Esa función verifica si el jugador tiene al menos 2 líneas inmediatamente
+    extensibles a C con C-1 fichas. Verifica que estas líneas a contar no
+    coincidan en su casillero faltante. De esta forma, si hubiera más de dos
+    el jugador ganaría en su próximo turno, sin importar si es ahora o después.
+    */
+    assert(jugador == 1 || jugador == 2);
 
-    // busco en filas
-    for (int fil = 0; fil < M; fil++) {
-        bool vacia_al_principio = false;
-        int fichas_consec = 0;
-        for (int col = 0; col < N; col++) {
-            if (juego.tablero()[col][fil] == jugador) {
-                // otra ficha consecutiva
-                fichas_consec++;
-            }else if(juego.tablero()[col][fil] == 0){
-                // agujero. Si hubo C-1 fichas consecutivas, un vacío al
-                // principio, y pueden llenarse los dos extremos, IMBATIBLE!
-                if (fichas_consec == C-1 && vacia_al_principio && juego._alturas[col] == fil && juego._alturas[col-C] == fil){
-                    return true;
-                }else{
-                    // No soy imbatible, reseteo el contador de consecutivas
-                    fichas_consec = 0;
-                    vacia_al_principio = true;
-                }
+    int cuenta_llenables = 0;
+    // me guardo las coordenadas del casillero vacío a completar.
+    // voy a querer encontrar dos líneas con estas coordenadas distintas
+    int casillero_fil = -1;
+    int casillero_col = -1;
+
+    int ultima_vacia_fil = -1;
+    int ultima_vacia_col = -1;
+    // busco líneas horizontales
+    // NOTE: este está más o menos comentado. El vertical y diagonal son
+    // escencialmente iguales.
+    for (int fil = 0; fil < M; fil++) { // fila 'fil'
+        int contador = 0; // cuenta casilleros libres llenables inmediatamente o de color 'jugador' consecutivos
+        int cant_completos = 0; // cuenta la cantidad de fichas propias en la línea que se está analizando actualmente
+        for (int col = 0; col < N; col++) { // columna 'col'
+            if (juego.tablero()[col][fil] == 0 && juego._alturas[col] == fil) {
+                // la línea sigue, y es otro espacio libre pa llenar inmediatamente
+                contador++;
+                ultima_vacia_col = col;
+                ultima_vacia_fil = fil;
+            }else if (juego.tablero()[col][fil] == jugador){
+                // la línea sigue, pero este ya lo llené
+                contador++;
+                cant_completos++;
             }else{
-                // Ficha enemiga, empiezo de cero
-                vacia_al_principio = false;
-                fichas_consec = 0;
+                // se cortó la línea
+                contador = 0;
+                cant_completos = 0;
+            }
+            /* si vengo con buena racha y sigo extendiendo la línea más
+             allá de C, me fijo si no acabo de dejar afuera una ficha mía
+             que había contado, que no llena las líneas extensibles que
+             contaré de ahora en más */
+            if (contador > C && juego.tablero()[col-C][fil] == jugador) {
+                cant_completos--;
+            }
+            if (contador >= C && cant_completos == C-1) {
+                if (ultima_vacia_fil != casillero_fil || ultima_vacia_col != casillero_col) {
+                    cuenta_llenables++;
+                    if (cuenta_llenables > 1) return true;
+                    casillero_fil = ultima_vacia_fil;
+                    casillero_col = ultima_vacia_col;
+                }
+            }
+
+        }
+    }
+    // busco líneas verticales
+    for (int col = 0; col < N; col++) { // columna 'col'
+        int contador = 0;
+        int cant_completos = 0;
+        for (int fil = 0; fil < M; fil++) {  // fila 'fil'
+            if (juego.tablero()[col][fil] == 0 && juego._alturas[col] == fil) {
+                contador++;
+                ultima_vacia_col = col;
+                ultima_vacia_fil = fil;
+            }else if (juego.tablero()[col][fil] == jugador){
+                contador++;
+                cant_completos++;
+            }else{
+                contador = 0;
+                cant_completos = 0;
+            }
+            if (contador > C && juego.tablero()[col][fil-C] == jugador) cant_completos--;
+            if (contador >= C && cant_completos == C-1) {
+                if (ultima_vacia_fil != casillero_fil || ultima_vacia_col != casillero_col) {
+                    cuenta_llenables++;
+                    if (cuenta_llenables > 1) return true;
+                    casillero_fil = ultima_vacia_fil;
+                    casillero_col = ultima_vacia_col;
+                }
             }
         }
     }
 
-    // busco en diagonales de 45°
-    for (int col_base = 0; col_base < N; col_base++) {
-        // desde la base de esa columna para arriba
-        bool vacia_al_principio = false;
-        int fichas_consec = 0;
+    // busco líneas a  45°
+    for (int col_base = 0; col_base < N; col_base++) { // columna 'col_base'
+        // desde la base de 'col_base' para arriba
+        int contador = 0;
+        int cant_completos = 0;
         for (int fil = 0; fil < M && col_base+fil<N; fil++) {
-            int col = col_base + fil;
-            if (juego.tablero()[col][fil] == jugador) {
-                fichas_consec++;
-            }else if(juego.tablero()[col][fil] == 0){
-                if (fichas_consec == C-1 && vacia_al_principio && juego._alturas[col] == fil && juego._alturas[col-C] == fil-C){
-                    return true;
-                }else{
-                    fichas_consec = 0;
-                    vacia_al_principio = true;
-                }
+            int col = col_base+fil;
+            if (juego.tablero()[col][fil] == 0 && juego._alturas[col] == fil) {
+                contador++;
+                ultima_vacia_col = col;
+                ultima_vacia_fil = fil;
+            }else if (juego.tablero()[col][fil] == jugador){
+                contador++;
+                cant_completos++;
             }else{
-                vacia_al_principio = false;
-                fichas_consec = 0;
+                contador = 0;
+                cant_completos = 0;
+            }
+            if (contador > C && juego.tablero()[col-C][fil-C] == jugador) cant_completos--;
+            if (contador >= C && cant_completos == C-1) {
+                if (ultima_vacia_fil != casillero_fil || ultima_vacia_col != casillero_col) {
+                    cuenta_llenables++;
+                    if (cuenta_llenables > 1) return true;
+                    casillero_fil = ultima_vacia_fil;
+                    casillero_col = ultima_vacia_col;
+                }
             }
         }
-        // desde el tope de esa columna para abajo
-        vacia_al_principio = false;
-        fichas_consec = 0;
+        // desde el tope de 'col_base' para abajo
+        cant_completos = 0;
+        contador = 0;
         for (int fil = M-1; fil >= 0 && (col_base-(M-1-fil)) >= 0; fil--) {
-            int col = col_base - (M-1-fil);
-            if (juego.tablero()[col][fil] == jugador) {
-                fichas_consec++;
-            }else if(juego.tablero()[col][fil] == 0){
-                if (fichas_consec == C-1 && vacia_al_principio && juego._alturas[col] == fil && juego._alturas[col+C] == fil+C){
-                    return true;
-                }else{
-                    fichas_consec = 0;
-                    vacia_al_principio = true;
-                }
+            int col = col_base-(M-1-fil);
+            if (juego.tablero()[col][fil] == 0 && juego._alturas[col] == fil) {
+                contador++;
+                ultima_vacia_col = col;
+                ultima_vacia_fil = fil;
+            }else if (juego.tablero()[col][fil] == jugador){
+                contador++;
+                cant_completos++;
             }else{
-                vacia_al_principio = false;
-                fichas_consec = 0;
+                contador = 0;
+                cant_completos = 0;
+            }
+            if (contador > C && juego.tablero()[col+C][fil+C] == jugador) cant_completos--;
+            if (contador >= C && cant_completos == C-1) {
+                if (ultima_vacia_fil != casillero_fil || ultima_vacia_col != casillero_col) {
+                    cuenta_llenables++;
+                    if (cuenta_llenables > 1) return true;
+                    casillero_fil = ultima_vacia_fil;
+                    casillero_col = ultima_vacia_col;
+                }
             }
         }
     }
     // busco en diagonales de -45°
     for (int col_base = 0; col_base < N; col_base++) {
-        // desde la base de esa columna para arriba
-        bool vacia_al_principio = false;
-        int fichas_consec = 0;
+        int contador = 0;
+        int cant_completos = 0;
+        // desde la base de 'col_base' para arriba
         for (int fil = 0; fil < M && col_base-fil>=0; fil++) {
-            int col = col_base - fil;
-            if (juego.tablero()[col][fil] == jugador) {
-                fichas_consec++;
-            }else if(juego.tablero()[col][fil] == 0){
-                if (fichas_consec == C-1 && vacia_al_principio && juego._alturas[col] == fil && juego._alturas[col+C] == fil-C){
-                    return true;
-                }else{
-                    fichas_consec = 0;
-                    vacia_al_principio = true;
-                }
+            int col = col_base-fil;
+            if (juego.tablero()[col][fil] == 0 && juego._alturas[col] == fil) {
+                contador++;
+                ultima_vacia_col = col;
+                ultima_vacia_fil = fil;
+            }else if (juego.tablero()[col][fil] == jugador){
+                contador++;
+                cant_completos++;
             }else{
-                vacia_al_principio = false;
-                fichas_consec = 0;
+                contador = 0;
+                cant_completos = 0;
+            }
+            if (contador > C && juego.tablero()[col+C][fil-C] == jugador) cant_completos--;
+            if (contador >= C && cant_completos == C-1) {
+                if (ultima_vacia_fil != casillero_fil || ultima_vacia_col != casillero_col) {
+                    cuenta_llenables++;
+                    if (cuenta_llenables > 1) return true;
+                    casillero_fil = ultima_vacia_fil;
+                    casillero_col = ultima_vacia_col;
+                }
             }
         }
-        // desde el tope de esa columna para abajo
-        vacia_al_principio = false;
-        fichas_consec = 0;
+        // desde el tope de 'col_base' para abajo
+        cant_completos = 0;
+        contador = 0;
         for (int fil = M-1; fil >= 0 && (col_base+(M-1-fil)) < N; fil--) {
-            int col = col_base + (M-1-fil);
-            if (juego.tablero()[col][fil] == jugador) {
-                fichas_consec++;
-            }else if(juego.tablero()[col][fil] == 0){
-                if (fichas_consec == C-1 && vacia_al_principio && juego._alturas[col] == fil && juego._alturas[col-C] == fil+C){
-                    return true;
-                }else{
-                    fichas_consec = 0;
-                    vacia_al_principio = true;
-                }
+            int col = col_base+(M-1-fil);
+            if (juego.tablero()[col][fil] == 0 && juego._alturas[col] == fil) {
+                contador++;
+                ultima_vacia_col = col;
+                ultima_vacia_fil = fil;
+            }else if (juego.tablero()[col][fil] == jugador){
+                contador++;
+                cant_completos++;
             }else{
-                vacia_al_principio = false;
-                fichas_consec = 0;
+                contador = 0;
+                cant_completos = 0;
+            }
+            if (contador > C && juego.tablero()[col-C][fil+C] == jugador) cant_completos--;
+            if (contador >= C && cant_completos == C-1) {
+                if (ultima_vacia_fil != casillero_fil || ultima_vacia_col != casillero_col) {
+                    cuenta_llenables++;
+                    if (cuenta_llenables > 1) return true;
+                    casillero_fil = ultima_vacia_fil;
+                    casillero_col = ultima_vacia_col;
+                }
             }
         }
     }
+
     return false;
 }
-
 /* /////////////////////////////////////// */
 //   AUXILIARES DE INICIALIZACIÓN Y OTROS  //
 //   (NO TIENEN QUE VER CON EL JUGADOR)    //

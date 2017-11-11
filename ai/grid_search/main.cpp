@@ -24,8 +24,11 @@ int main(int argc, char const *argv[]) {
     int c = read_int();
     int p = read_int();
 
-    // grid_search gridsearch(n,m,c,p,-1,1,0.25);
-    grid_search grid(n,m,c,p,-1000,1000,100);
+    grid_search grid(n,m,c,p,-1000,1000,1000);
+
+    grid.thorough_train();
+
+
     // pesos a = grid.get_random_params();
     // cout<< "RANDOM VECTOR " << endl;
     // print(a);
@@ -35,7 +38,7 @@ int main(int argc, char const *argv[]) {
     //     print(list[i].ver_parametros());
     //     print(list[i].ver_pesos_lineas());
     // }
-    grid.randomized_train();
+    // grid.randomized_train();
 
     return 0;
 }

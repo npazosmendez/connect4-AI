@@ -16,7 +16,7 @@ class grid_search{
                 // cout << _columnas << ", " << _filas << ", " << _c << ", " << _p << '\n';
                 // cout << _inf << ", " << _sup << ", " << _step << '\n';
         };
-        void thorough_train(int inf_limit, int sup_limit, float step);
+        void thorough_train();
         void randomized_train();
         pesos get_random_params();
         list<golosa> get_neighbors_golosos(const pesos& params);

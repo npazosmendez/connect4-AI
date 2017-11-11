@@ -66,11 +66,12 @@ uint golosa_vs_random(uint N, uint M, uint C, uint P, golosa &golo, bool rand_pr
         return EMPATE;
 }
 
-uint play_golosa_vs_random(uint N, uint M, uint C, uint P, vector<float> pesos, uint games, bool rand_first) {
+uint play_golosa_vs_random(uint N, uint M, uint C, uint P, vector<float> &pesos, uint games, bool rand_first) {
     golosa goloso(pesos, N, M, C);
     int ganados = 0;
     uint goloso_orden = rand_first ? SEGUNDO : PRIMERO;
     for (uint i=0; i<games; i++){
+
         if (golosa_vs_random(N,M,C,P,goloso,rand_first) == goloso_orden)
             ganados ++;
     }
@@ -82,7 +83,7 @@ float regular_fitness(uint N, uint M, uint C, uint P, vector<float> pesos)  {
     uint wins_home = play_golosa_vs_random(N,M,C,P,pesos,iterations_each,true);
     uint wins_away = play_golosa_vs_random(N,M,C,P,pesos,iterations_each,false);
 
-    cout << wins_home << ", " << wins_away << ", " << ((float)(wins_home+wins_away))/(iterations_each*2) << endl << endl;
+    // cout << wins_home << ", " << wins_away << ", " << ((float)(wins_home+wins_away))/(iterations_each*2) << endl << endl;
     return ((float)(wins_home+wins_away))/(iterations_each*2);
 }
 
@@ -95,7 +96,6 @@ float threaded_regular_fitness(uint N, uint M, uint C, uint P, vector<float> pes
     vector<uint> res(num_threads, 0);
     params_fitness ex = params_fitness(N,M,C,P,its_per_thread,pesos,NULL);
     vector<params_fitness> params_s(num_threads, ex);
-
     for (uint i = 0; i < num_threads; i++) {
         pthread_t un_thread;
         ps.push_back(un_thread);
@@ -125,11 +125,10 @@ float threaded_regular_fitness(uint N, uint M, uint C, uint P, vector<float> pes
 void* regular_fitness_caller(void* params){
     params_fitness* p = (params_fitness*) params;
     int N = p->n, M = p->m, C = p->c, P = p->p;
-    vector<float> pesos = std::vector<float>(p->pesos);
     uint iterations_each = p->its;
 
-    uint wins_home = play_golosa_vs_random(N,M,C,P,pesos,iterations_each,true);
-    uint wins_away = play_golosa_vs_random(N,M,C,P,pesos,iterations_each,false);
+    uint wins_home = play_golosa_vs_random(N,M,C,P,p->pesos,iterations_each,true);
+    uint wins_away = play_golosa_vs_random(N,M,C,P,p->pesos,iterations_each,false);
 
     uint r = (wins_home + wins_away);
     *(p->result) = r;

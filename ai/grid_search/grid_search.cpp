@@ -16,36 +16,28 @@ bool avanzar(vector<float> &params, int inf_limit, int sup_limit, float step, ui
     return false;
 }
 
-void randomize(pesos& params, int inf_limit, int sup_limit, uint idx_desde, uint idx_hasta) {
-    for (uint i= idx_desde; i< idx_hasta; i++){
-        float randnum = inf_limit + (sup_limit-inf_limit) * (static_cast <float> (rand()))/( static_cast <float> (RAND_MAX));
-        params[i] = randnum;
-    }
-}
-
-void grid_search::thorough_train(int inf_limit, int sup_limit, float step){
+void grid_search::thorough_train(){
     //Precondiciones, pueden cambiar
-    // assert(inf_limit < 0);
-    // assert(sup_limit > 0);
-    // assert(sup_limit + inf_limit == 0);
-    // assert(step > 0);
-    float optimal_fitness = 0;
-
-    pesos params((int) golosa::cuantos_parametros(this->columnas,this->filas,this->c), inf_limit);
-    pesos optimal_weights = params;
+    int cant_vic = 0;
+    int cant = 0;
+    pesos params((int) golosa::cuantos_parametros(this->columnas,this->filas,this->c), this->inf_limit);
+    golosa optimo = golosa(params, this->columnas, this->filas, this->c);
     do{
-        float result = this->fitness(params);
-        if (optimal_fitness <= result){
-            optimal_fitness = result;
-            optimal_weights = params;
-            cout << "NUEVO MAX " << result << endl;
-            for (uint i=0; i<optimal_weights.size();i++){
-                cout << optimal_weights[i] << "\t ";
-            }
-            cout << endl << endl << endl;
-        }
+        cant ++;
+        golosa current = golosa(params, this->columnas, this->filas, this->c);
 
-    } while (avanzar(params, inf_limit, sup_limit, step, 1, (uint)params.size()));
+        int result = ida_y_vuelta(this->columnas, this->filas, this->c, this->p, optimo, current);
+        if (result == SEGUNDO){
+            cant_vic++;
+            optimo = current;
+            // cout << "NUEVO MAX " << result << endl;
+            // for (uint i=0; i<params.size();i++){
+            //     cout << params[i] << "\t ";
+            // }
+            // cout << endl << endl << endl;
+        }
+    } while (avanzar(params, this->inf_limit, this->sup_limit, this->step, 1, (uint)params.size()));
+    // cout << cant_vic << ", " << cant << endl;
 }
 
 bool grid_search::fitness(pesos& params){

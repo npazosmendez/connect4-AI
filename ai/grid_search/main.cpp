@@ -25,7 +25,6 @@ int main(int argc, char const *argv[]) {
     int p = read_int();
 
     // grid_search gridsearch(n,m,c,p,-1,1,0.25);
-    // gridsearch.minecraft_train(-1,1,0.25);
     grid_search grid(n,m,c,p,-1000,1000,100);
     // pesos a = grid.get_random_params();
     // cout<< "RANDOM VECTOR " << endl;

@@ -1,32 +1,44 @@
 #include "genetic_trainer.hpp"
-// #include "logging.hpp"
 #include "../fitness.hpp"
 #include <string.h>
 #include <cstdlib>
 #include <stdlib.h>
 #include <string>
 #include <limits>
+#include <fstream>
+
+using namespace std;
 
 #define CLIP_ABS_LIMIT 100
 #define CANT_PARTIDOS_RANDOM 20000
 #define CANT_PARTIDOS_GOLOSOS 1000
 
-enum fitness_t{VS_RANDOM, FIXTURE, VS_GOLOSOS};
-enum crossover_t{COMPLETO, BINARIO};
-enum seleccion_t{PROBABILISTICA,RANK};
-enum mutation_t{MONO,MULTI};
-
-fitness_t FITNESS = VS_GOLOSOS;
-crossover_t CROSSOVER = COMPLETO;
-seleccion_t SELECCION = RANK;
-mutation_t MUTATION = MULTI;
-
 // Logging
-#define LOG_LEVEL 1
+ofstream best_fitness_log; // log para el mejor fitness de cada generación
+ofstream progenitores_log; // log para los 2 progenitores de cada generación
+ofstream champion_log; // log para los parámetros finales encontrados
+void open_log(){
+    if (system("mkdir -p log") || system("rm -f log/best_fitness_log.dat log/best_fitness_log.dat log/ganador.dat")) {
+        cerr << "Error iniciando logs." << endl;
+        exit(1);
+    }
+    best_fitness_log.open("log/best_fitness_log.dat");
+    progenitores_log.open("log/progenitores.dat");
+    champion_log.open("log/ganador.dat");
+}
+
+void close_log(){
+    best_fitness_log.close();
+    progenitores_log.close();
+    champion_log.close();
+}
+
+
+#define CONSOLE_LOG_LEVEL 2
 class mystreambuf: public streambuf{};
 mystreambuf nostreambuf;
 std::ostream nocout(&nostreambuf); // ostream que no se ve
-#define log(x) ((x <= LOG_LEVEL) ? cout : nocout)
+#define log(x) ((x <= CONSOLE_LOG_LEVEL) ? cout : nocout)
 
 
 ////////////////////////////////////
@@ -35,6 +47,7 @@ std::ostream nocout(&nostreambuf); // ostream que no se ve
 vector<float> gen_trainer::train(){
     // assert que las poblaciones sean de tamaño mayor a 2
     assert(pop_size >= 2);
+    open_log();
 
     log(1) << "-------------------------------------------------------" << endl;
     log(1) << "Población: \t" << pop_size << endl;
@@ -50,10 +63,12 @@ vector<float> gen_trainer::train(){
     vector< float > pop_fitness(pop_size); // fitness de cada chabón
     vector< vector<float> > pop(pop_size); // población
     vector<float> p1,p2; // progenitores
+    vector<float> alfa(param_count); // el mejor encontrado hasta ahora
+    float global_max_fitness = -1;
 
     // Población inicial, aleatoria
     for (uint i = 0; i < pop_size; i++)
-    pop[i] = this->randon_genome();
+    pop[i] = randon_genome();
 
     // Itero: fitness, crossover, mutación.
     do{
@@ -78,11 +93,19 @@ vector<float> gen_trainer::train(){
             break;
         }
         float max = -1;
+        int k = -1;
         for (uint i = 0; i < pop_fitness.size(); i++) {
-            max = (max < pop_fitness[i]) ? pop_fitness[i] : max;
+            if (pop_fitness[i] > max) {
+                k = i;
+                max = pop_fitness[i];
+            }
         }
-        log(2) << "\tmejor fitness de la generación: ";
-        log(0) << max << endl; // Imprimio el mejor fitness
+        if (max > global_max_fitness){
+            alfa = pop[k];
+            global_max_fitness = max;
+        }
+        log(2) << "\tmejor fitness de la generación: " << max << endl;
+        best_fitness_log << max << endl; // Imprimio el mejor fitness
 
 
         /////////////////////////////////////////
@@ -97,12 +120,19 @@ vector<float> gen_trainer::train(){
                 progenitores_por_fitness(p1,p2,pop_fitness, pop);
                 break;
         }
-        log (2) << "\t";
-        for (size_t i = 0; i < p1.size(); i++) log(1) << p1[i] << "\t";
-        log(1) << endl;
-        log(2) << "\t";
-        for (size_t i = 0; i < p2.size(); i++) log(1) << p2[i] << "\t";
-        log(1) << endl;
+        // Consola
+        for (size_t i = 0; i < p1.size(); i++) log(2) << p1[i] << "\t";
+        log(2) << endl;
+        for (size_t i = 0; i < p2.size(); i++) log(2) << p2[i] << "\t";
+        log(2) << endl;
+        // Log
+        progenitores_log << p1[0];
+        for (size_t i = 1; i < p1.size(); i++) progenitores_log <<","<< p1[i];
+        progenitores_log << endl;
+        progenitores_log << p2[0];
+        for (size_t i = 1; i < p2.size(); i++) progenitores_log <<","<< p2[i];
+        progenitores_log << endl;
+
 
 
         ///////////////////////////////////////////////
@@ -140,16 +170,15 @@ vector<float> gen_trainer::train(){
     ////////////////////
     log(1) << "-------------------------------------------------------" << endl;
     log(1) << "la evolucion a terminado!" << endl;
+    log(1) << "Mayor fitness encontrado: " << global_max_fitness << endl;
 
-    vector<float> max_pesos; float max_fitness = -1;
-    for (uint i = 0; i < pop.size(); i++) {
-        if (pop_fitness[i] > max_fitness) {
-            max_fitness = pop_fitness[i];
-            max_pesos = pop[i];
-        }
-    }
-    log(1) << "Mayor fitness encontrado: " << max_fitness << endl;
-    return (max_pesos);
+    champion_log << global_max_fitness << endl;
+    champion_log << alfa[0];
+    for (size_t i = 1; i < alfa.size(); i++) champion_log <<","<< alfa[i];
+    champion_log << endl;
+
+    close_log();
+    return (alfa);
 }
 
 
@@ -211,7 +240,6 @@ float gen_trainer::fitness_against_golosos(vector<float> &chabon){
             ganados++;
         }
     }
-    cout << ganados << endl;
     return (float)ganados/CANT_PARTIDOS_GOLOSOS;
 }
 
@@ -290,7 +318,7 @@ bool gen_trainer::multi_mutate(vector<float> &p){
             log(3) << "> hubo mutación en el gen " << i << endl;
             if (i != PRIMERA_JUGADA) {
                 p[i] = -CLIP_ABS_LIMIT + rand()%(CLIP_ABS_LIMIT*2);
-                p[i] *= rand()%2; // permite que haya muchos 0s
+                p[i] *= max(rand()%2,rand()%2); // P(x=0) = 0.25
                 log(3) << "Muto el gen " << i <<": "<< p[i] << endl;
             }else{ // i == PRIMERA_JUGADA
                 int r = -1 + rand()%(n+1);
@@ -381,8 +409,8 @@ void gen_trainer::progenitores_por_fitness(vector<float> &p1, vector<float> &p2,
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-
 /*
+
 vector<float> gen_trainer::random_selection(vector< vector<float> > ps, vector<float> &fs){
     // ps: poblacion de vector<float> actual
     // fs: fitness converetido en proba fs(p) = 1 - (1/fitness(p))

@@ -1,5 +1,6 @@
 #include "../ai/c_linea.hpp"
 #include "../ai/golosa.hpp"
+#include "../ai/grid_search/grid_search.hpp"
 #include "../ai/minimax.hpp"
 #include "../ai/minimax_ab.hpp"
 #include <string>
@@ -14,12 +15,13 @@ using namespace std::chrono;
 void get_flags(int argc, char const *argv[]);
 void print_help(char const *argv[]);
 
-enum ai_t{MINIMAX, MINIMAX_AB, GOLOSA};
+enum ai_t{MINIMAX, MINIMAX_AB, GOLOSA, GRID_EXHAUSTIVO};
 enum tiempo_t{TICKS,MILIS,MICROS,SECS};
 
 uint N,M,C,P;
 ai_t ai;
 tiempo_t unidad;
+float step;
 vector<float> params;
 vector<int> jugadas_previas;
 
@@ -63,6 +65,14 @@ int main(int argc, char const *argv[]) {
             minimax_ab(juego);
             end = high_resolution_clock::now();
             break;
+        case GRID_EXHAUSTIVO:
+        {
+            grid_search grid(N,M,C,P,-1000,1000,step);
+            start = high_resolution_clock::now();
+            grid.thorough_train();
+            end = high_resolution_clock::now();
+            break;
+        }
         case GOLOSA:
             golosa ai_golosa(params,N,M,C);
             start = high_resolution_clock::now();
@@ -98,6 +108,9 @@ void get_flags(int argc, char const *argv[]){
             ai = MINIMAX;
         }else if(strcmp(param, "-mab") == 0){
             ai = MINIMAX_AB;
+        }else if(strcmp(param, "-gre") == 0){
+            ai = GRID_EXHAUSTIVO;
+            step = stof(argv[i+1]);
         }else if(strcmp(param, "--help") == 0){
             print_help(argv);
             exit(0);
@@ -130,6 +143,7 @@ void print_help(char const *argv[]){
     cout <<"\t -t ticks/milis/micros/secs \t\t(determina la unidad de medición)"<< endl;
     cout <<"\t -m" << " \t\t\t\t\t(ai = minimax)" << endl;
     cout <<"\t -mab" << " \t\t\t\t\t(ai = minimax alfa beta)" << endl;
+    cout <<"\t -gre <step>" << " \t\t(ai = grid exhaustivo)" << endl;
     cout <<"\t -g <p1> <p2> <p3> <p4> ..." << " \t\t(ai = goloso)" << endl;
     cout <<"\t --jugadas  <j1> <j2> <j3> <j4>..." << " \t(jugadas previas a medir)" << endl;
     cout << endl;

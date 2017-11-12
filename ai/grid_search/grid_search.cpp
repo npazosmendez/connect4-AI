@@ -52,7 +52,7 @@ void grid_search::thorough_train(){
 
 
     params = mas_victorias.join_params();
-    cout << "MAX con peleas en podio " << cant_en_pelea << endl;
+    cout << "MAX con peleas en podio " << cant_mas_victorias << endl;
     for (uint i=0; i<params.size();i++){
         cout << params[i] << "\t ";
     }

@@ -294,7 +294,6 @@ golosa grid_search::random_busqueda_local_first_lose() {
                 int result = ida_y_vuelta(this->columnas, this->filas, this->c, this->p, g_centro, competidores[i]);
                 if (result == EMPATE && (competidores[i]).join_params() != anterior){
                     current_winner = (competidores[i]).join_params();
-                    if (result == SEGUNDO) ganados++;
                     empates++;
                     break;
                 }

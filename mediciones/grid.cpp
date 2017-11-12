@@ -10,6 +10,7 @@ using namespace std;
 /* AI posibles: */
 #define CANT_STEPS_VICT 1
 #define CANT_STEPS_EMP 2
+#define DIFF_LOCAL 3
 
 
 #ifndef EXP
@@ -33,6 +34,11 @@ int main(int argc, char const *argv[]) {
     #elif EXP==CANT_STEPS_EMP
         float step = read_float();
         grid_search grid(7,6,4,40,-1000,1000,step);
+        for (int i=0; i<200; i++){
+            grid.random_busqueda_local_first_lose();
+        }
+    #elif EXP==DIFF_LOCAL
+        grid_search grid(7,6,4,40,-1000,1000,100);
         for (int i=0; i<200; i++){
             grid.random_busqueda_local_first_lose();
         }

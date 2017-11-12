@@ -262,8 +262,10 @@ golosa grid_search::random_busqueda_local_solo_victoria() {
 
 golosa grid_search::random_busqueda_local_first_lose() {
     pesos centro = this->get_random_params();
+    golosa primero = golosa(centro, this->columnas, this->filas, this->c);
     pesos anterior = centro;
     pesos current_winner = centro;
+    // cerr << threaded_regular_fitness(this->columnas, this->filas, this->c, this->p, centro, 20000) << ',';
     // cout << "RANDOafdsfsdM" << endl;
     // for (uint i=0; i<current_winner.size();i++){
     //     cout << current_winner[i] << '\t';
@@ -305,7 +307,7 @@ golosa grid_search::random_busqueda_local_first_lose() {
         // }
         // cout << endl;
         jugados ++;
-    } while (centro != current_winner && empates < 15 && jugados < 100);
+    } while (centro != current_winner && empates < 7 && jugados < 100);
 
     //Cuando se repite 2 veces el mismo campeon salimos
     // for (uint i=0; i<current_winner.size();i++){
@@ -314,34 +316,37 @@ golosa grid_search::random_busqueda_local_first_lose() {
     // cout << endl;
     // cout << "TRAS JUGAR " << jugados << " PARTIDOS" << endl;
     // cout << ganados << endl;
-    cerr << ganados << endl;
+    // cerr << threaded_regular_fitness(this->columnas, this->filas, this->c, this->p, centro, 20000) << ',';
+    cerr << ganados << ',';
+    golosa a (current_winner, this->columnas, this->filas, this->c);
+    cerr << ida_y_vuelta(this->columnas, this->filas, this->c, this->p, primero, a) << endl;
     return golosa(current_winner, this->columnas, this->filas, this->c);
 }
 
 void grid_search::randomized_train() {
     golosa partial_best = this->random_busqueda_local_first_lose();
     int championships = 0;
-    int total_matches = 0;
+    // int total_matches = 0;
     golosa current_goloso = partial_best;
-    while(championships < 100 && total_matches < 6000) {
-        total_matches++;
+    while(championships < 100/* && total_matches < 6000*/) {
+        // total_matches++;
         current_goloso = this->random_busqueda_local_first_lose();
         int result = ida_y_vuelta(this->columnas, this->filas, this->c, this->p, partial_best, current_goloso);
         if (result == SEGUNDO) {
             partial_best = current_goloso;
-            cout << championships << endl;
+            // cout << championships << endl;
             championships = 0;
         } else {
             championships ++;
         }
     }
-    cout << "championships " << championships << ", total_matches " << total_matches << endl;
-
-    pesos params = partial_best.join_params();
-    for (uint i=0; i<params.size();i++){
-        cout << params[i] << '\t';
-    }
-    cout << endl << endl;
+    // cout << "championships " << championships << ", total_matches " << total_matches << endl;
+    //
+    // pesos params = partial_best.join_params();
+    // for (uint i=0; i<params.size();i++){
+    //     cout << params[i] << '\t';
+    // }
+    // cout << endl << endl;
 
     // ESTO ES LO DEL FIXTURE
     // list<golosa> triunfadores;

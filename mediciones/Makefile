@@ -31,6 +31,11 @@ grid_steps_emp: $(SRC) $(SRC_GRID) grid.cpp
 	make -C ../ai/grid_search/
 	$(CC) -DEXP=CANT_STEPS_EMP $(FLAGS) $(OBJ_GRID) ../ai/golosa.o ../ai/fitness.o ../ai/c_linea.o grid.cpp -o grid_steps_emp $(LDFLAGS)
 
+grid_diff_local: $(SRC) $(SRC_GRID) grid.cpp
+	make -C ../ai/
+	make -C ../ai/grid_search/
+	$(CC) -DEXP=DIFF_LOCAL $(FLAGS) $(OBJ_GRID) ../ai/golosa.o ../ai/fitness.o ../ai/c_linea.o grid.cpp -o grid_diff_local $(LDFLAGS)
+
 
 clean:
 	rm -f *.o
@@ -38,3 +43,4 @@ clean:
 	rm -f victorias
 	rm -f grid_steps_emp
 	rm -f grid_steps_vict
+	rm -f grid_diff_local

@@ -38,7 +38,7 @@ int main(int argc, char const *argv[]) {
             grid.random_busqueda_local_first_lose();
         }
     #elif EXP==DIFF_LOCAL
-        grid_search grid(7,6,4,40,-1000,1000,200);
+        grid_search grid(7,6,4,40,-1000,1000,100);
         for (int i=0; i<200; i++){
             grid.random_busqueda_local_first_lose();
         }

@@ -24,12 +24,12 @@ victorias: $(SRC) victorias.cpp
 grid_steps_vict: $(SRC) $(SRC_GRID) grid.cpp
 	make -C ../ai/
 	make -C ../ai/grid_search/
-	$(CC) -DEXP=CANT_STEPS_VICT $(FLAGS) $(OBJ_GRID) ../ai/golosa.o ../ai/fitness.o ../ai/c_linea.o grid.cpp -o grid_steps_vict
+	$(CC) -DEXP=CANT_STEPS_VICT $(FLAGS) $(OBJ_GRID) ../ai/golosa.o ../ai/fitness.o ../ai/c_linea.o grid.cpp -o grid_steps_vict $(LDFLAGS)
 
 grid_steps_emp: $(SRC) $(SRC_GRID) grid.cpp
 	make -C ../ai/
 	make -C ../ai/grid_search/
-	$(CC) -DEXP=CANT_STEPS_EMP $(FLAGS) $(OBJ_GRID) ../ai/golosa.o ../ai/fitness.o ../ai/c_linea.o grid.cpp -o grid_steps_emp
+	$(CC) -DEXP=CANT_STEPS_EMP $(FLAGS) $(OBJ_GRID) ../ai/golosa.o ../ai/fitness.o ../ai/c_linea.o grid.cpp -o grid_steps_emp $(LDFLAGS)
 
 
 clean:

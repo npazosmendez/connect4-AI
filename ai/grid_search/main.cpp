@@ -24,7 +24,7 @@ int main(int argc, char const *argv[]) {
     int c = read_int();
     int p = read_int();
 
-    grid_search grid(n,m,c,p,-1000,1000,1000);
+    grid_search grid(n,m,c,p,-1000,1000,500);
 
     grid.thorough_train();
 

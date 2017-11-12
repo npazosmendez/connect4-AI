@@ -18,26 +18,45 @@ bool avanzar(vector<float> &params, int inf_limit, int sup_limit, float step, ui
 
 void grid_search::thorough_train(){
     //Precondiciones, pueden cambiar
-    int cant_vic = 0;
-    int cant = 0;
     pesos params((int) golosa::cuantos_parametros(this->columnas,this->filas,this->c), this->inf_limit);
-    golosa optimo = golosa(params, this->columnas, this->filas, this->c);
+    golosa en_pelea = golosa(params, this->columnas, this->filas, this->c);
+    int cant_en_pelea = 0;
+    golosa mas_victorias = golosa(params, this->columnas, this->filas, this->c);
+    int cant_mas_victorias = 0;
     do{
-        cant ++;
         golosa current = golosa(params, this->columnas, this->filas, this->c);
-
-        int result = ida_y_vuelta(this->columnas, this->filas, this->c, this->p, optimo, current);
+        int result = ida_y_vuelta(this->columnas, this->filas, this->c, this->p, en_pelea, current);
         if (result == SEGUNDO){
-            cant_vic++;
-            optimo = current;
-            // cout << "NUEVO MAX " << result << endl;
-            // for (uint i=0; i<params.size();i++){
-            //     cout << params[i] << "\t ";
-            // }
-            // cout << endl << endl << endl;
+            if (cant_en_pelea >= cant_mas_victorias){
+                cout << "Nuevo max tras " << cant_en_pelea << " peleas" << endl;
+                pesos peso = en_pelea.join_params();
+                for (uint i=0; i<peso.size();i++){
+                    cout << peso[i] << "\t ";
+                }
+                cout << endl << endl << endl;
+
+                cant_mas_victorias = cant_en_pelea;
+                mas_victorias = en_pelea;
+            }
+            en_pelea = current;
+            cant_en_pelea = 0;
+        } else {
+            cant_en_pelea++;
         }
     } while (avanzar(params, this->inf_limit, this->sup_limit, this->step, 1, (uint)params.size()));
-    // cout << cant_vic << ", " << cant << endl;
+
+    if (cant_en_pelea >= cant_mas_victorias){
+        cant_mas_victorias = cant_en_pelea;
+        mas_victorias = en_pelea;
+    }
+
+
+    params = mas_victorias.join_params();
+    cout << "MAX con peleas en podio " << cant_en_pelea << endl;
+    for (uint i=0; i<params.size();i++){
+        cout << params[i] << "\t ";
+    }
+    cout << endl << endl << endl;
 }
 
 bool grid_search::fitness(pesos& params){

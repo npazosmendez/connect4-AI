@@ -21,7 +21,6 @@ class grid_search{
         pesos get_random_params();
         list<golosa> get_neighbors_golosos(const pesos& params);
         vector<golosa> get_neighbors_golosos_v(const pesos& params);
-        golosa random_busqueda_local_con_fixture();
         golosa random_busqueda_local_solo_victoria();
         golosa random_busqueda_local_first_lose();
 
@@ -30,9 +29,7 @@ class grid_search{
         float inf_limit;
         float sup_limit;
         float step;
-        bool fitness(pesos& params);
-        // bool fitness(pesos& params, pesos& maximo);
-
+        
 
 
 };

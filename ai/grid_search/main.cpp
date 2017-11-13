@@ -24,21 +24,10 @@ int main(int argc, char const *argv[]) {
     int c = read_int();
     int p = read_int();
 
-    grid_search grid(n,m,c,p,-1000,1000,500);
+    grid_search grid(n,m,c,p,-1000,1000,100);
 
-    grid.thorough_train();
-
-
-    // pesos a = grid.get_random_params();
-    // cout<< "RANDOM VECTOR " << endl;
-    // print(a);
-    // vector<golosa> list = grid.get_neighbors_golosos(a);
-    // for (uint i=0;i<list.size();i++){
-    //     cout << "VECINO " << endl;
-    //     print(list[i].ver_parametros());
-    //     print(list[i].ver_pesos_lineas());
-    // }
-    // grid.randomized_train();
+    // grid.thorough_train();
+    grid.randomized_train();
 
     return 0;
 }

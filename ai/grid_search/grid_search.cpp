@@ -59,16 +59,6 @@ void grid_search::thorough_train(){
     cout << endl << endl << endl;
 }
 
-bool grid_search::fitness(pesos& params){
-    return regular_fitness(this->columnas, this->filas, this->c, this->p, params);
-}
-
-// bool grid_search::fitness(pesos& params, pesos& maximo){
-//     return regular_fitness(this->columnas, this->filas, this->c, this->p, params, maximo);
-// }
-
-
-
 
 /************************************** EMPIEZO CON EL GRASP, LO DE ARRIBA ESTA MEDIO DESORDENADO **********************************************/
 
@@ -131,14 +121,6 @@ list<golosa> grid_search::get_neighbors_golosos(const pesos& params){
             golosos.push_back(g);
         }
     }
-    // cout << "GOLOSO" << endl;
-    // for (list<golosa>::iterator it = golosos.begin(); it != golosos.end(); ++it) {
-    //     pesos params = (*it).join_params();
-    //     for (uint i=0; i<params.size();i++){
-    //         cout << params[i] << '\t';
-    //     }
-    //     cout << endl;
-    // }
     return golosos;
 }
 
@@ -185,54 +167,6 @@ vector<golosa> grid_search::get_neighbors_golosos_v(const pesos& params) {
     return golosos;
 }
 
-
-golosa grid_search::random_busqueda_local_con_fixture(){
-    pesos centro = this->get_random_params();
-    pesos current_winner = centro;
-    // cout << "RANDOM" << endl;
-    // for (uint i=0; i<current_winner.size();i++){
-    //     cout << current_winner[i] << '\t';
-    // }
-    // cout << endl;
-
-    int jugados = 0;
-    do {
-        centro = current_winner;
-
-
-
-        list<golosa> competidores = this->get_neighbors_golosos(centro);
-        golosa g = golosa(centro, this->columnas, this->filas, this->c);
-        competidores.push_back(g);
-
-        // for (list<golosa>::iterator it = competidores.begin(); it != competidores.end(); ++it) {
-        //     pesos params = (*it).join_params();
-        //     cout << "Jugador" << endl;
-        //     for (uint i=0; i<params.size();i++){
-        //         cout << params[i] << '\t';
-        //     }
-        //     cout << endl;
-        // }
-        // cout << endl;
-        list<golosa> results = fixture_golosas(this->columnas, this->filas, this->c, this->p, competidores);
-        current_winner = results.front().join_params();
-        cout << "current_winner" << endl;
-        for (uint i=0; i<current_winner.size();i++){
-            cout << current_winner[i] << '\t';
-        }
-        cout << endl;
-        jugados ++;
-    } while (centro != current_winner);
-
-    //Cuando se repite 2 veces el mismo campeon salimos
-    // for (uint i=0; i<current_winner.size();i++){
-    //     cout << current_winner[i] << '\t';
-    // }
-    // cout << endl;
-    cout << "TRAS JUGAR " << jugados << " PARTIDOS" << endl;
-    return golosa(current_winner, this->columnas, this->filas, this->c);
-}
-
 golosa grid_search::random_busqueda_local_solo_victoria() {
     pesos centro = this->get_random_params();
     pesos anterior = centro;
@@ -256,7 +190,7 @@ golosa grid_search::random_busqueda_local_solo_victoria() {
         }
         jugados ++;
     } while (centro != current_winner && jugados < 100);
-    cerr << jugados << endl;
+    // cerr << jugados << endl;
     return golosa(current_winner, this->columnas, this->filas, this->c);
 }
 
@@ -266,11 +200,6 @@ golosa grid_search::random_busqueda_local_first_lose() {
     pesos anterior = centro;
     pesos current_winner = centro;
     // cerr << threaded_regular_fitness(this->columnas, this->filas, this->c, this->p, centro, 20000) << ',';
-    // cout << "RANDOafdsfsdM" << endl;
-    // for (uint i=0; i<current_winner.size();i++){
-    //     cout << current_winner[i] << '\t';
-    // }
-    // cout << endl;
 
     int jugados = 0;
     int empates = 0;
@@ -301,65 +230,44 @@ golosa grid_search::random_busqueda_local_first_lose() {
                 }
             }
         }
-        // cout << "current_winner" << endl;
-        // for (uint i=0; i<current_winner.size();i++){
-        //     cout << current_winner[i] << '\t';
-        // }
-        // cout << endl;
         jugados ++;
-    } while (centro != current_winner && empates < 7 && jugados < 100);
-
+    } while (centro != current_winner && empates < 15 && jugados < 100);
     //Cuando se repite 2 veces el mismo campeon salimos
-    // for (uint i=0; i<current_winner.size();i++){
-    //     cout << current_winner[i] << '\t';
-    // }
-    // cout << endl;
-    // cout << "TRAS JUGAR " << jugados << " PARTIDOS" << endl;
-    // cout << ganados << endl;
+
     // cerr << threaded_regular_fitness(this->columnas, this->filas, this->c, this->p, centro, 20000) << ',';
-    cerr << ganados << ',';
-    golosa a (current_winner, this->columnas, this->filas, this->c);
-    cerr << ida_y_vuelta(this->columnas, this->filas, this->c, this->p, primero, a) << endl;
+    // cerr << ganados << ',';
+    // golosa a (current_winner, this->columnas, this->filas, this->c);
+    // cerr << ida_y_vuelta(this->columnas, this->filas, this->c, this->p, primero, a) << endl;
     return golosa(current_winner, this->columnas, this->filas, this->c);
 }
 
 void grid_search::randomized_train() {
+    cout << "fitness, championships" << endl;
     golosa partial_best = this->random_busqueda_local_first_lose();
     int championships = 0;
-    // int total_matches = 0;
+    int total_matches = 0;
     golosa current_goloso = partial_best;
-    while(championships < 100/* && total_matches < 6000*/) {
-        // total_matches++;
+    while(championships < 50 && total_matches < 1000) {
+        total_matches++;
         current_goloso = this->random_busqueda_local_first_lose();
         int result = ida_y_vuelta(this->columnas, this->filas, this->c, this->p, partial_best, current_goloso);
         if (result == SEGUNDO) {
+            pesos pes = partial_best.join_params();
+            cout << threaded_regular_fitness(this->columnas, this->filas, this->c, this->p, pes , 20000) << ", " << championships << endl;
             partial_best = current_goloso;
-            // cout << championships << endl;
             championships = 0;
         } else {
             championships ++;
         }
     }
+    pesos pes = partial_best.join_params();
+    cout << threaded_regular_fitness(this->columnas, this->filas, this->c, this->p, pes , 20000) << ", " << championships << endl;
     // cout << "championships " << championships << ", total_matches " << total_matches << endl;
     //
-    // pesos params = partial_best.join_params();
-    // for (uint i=0; i<params.size();i++){
-    //     cout << params[i] << '\t';
-    // }
-    // cout << endl << endl;
-
-    // ESTO ES LO DEL FIXTURE
-    // list<golosa> triunfadores;
-    // // for (int i=0; i< 50; i++) {
-    //     triunfadores.push_back(this->random_busqueda_local_con_fixture());
-    // // }
-    // list<golosa> results = fixture_golosas(this->columnas, this->filas, this->c, this->p, triunfadores);
-    // cout << "GOLOSO" << endl;
-    // for (list<golosa>::iterator it = results.begin(); it != results.end(); ++it) {
-    //     pesos params = (*it).join_params();
-    //     for (uint i=0; i<params.size();i++){
-    //         cout << params[i] << '\t';
-    //     }
-    //     cout << endl << endl;
-    // }
+    cout << endl << endl;
+    pesos params = partial_best.join_params();
+    for (uint i=0; i<params.size();i++){
+        cout << params[i] << '\t';
+    }
+    cout << endl << endl;
 }

@@ -17,9 +17,8 @@ grid_search: main.cpp $(OBJ)
 %.o: %.cpp %.hpp
 	$(CC) $(FLAGS) -c $< -o $@ $(LDFLAGS)
 
-
 clean:
 	rm -f *.o
 	rm -f $(EXECS)
 	rm -f *.gch
-	-rm ../../bin/$(EXECS)
+	rm -f ../../bin/$(EXECS)

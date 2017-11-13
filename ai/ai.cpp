@@ -4,7 +4,6 @@
 
 #include "minimax.hpp"
 #include "minimax_ab.hpp"
-#include "minimax_hc.hpp"
 #include "golosa.hpp"
 
 /* Compilar usando:
@@ -15,7 +14,6 @@
 /* AI posibles: */
 #define MINIMAX 1
 #define MINIMAX_AB 2
-#define MINIMAX_HC 4
 #define GOLOSA 3
 
 #ifndef AI
@@ -72,8 +70,6 @@ int main(int argc, char const *argv[]) {
                 jugada = ai_golosa.jugar(juego);
             #elif AI==MINIMAX_AB
                 jugada = minimax_ab(juego);
-            #elif AI==MINIMAX_HC
-                jugada = minimax_hc(juego);
             #endif
             juego.jugar(yo,jugada);
             send(jugada);
@@ -89,8 +85,6 @@ int main(int argc, char const *argv[]) {
                 jugada = minimax(juego);
             #elif AI==MINIMAX_AB
                 jugada = minimax_ab(juego);
-            #elif AI==MINIMAX_HC
-                jugada = minimax_hc(juego);
             #elif AI==GOLOSA
                 jugada = ai_golosa.jugar(juego);
             #endif

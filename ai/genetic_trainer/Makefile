@@ -24,4 +24,4 @@ clean:
 	rm -f *.o
 	rm -f $(EXECS)
 	rm -f *.gch
-	-rm ../../bin/$(EXECS)
+	rm -f ../../bin/$(EXECS)

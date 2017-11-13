@@ -6,7 +6,7 @@ EXECS = minimax minimax_ab golosa
 
 all: $(EXECS)
 
-# Ejecutables (AIs)
+# Ejecutables AIs
 
 minimax: ai.cpp $(OBJ)
 	$(CC) $(FLAGS) -DAI=MINIMAX $(OBJ) $< -o ../bin/$@ $(LDFLAGS)
@@ -16,6 +16,9 @@ minimax_ab: ai.cpp $(OBJ)
 
 golosa: ai.cpp $(OBJ) c_linea.o
 	$(CC) $(FLAGS) -DAI=GOLOSA $(OBJ) $< -o ../bin/$@ $(LDFLAGS)
+
+
+# Otros
 
 random_fitness: random_fitness.cpp $(OBJ)
 	$(CC) $(FLAGS) $(OBJ) $< -o ../bin/$@ $(LDFLAGS)

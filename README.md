@@ -1,1 +1,2 @@
-# connect4-AI
+## Connect 4
+An implementation of a bot player for the famous game 'Connect 4'. This project was part of the course 'Algorithms and Data Structures III' given at the University of Buenos Aires; its original repository is private and contains other things apart from the player and game themselves. This is a public version of it (currently working on it) that aims to be cleaner and let the project keep growing.

@@ -1,0 +1,12 @@
+language: cpp
+# install additional dependencies, not necessary
+notifications:
+  webhooks: https://fathomless-fjord-24024.herokuapp.com/notify?secret=perrovaca
+  on_success: never
+  on_failure: always
+script: 
+    - mkdir bin/
+    - make -C tests/ install
+    - make -C tests/
+    - ./bin/tests
+

@@ -62,43 +62,42 @@ if __name__ == '__main__':
     parser.add_argument('--red_player',
                         type=str,
                         nargs='*',
-                        help='Path al ejecutable del jugador rojo.')
+                        help='Path to the red player binary and its arguments.')
     parser.add_argument('--blue_player',
                         type=str,
                         nargs='*',
-                        help='Path al ejecutable del jugador azul.')
+                        help='Path to the blue player binary and its arguments.')
     parser.add_argument('--columns',
                         type=positive_integer,
                         default=7,
-                        help="Cantidad de columnas. columns > 0.")
+                        help="How many columns. columns > 0.")
     parser.add_argument('--rows',
                         type=positive_integer,
                         default=6,
-                        help="Cantidad de filas. rows > 0.")
+                        help="How many rows. rows > 0.")
     parser.add_argument('--c',
                         type=positive_integer,
                         default=4,
-                        help="El tamaño de la linea a formar. c <= mínimo {columns, rows}.")
+                        help="Winning-line-length. c <= min {columns, rows}.")
     parser.add_argument('--p',
                         type=int,
                         default=21,
-                        help="Cantidad de fichas por jugador. p > 0.")
+                        help="How many tokens for each player. p > 0.")
     parser.add_argument('--first',
                         type=str,
                         choices=[BLUE, RED],
-                        help='Color del jugador que comienza, si no está especificado comienza'
-                             ' siempre un jugador random con distribución uniforme.')
+                        help='Who starts. Random if not specified.')
     parser.add_argument('--iterations',
                         type=positive_integer,
-                        help="Cantidad de iteraciones. iteraciones > 0.")
+                        help="How many games are played. iterations > 0.")
     parser.add_argument('--ui',
                         type=bool,
-                        default=False,
-                        help="Si es True, la aplicacion muestra una interfaz grafica.")
+                        default=True,
+                        help="If False, hide GUI.")
     parser.add_argument('--q',
                         type=bool,
                         default=False,
-                        help="Si es True, no printea nada.")
+                        help="If True, nothing is printed.")
     args = parser.parse_args()
 
     assert args.c <= min(args.columns, args.rows)

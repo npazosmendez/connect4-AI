@@ -811,8 +811,13 @@ golosa::golosa(vector<float> param, int N, int M, int C) : parametros(param.begi
     assert(param.size() == cuantos_parametros(N,  M, C));
 };
 
-golosa::golosa(int argc, char const *argv[], int N, int M, int C) : parametros(leer_parametros(argc, argv, C)), pesos_lineas(leer_pesos_lineas(argc, argv, C)), N(N), M(M), C(C){
-    // say_hello();
+golosa::golosa(int argc, char const *argv[], int N, int M, int C) : N(N), M(M), C(C){
+	if((unsigned int)(argc -1)  < cuantos_parametros(N,M,C)){
+		cerr << "Greedy player needs " << cuantos_parametros(N,M,C)<< " arguments. Exit and run again." << endl;
+	}		
+       	parametros = leer_parametros(argc, argv, C);
+	pesos_lineas = leer_pesos_lineas(argc, argv, C);
+	//say_hello();
 };
 
 uint golosa::cuantos_parametros(int N, int M, int C){
